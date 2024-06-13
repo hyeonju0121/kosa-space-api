@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" 
+   "http://mybatis.org/dtd/mybatis-3-config.dtd">
+   
+<configuration>
+	<settings>
+		<setting name="jdbcTypeForNull" value="NULL"/>
+		<setting name="mapUnderscoreToCamelCase" value="true"/>
+	</settings>
+
+   <typeAliases>
+      <typeAlias alias="attendance" type="com.mycompany.kosa_space.dto.Attendance"/>
+      <typeAlias alias="attendancenotes" type="com.mycompany.kosa_space.dto.AttendanceNotes"/>
+      <typeAlias alias="course" type="com.mycompany.kosa_space.dto.Course"/>
+      <typeAlias alias="educenter" type="com.mycompany.kosa_space.dto.EduCenter"/>
+      <typeAlias alias="member" type="com.mycompany.kosa_space.dto.Member"/>
+      <typeAlias alias="notice" type="com.mycompany.kosa_space.dto.Notice"/>
+      <typeAlias alias="referencedata" type="com.mycompany.kosa_space.dto.ReferenceData"/>
+      <typeAlias alias="traineeinfo" type="com.mycompany.kosa_space.dto.TraineeInfo"/>
+      <typeAlias alias="trainingroom" type="com.mycompany.kosa_space.dto.TrainingRoom"/>
+   </typeAliases>
+</configuration>
