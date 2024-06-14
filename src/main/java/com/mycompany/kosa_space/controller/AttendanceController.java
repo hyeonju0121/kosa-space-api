@@ -1,5 +1,9 @@
 package com.mycompany.kosa_space.controller;
 
+/*
+  	출석과 관련
+*/
+
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
