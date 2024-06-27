@@ -25,6 +25,9 @@ public class Course {
 	private String cattachtype;
 	private byte[] cattachdata;
 	
+	private String ctrainingdate;
+	private String ctrainingtime;
+	
 	private Date ccreatedat;
 	private Date cupdatedat;
 	
