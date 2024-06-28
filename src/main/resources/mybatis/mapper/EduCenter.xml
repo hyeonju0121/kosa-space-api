@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mycompany.kosa_space.dao.EduCenterDao">
-   
-   
+	
+	<select id="selectByEcname" resultType="EduCenter">
+		select ecno, ecname, ecpostcode, ecaddress, ecattachoname, ecattachtype, eccreatedat, ecupdatedat
+		from educenter
+		where ecname=#{ecname}
+	</select>
+
 </mapper>

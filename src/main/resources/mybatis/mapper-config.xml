@@ -19,5 +19,6 @@
       <typeAlias alias="traineeinfo" type="com.mycompany.kosa_space.dto.TraineeInfo"/>
       <typeAlias alias="trainingroom" type="com.mycompany.kosa_space.dto.TrainingRoom"/>
       <typeAlias alias="dailynote" type="com.mycompany.kosa_space.dto.DailyNote"/>
+      <typeAlias alias="createtrainingroomrequestdto" type="com.mycompany.kosa_space.dto.request.CreateTrainingRoomRequestDTO"/>
    </typeAliases>
 </configuration>

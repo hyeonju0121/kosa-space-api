@@ -2,5 +2,56 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mycompany.kosa_space.dao.TrainingRoomDao">
    
-   
+   <insert id="insert" parameterType="trainingroom">
+		<selectKey keyProperty="trno" resultType="int"
+			order="BEFORE">
+			select seq_trno.nextval from dual
+		</selectKey>
+		insert into trainingroom(
+			trno, ecno, trname, trcapacity, trenable,
+			trattach, trattachoname, trattachtype, trcreatedat
+		)
+		values (
+			#{trno}, #{ecno}, #{trname}, #{trcapacity}, #{trenable},
+			#{trattach}, #{trattachoname}, #{trattachtype}, sysdate
+		)
+	</insert>
+	
+	<select id="selectCntByTrname" parameterType="map" resultType="int">
+		select count(trname)
+		from trainingroom
+		where ecno=#{ecno} and trname=#{trname}
+	</select>
+
+	<select id="selectByTrno" parameterType="int" resultType="trainingroom">
+		select trno, ecno, trname, trcapacity, trenable,
+			trattach, trattachoname, trattachtype, trcreatedat, trupdatedat
+		from trainingroom
+		where trno=#{trno}
+	</select>
+	
+	<select id="selectByEcno" parameterType="int" resultType="trainingroom">
+		select trno, ecno, trname, trcapacity, trenable,
+			trattach, trattachoname, trattachtype, trcreatedat, trupdatedat
+		from trainingroom
+		where ecno=#{ecno}
+	</select>
+	
+	<update id="update" parameterType="map">
+		update trainingroom set
+			trname=#{room.trname}, trcapacity=#{room.trcapacity}, trenable=#{room.trenable}, trupdatedat=sysdate
+			<if test="room.trattachoname != null">
+				, trattach=#{room.trattach}
+				, trattachoname=#{room.trattachoname}
+				, trattachtype=#{room.trattachtype}
+			</if>
+		where trno=#{trno}
+	</update>
+	
+	<select id="selectAllRoom" resultType="trainingroom">
+		select trno, ecno, trname, trcapacity, trenable,
+			trattach, trattachoname, trattachtype, trcreatedat, trupdatedat
+		from trainingroom
+	</select>
+
 </mapper>

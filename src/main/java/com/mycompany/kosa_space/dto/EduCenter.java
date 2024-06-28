@@ -13,9 +13,10 @@ public class EduCenter {
 	private String ecpostcode;
 	private String ecaddress;
 	
-	private MultipartFile ecattach;
+	private MultipartFile ecattachdata;
 	private String ecattachoname;
 	private String ecattachtype;
+	private byte[] ecattach;
 	
 	private Date eccreatedat;
 	private Date ecupdatedat;
