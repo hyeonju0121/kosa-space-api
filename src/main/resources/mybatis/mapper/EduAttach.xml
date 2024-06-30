@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mycompany.kosa_space.dao.EduAttachDao">
+	
+	<insert id="insertEduCenter" parameterType="eduattach">
+		<selectKey keyProperty="eano" resultType="int" order="BEFORE">
+			select seq_eano.nextval from dual
+		</selectKey>
+		insert into eduattach(
+			eano, ecno, eaattach, eaattachoname, eaattachtype, eacreatedat
+		)
+		values (
+			#{eano}, #{ecno}, #{eaattach}, #{eaattachoname}, #{eaattachtype}, sysdate
+		)
+	</insert>
+	
+</mapper>

@@ -4,19 +4,20 @@ import java.util.Date;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class EduCenter {
 	private int ecno;
 	private String ecname;
 	private String ecpostcode;
 	private String ecaddress;
-	
-	private MultipartFile ecattachdata;
-	private String ecattachoname;
-	private String ecattachtype;
-	private byte[] ecattach;
 	
 	private Date eccreatedat;
 	private Date ecupdatedat;
