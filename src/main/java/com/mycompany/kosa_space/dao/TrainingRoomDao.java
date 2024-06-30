@@ -13,6 +13,10 @@ public interface TrainingRoomDao {
 	
 	public void update(int trno, CreateTrainingRoomRequestDTO room);
 	
+	public void delete();
+	
+	public void deleteByTrno(int trno);
+	
 	// 강의실 명 존재 여부
 	public int selectCntByTrname(int ecno, String trname);
 	

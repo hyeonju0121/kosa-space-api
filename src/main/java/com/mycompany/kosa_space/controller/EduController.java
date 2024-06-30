@@ -64,13 +64,7 @@ public class EduController {
 	// 강의실 삭제
 	@DeleteMapping("/room/delete")
 	public void roomDelete(@RequestParam int trno) {
-		
+		eduService.deleteRoom(trno);
 	}
 	
-	// 강의실 전체 삭제
-	@DeleteMapping("/room/delete/all")
-	public void roomDeleteAll() {
-		
-	}
-
 }

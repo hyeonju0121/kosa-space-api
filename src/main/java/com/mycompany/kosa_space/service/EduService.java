@@ -135,6 +135,13 @@ public class EduService {
 		return trainingRoomDao.selectAllRoom();
 	}
 	
+	/*
+	 * 강의실 trno 기준으로 단건삭제 ***************************************
+	 */
+	public void deleteRoom(int trno) {
+		trainingRoomDao.deleteByTrno(trno);
+	}
+	
 	
 	/**
 	 * 교육장 내에 강의실 명 중복 검사 메소드

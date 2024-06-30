@@ -54,4 +54,8 @@
 		from trainingroom
 	</select>
 
+	<delete id="deleteByTrno" parameterType="int">
+		delete from trainingroom where trno=#{trno}
+	</delete>
+
 </mapper>
