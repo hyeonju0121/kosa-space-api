@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mycompany.kosa_space.dto.TrainingRoom;
+import com.mycompany.kosa_space.dto.request.CreateEduCenterRequestDTO;
 import com.mycompany.kosa_space.dto.request.CreateTrainingRoomRequestDTO;
 import com.mycompany.kosa_space.service.EduService;
 
@@ -24,6 +25,18 @@ import lombok.extern.slf4j.Slf4j;
 public class EduController {
 	@Autowired
 	private EduService eduService;
+	
+	// 교육장 관련 -------------------------------------
+	// 교육장 등록
+	@PostMapping("/center/create")
+	public void centerCreate(CreateEduCenterRequestDTO request) {
+		log.info(request.toString());
+		
+		eduService.createCenter(request);
+	}
+	
+	
+	
 
 	// 강의실 관련 -------------------------------------
 	

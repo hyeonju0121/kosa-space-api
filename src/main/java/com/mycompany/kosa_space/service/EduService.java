@@ -3,16 +3,18 @@ package com.mycompany.kosa_space.service;
 import java.io.IOException;
 import java.util.List;
 
-import javax.management.RuntimeErrorException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.mycompany.kosa_space.dao.EduAttachDao;
 import com.mycompany.kosa_space.dao.EduCenterDao;
 import com.mycompany.kosa_space.dao.TrainingRoomDao;
+import com.mycompany.kosa_space.dto.EduAttach;
 import com.mycompany.kosa_space.dto.EduCenter;
 import com.mycompany.kosa_space.dto.TrainingRoom;
+import com.mycompany.kosa_space.dto.request.CreateEduCenterRequestDTO;
 import com.mycompany.kosa_space.dto.request.CreateTrainingRoomRequestDTO;
 
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +27,71 @@ public class EduService {
 
 	@Autowired
 	private TrainingRoomDao trainingRoomDao;
+	
+	@Autowired
+	private EduAttachDao eduAttachDao;
+	
+	
+	// 교육장 관련 ------------------------------------------------
+	/*
+	 * 교육장 등록
+	 * 1. 교육장 명 중복 여부 검사 진행 -> 존재한다면, 에러 처리
+	 * 2. 도로명 주소 + 상세주소 합쳐서 address 변수에 저장 
+	 * 3. EduCenter 객체 생성 후, request 내에서 값을 꺼내 세팅 후, DB에 저장
+	 * 3. 첨부파일로 들어온 갯수만큼 반복문 내에서 EduAttach 객체 생성 후,
+	 * eaattach, eaattachoname, eaattachtype 세팅하고 DB에 저장하는 방식으로 구현함
+	 */
+	@Transactional
+	public void createCenter(CreateEduCenterRequestDTO request) {
+		// 교육장 명 중복 여부 검사
+		if (educenterDao.selectByEcname(request.getEcname()) != null) {
+			throw new RuntimeException("교육장 이름이 존재합니다.");
+		}
+		
+		// 도로명 주소 + 상세주소 합치기
+		String address = request.getEcaddress() + ", " + request.getEcdetailaddress();
+		
+		// EduCenter 객체 생성
+		EduCenter center = EduCenter.builder()
+				.ecname(request.getEcname())
+				.ecpostcode(request.getEcpostcode())
+				.ecaddress(address)
+				.build();
+		
+		// DB 에 EduCenter 객체 저장
+		educenterDao.insert(center);
+		
+		// 저장된 EduCenter ecno 를 찾고, 변수에 저장
+		int ecno = educenterDao.selectByEcname(request.getEcname()).getEcno();
+		
+		// 첨부파일이 넘어왔을 경우 처리
+		List<MultipartFile> attachList = request.getEcattachdata();
+		if (attachList.size() > 0) { // 첨부파일이 있는 경우
+			for (int i = 0; i < attachList.size(); i++) {
+				EduAttach attach = new EduAttach();
+				
+				MultipartFile mf = attachList.get(i);
+				// 파일 이름 설정
+				attach.setEaattachoname(mf.getOriginalFilename());
+				
+				// 파일 종류 설정
+				attach.setEaattachtype(mf.getContentType());
+				
+				try {
+					// 파일 데이터 설정
+					attach.setEaattach(mf.getBytes());
+				} catch (IOException e) {
+				}
+				
+				// ecno 세팅
+				attach.setEcno(ecno);
+				
+				// EduAttach 객체 DB 에 저장
+				eduAttachDao.insertEduCenter(attach);
+			}
+		}
+	}
+	
 
 	// 강의실 관련 ------------------------------------------------
 	/**
