@@ -14,6 +14,8 @@ public interface EduAttachDao {
 	
 	public int deleteEduCenterByEano(int eano);
 	
+	public int deleteEduCenterByEcno(int ecno);
+	
 	// ecno 기준으로 첨부파일 전체 조회
 	public List<EduAttach> selectEduCenterByEcno(int ecno);
 	

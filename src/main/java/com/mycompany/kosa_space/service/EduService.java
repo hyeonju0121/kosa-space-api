@@ -215,6 +215,28 @@ public class EduService {
 		educenterDao.update(ecno, request);
 	}
 	
+	/*
+	 * 교육장 ecno 기준으로 단건 삭제
+	 */
+	@Transactional
+	public void deleteCenter(int ecno) {
+		// ecno 유효한지 검증
+		validationExistsByEcno(ecno);
+		
+		// EduAttach DB delete 처리
+		eduAttachDao.deleteEduCenterByEcno(ecno);
+		
+		// EduCenter DB delete 처리
+		educenterDao.deleteByEcno(ecno);
+	}
+	
+	/*
+	 * 교육장 이름 전체 조회
+	 */
+	public List<String> listCenterName() {
+		return educenterDao.selectAllCenterName();
+	}
+	
 
 	// 강의실 관련 ------------------------------------------------
 	/**

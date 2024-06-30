@@ -15,11 +15,17 @@ public interface EduCenterDao {
 	// 교육장 수정
 	public void update(int ecno, CreateEduCenterRequestDTO request);
 	
+	// 교육장 삭제
+	public void deleteByEcno(int ecno);
+	
 	// ecno 기준으로 교육장 정보 조회
 	public EduCenter selectByEcno(int ecno);
 	
 	// 교육장 전체 조회
 	public List<EduCenter> selectAllCenter();
+	
+	// 교육장 이름 전체 조회
+	public List<String> selectAllCenterName();
 	
 	// 교육장 이름을 기준으로 교육장 정보 조회 
 	public EduCenter selectByEcname(String ecname);

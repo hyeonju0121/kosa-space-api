@@ -21,6 +21,11 @@
 		where ecno=#{ecno}
 	</update>
 	
+	<delete id="deleteByEcno" parameterType="int">
+		delete from educenter where ecno=#{ecno}
+	</delete>
+	
+	
 	<select id="selectByEcno" parameterType="int" resultType="educenter">
 		select ecno, ecname, ecpostcode, ecaddress, eccreatedat, ecupdatedat
 		from educenter
@@ -36,6 +41,10 @@
 	<select id="selectAllCenter" resultType="educenter">
 		select ecno, ecname, ecpostcode, ecaddress, eccreatedat, ecupdatedat
 		from educenter
+	</select>
+	
+	<select id="selectAllCenterName" resultType="String">
+		select ecname from educenter
 	</select>
 	
 </mapper>

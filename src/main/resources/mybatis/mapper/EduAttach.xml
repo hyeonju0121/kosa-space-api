@@ -30,6 +30,10 @@
 		delete from eduattach where eano=#{eano}
 	</delete>
 	
+	<delete id="deleteEduCenterByEcno" parameterType="int">
+		delete from eduattach where ecno=#{ecno}
+	</delete>
+	
 	<select id="selectEduCenterByEcno" parameterType="int" resultType="eduattach">
 		select eano, ecno, eaattach, eaattachoname, eaattachtype
 		from eduattach

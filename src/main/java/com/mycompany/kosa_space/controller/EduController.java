@@ -55,6 +55,18 @@ public class EduController {
 		eduService.updateCenter(ecno, request);
 	}
 	
+	// 교육장 단건 삭제
+	@DeleteMapping("/center/delete")
+	public void centerDelete(@RequestParam int ecno) {
+		eduService.deleteCenter(ecno);
+	}
+	
+	// 교육장 이름 전체 조회
+	@GetMapping("/center/name/list")
+	public List<String> centerNameList() {
+		return eduService.listCenterName();
+	}
+	
 
 	// 강의실 관련 -------------------------------------
 	
