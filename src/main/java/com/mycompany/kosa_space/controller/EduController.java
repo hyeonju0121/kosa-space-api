@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mycompany.kosa_space.dto.EduCenter;
 import com.mycompany.kosa_space.dto.TrainingRoom;
 import com.mycompany.kosa_space.dto.request.CreateEduCenterRequestDTO;
 import com.mycompany.kosa_space.dto.request.CreateTrainingRoomRequestDTO;
@@ -35,7 +36,24 @@ public class EduController {
 		eduService.createCenter(request);
 	}
 	
+	// 교육장 단건 조회
+	@GetMapping("/center/info")
+	public EduCenter centerInfo(@RequestParam int ecno) {
+		return eduService.infoCenter(ecno);
+	}
 	
+	// 교육장 전체 조회
+	@GetMapping("/center/list")
+	public List<EduCenter> centerList() {
+		return eduService.listCenter();
+	}
+	
+	// 교육장 수정
+	@PutMapping("/center/update")
+	public void centerUpdate(@RequestParam int ecno, 
+				CreateEduCenterRequestDTO request) {
+		eduService.updateCenter(ecno, request);
+	}
 	
 
 	// 강의실 관련 -------------------------------------

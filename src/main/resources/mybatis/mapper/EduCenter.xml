@@ -14,10 +14,28 @@
 		)
 	</insert>
 	
-	<select id="selectByEcname" resultType="EduCenter">
+	<update id="update" parameterType="map">
+		update educenter set
+			ecname=#{request.ecname}, ecpostcode=#{request.ecpostcode}, 
+			ecaddress=#{request.ecaddress}, ecupdatedat=sysdate
+		where ecno=#{ecno}
+	</update>
+	
+	<select id="selectByEcno" parameterType="int" resultType="educenter">
+		select ecno, ecname, ecpostcode, ecaddress, eccreatedat, ecupdatedat
+		from educenter
+		where ecno=#{ecno}
+	</select>
+	
+	<select id="selectByEcname" resultType="educenter">
 		select ecno, ecname, ecpostcode, ecaddress, eccreatedat, ecupdatedat
 		from educenter
 		where ecname=#{ecname}
+	</select>
+	
+	<select id="selectAllCenter" resultType="educenter">
+		select ecno, ecname, ecpostcode, ecaddress, eccreatedat, ecupdatedat
+		from educenter
 	</select>
 	
 </mapper>

@@ -44,9 +44,7 @@ public class EduService {
 	@Transactional
 	public void createCenter(CreateEduCenterRequestDTO request) {
 		// 교육장 명 중복 여부 검사
-		if (educenterDao.selectByEcname(request.getEcname()) != null) {
-			throw new RuntimeException("교육장 이름이 존재합니다.");
-		}
+		validationDuplicatedEcname(request.getEcname());
 		
 		// 도로명 주소 + 상세주소 합치기
 		String address = request.getEcaddress() + ", " + request.getEcdetailaddress();
@@ -69,11 +67,10 @@ public class EduService {
 		if (attachList.size() > 0) { // 첨부파일이 있는 경우
 			for (int i = 0; i < attachList.size(); i++) {
 				EduAttach attach = new EduAttach();
-				
 				MultipartFile mf = attachList.get(i);
+				
 				// 파일 이름 설정
 				attach.setEaattachoname(mf.getOriginalFilename());
-				
 				// 파일 종류 설정
 				attach.setEaattachtype(mf.getContentType());
 				
@@ -85,11 +82,137 @@ public class EduService {
 				
 				// ecno 세팅
 				attach.setEcno(ecno);
-				
 				// EduAttach 객체 DB 에 저장
 				eduAttachDao.insertEduCenter(attach);
 			}
 		}
+	}
+	
+	/*
+	 * 교육장 ecno 기준으로 단건 조회
+	 */
+	public EduCenter infoCenter(int ecno) {
+		// ecno 유효한지 검증
+		validationExistsByEcno(ecno);
+		
+		return educenterDao.selectByEcno(ecno);
+	}
+	
+	/*
+	 * 교육장 전체 조회
+	 */
+	public List<EduCenter> listCenter() {
+		
+		return educenterDao.selectAllCenter();
+	}
+	
+	/*
+	 * 교육장 ecno 기준으로 수정
+	 */
+	@Transactional
+	public void updateCenter(int ecno, CreateEduCenterRequestDTO request) {
+		// ecno 유효한지 검증
+		validationExistsByEcno(ecno);
+		
+		// 교육장 명 중복 여부 검사
+		validationDuplicatedEcname(request.getEcname());
+		
+		// 도로명 주소 + 상세주소 합치기
+	    String address = request.getEcaddress() + ", " + request.getEcdetailaddress();
+	    request.setEcaddress(address);
+	    
+	    // 첨부파일이 넘어왔을 경우 처리
+	 	List<MultipartFile> attachList = request.getEcattachdata();
+	 	log.info("attachList: " + attachList.toString());
+	 	
+	 	// ecno 에 해당하는 첨부파일 전체 가져오기
+		List<EduAttach> data = eduAttachDao.selectEduCenterByEcno(ecno);
+		
+		if (attachList.size() > 0) { // 첨부파일이 있는 경우
+			if (attachList.size() > data.size()) { 
+				// 기존 첨부파일 목록보다 request 로 들어온 첨부파일 사이즈가 더 큰 경우
+				for (int i = 0; i < data.size(); i++) {
+					// 사이즈가 동일한 만큼, 기존 첨부파일 목록 덮어쓰기 
+					EduAttach attach = data.get(i);
+					int eano = attach.getEano();
+					
+					MultipartFile mf = attachList.get(i);
+					
+					// 파일 이름 설정
+					attach.setEaattachoname(mf.getOriginalFilename());
+					// 파일 종류 설정
+					attach.setEaattachtype(mf.getContentType());
+					
+					try {
+		 				// 파일 데이터 설정
+		 				attach.setEaattach(mf.getBytes());
+		 			} catch (IOException e) {
+		 			}
+					
+					// 수정된 EduAttach 객체를 DB 에 update
+		 			eduAttachDao.updateEduCenterByEano(eano, attach);
+		 			
+		 			attachList.remove(i);
+				}
+				// 남은 첨부파일 목록 DB 에 삽입하기 
+				log.info("남은 attachList: " + attachList.toString());
+				for (int i = 0; i < attachList.size(); i++) {
+					EduAttach attach = new EduAttach();
+					MultipartFile mf = attachList.get(i);
+					
+					// 파일 이름 설정
+					attach.setEaattachoname(mf.getOriginalFilename());
+					// 파일 종류 설정
+					attach.setEaattachtype(mf.getContentType());
+					
+					try {
+						// 파일 데이터 설정
+						attach.setEaattach(mf.getBytes());
+					} catch (IOException e) {
+					}
+					
+					// ecno 세팅
+					attach.setEcno(ecno);
+					// EduAttach 객체 DB 에 저장
+					eduAttachDao.insertEduCenterNewAttach(attach);
+				}
+			} else {
+				// 기존 첨부파일 목록보다 request 로 들어온 첨부파일 사이즈가 더 작은 경우
+				for (int i = 0; i < attachList.size(); i++) {
+					// 사이즈가 동일한 만큼, 기존 첨부파일 목록 덮어쓰기 
+					EduAttach attach = data.get(i);
+					
+					MultipartFile mf = attachList.get(i);
+					
+					// 파일 이름 설정
+					attach.setEaattachoname(mf.getOriginalFilename());
+					// 파일 종류 설정
+					attach.setEaattachtype(mf.getContentType());
+					
+					try {
+		 				// 파일 데이터 설정
+		 				attach.setEaattach(mf.getBytes());
+		 			} catch (IOException e) {
+		 			}
+					
+					// 수정된 EduAttach 객체를 DB 에 update
+		 			eduAttachDao.updateEduCenterByEano(attach.getEano(), attach);
+		 			
+		 			data.remove(i);
+				}
+				// 남은 첨부파일 목록 DB 에서 삭제하기
+				for (int i = 0; i < data.size(); i++) {
+					EduAttach attach = data.get(i);
+					int eano = attach.getEano();
+					
+					// 기존에 남아있던 첨부파일을 DB 에서 delete 처리
+					eduAttachDao.deleteEduCenterByEano(eano);
+				}
+			}
+		}
+		
+		// update
+		educenterDao.update(ecno, request);
 	}
 	
 
@@ -209,6 +332,29 @@ public class EduService {
 		trainingRoomDao.deleteByTrno(trno);
 	}
 	
+	
+	/*
+	 * ecno 가 유효한지 검사하는 메소드 
+	 */
+	public boolean validationExistsByEcno(int ecno) {
+		if (educenterDao.selectByEcno(ecno) == null) {
+			throw new RuntimeException("존재하지 않는 교육장입니다. ");
+		}
+		return true;
+	}
+	
+	/**
+	 * 교육장 명 중복 검사 메소드
+	 * @param ecno 교육장 식별번호
+	 * @param ecname 교육장 명
+	 * @return 
+	 */
+	public boolean validationDuplicatedEcname(String ecname) {
+		if (educenterDao.selectByEcname(ecname) != null) {
+			throw new RuntimeException("이미 존재하는 교육장 명입니다. ");
+		}
+		return true;
+	}
 	
 	/**
 	 * 교육장 내에 강의실 명 중복 검사 메소드

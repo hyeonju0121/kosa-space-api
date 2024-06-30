@@ -14,4 +14,33 @@
 		)
 	</insert>
 	
+	<insert id="insertEduCenterNewAttach" parameterType="eduattach">
+		<selectKey keyProperty="eano" resultType="int" order="BEFORE">
+			select seq_eano.nextval from dual
+		</selectKey>
+		insert into eduattach(
+			eano, ecno, eaattach, eaattachoname, eaattachtype, eacreatedat, eaupdatedat
+		)
+		values (
+			#{eano}, #{ecno}, #{eaattach}, #{eaattachoname}, #{eaattachtype}, sysdate, sysdate
+		)
+	</insert>
+	
+	<delete id="deleteEduCenterByEano" parameterType="int">
+		delete from eduattach where eano=#{eano}
+	</delete>
+	
+	<select id="selectEduCenterByEcno" parameterType="int" resultType="eduattach">
+		select eano, ecno, eaattach, eaattachoname, eaattachtype
+		from eduattach
+		where ecno=#{ecno}
+	</select>
+	
+	<update id="updateEduCenterByEano" parameterType="map">
+		update eduattach set
+			eaattach=#{attach.eaattach}, eaattachoname=#{attach.eaattachoname},
+			eaattachtype=#{attach.eaattachtype}, eaupdatedat=sysdate
+		where eano=#{eano}
+	</update>
+	
 </mapper>
