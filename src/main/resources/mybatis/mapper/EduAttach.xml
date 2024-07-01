@@ -26,12 +26,40 @@
 		)
 	</insert>
 	
-	<delete id="deleteEduCenterByEano" parameterType="int">
+	<insert id="insertTrainingRoomNewAttach" parameterType="eduattach">
+		<selectKey keyProperty="eano" resultType="int" order="BEFORE">
+			select seq_eano.nextval from dual
+		</selectKey>
+		insert into eduattach(
+			eano, trno, eaattach, eaattachoname, eaattachtype, eacreatedat, eaupdatedat
+		)
+		values (
+			#{eano}, #{trno}, #{eaattach}, #{eaattachoname}, #{eaattachtype}, sysdate, sysdate
+		)
+	</insert>
+	
+	<insert id="insertTrainingRoom" parameterType="eduattach">
+		<selectKey keyProperty="eano" resultType="int" order="BEFORE">
+			select seq_eano.nextval from dual
+		</selectKey>
+		insert into eduattach(
+			eano, trno, eaattach, eaattachoname, eaattachtype, eacreatedat
+		)
+		values (
+			#{eano}, #{trno}, #{eaattach}, #{eaattachoname}, #{eaattachtype}, sysdate
+		)
+	</insert>
+	
+	<delete id="deleteByEano" parameterType="int">
 		delete from eduattach where eano=#{eano}
 	</delete>
 	
 	<delete id="deleteEduCenterByEcno" parameterType="int">
 		delete from eduattach where ecno=#{ecno}
+	</delete>
+	
+	<delete id="deleteTrainingRoomByTrno" parameterType="int">
+		delete from eduattach where trno=#{trno}
 	</delete>
 	
 	<select id="selectEduCenterByEcno" parameterType="int" resultType="eduattach">
@@ -40,7 +68,13 @@
 		where ecno=#{ecno}
 	</select>
 	
-	<update id="updateEduCenterByEano" parameterType="map">
+	<select id="selectTrainingRoomByTrno" parameterType="int" resultType="eduattach">
+		select eano, trno, eaattach, eaattachoname, eaattachtype
+		from eduattach
+		where trno=#{trno}
+	</select>
+	
+	<update id="updateByEano" parameterType="map">
 		update eduattach set
 			eaattach=#{attach.eaattach}, eaattachoname=#{attach.eaattachoname},
 			eaattachtype=#{attach.eaattachtype}, eaupdatedat=sysdate

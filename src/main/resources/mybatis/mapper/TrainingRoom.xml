@@ -8,12 +8,10 @@
 			select seq_trno.nextval from dual
 		</selectKey>
 		insert into trainingroom(
-			trno, ecno, trname, trcapacity, trenable,
-			trattach, trattachoname, trattachtype, trcreatedat
+			trno, ecno, trname, trcapacity, trenable, trcreatedat
 		)
 		values (
-			#{trno}, #{ecno}, #{trname}, #{trcapacity}, #{trenable},
-			#{trattach}, #{trattachoname}, #{trattachtype}, sysdate
+			#{trno}, #{ecno}, #{trname}, #{trcapacity}, #{trenable}, sysdate
 		)
 	</insert>
 	
@@ -25,14 +23,14 @@
 
 	<select id="selectByTrno" parameterType="int" resultType="trainingroom">
 		select trno, ecno, trname, trcapacity, trenable,
-			trattach, trattachoname, trattachtype, trcreatedat, trupdatedat
+			trcreatedat, trupdatedat
 		from trainingroom
 		where trno=#{trno}
 	</select>
 	
 	<select id="selectByEcno" parameterType="int" resultType="trainingroom">
 		select trno, ecno, trname, trcapacity, trenable,
-			trattach, trattachoname, trattachtype, trcreatedat, trupdatedat
+			trcreatedat, trupdatedat
 		from trainingroom
 		where ecno=#{ecno}
 	</select>
@@ -40,18 +38,19 @@
 	<update id="update" parameterType="map">
 		update trainingroom set
 			trname=#{room.trname}, trcapacity=#{room.trcapacity}, trenable=#{room.trenable}, trupdatedat=sysdate
-			<if test="room.trattachoname != null">
-				, trattach=#{room.trattach}
-				, trattachoname=#{room.trattachoname}
-				, trattachtype=#{room.trattachtype}
-			</if>
 		where trno=#{trno}
 	</update>
 	
 	<select id="selectAllRoom" resultType="trainingroom">
 		select trno, ecno, trname, trcapacity, trenable,
-			trattach, trattachoname, trattachtype, trcreatedat, trupdatedat
+			trcreatedat, trupdatedat
 		from trainingroom
+	</select>
+	
+	<select id="selectByEcnoAndTrname" parameterType="map" resultType="int">
+		select trno
+		from trainingroom
+		where ecno=#{ecno} and trname=#{trname}
 	</select>
 
 	<delete id="deleteByTrno" parameterType="int">
