@@ -1,5 +1,7 @@
 package com.mycompany.kosa_space.dto.request;
 
+import java.util.List;
+
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.Data;
@@ -11,8 +13,6 @@ public class CreateTrainingRoomRequestDTO {
 	private int trcapacity;
 	private boolean trenable;
 	
-	private MultipartFile trattachdata;
-	private byte[] trattach;
-	private String trattachoname;
-	private String trattachtype;
+	private List<MultipartFile> trattachdata;
+	
 }
