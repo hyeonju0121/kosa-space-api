@@ -2,5 +2,41 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mycompany.kosa_space.dao.MemberDao">
    
+   <insert id="insert" parameterType="Member">
+	   	insert into member (
+	   		mid, mpassword, mname, mphone, memail, mrole, menable, mcreatedat
+	   	) values (
+	   		#{mid}, #{mpassword}, #{mname}, #{mphone}, #{memail}, #{mrole},
+	   		#{menable}, sysdate
+	   	)
+   </insert>
+   
+   <!-- ID에 해당하는 회원의 정보 불러오기 -->
+   <select id="selectByMid" parameterType="String" resultType="Member">
+   		select *
+   		from member
+   		where mid = #{mid}
+   </select>
+   
+   <!-- 휴대폰 번호에 해당하는 회원의 정보 불러오기 -->
+   <select id="selectByMphone" parameterType="String" resultType="Member">
+   		select mid, memail
+   		from member
+   		where mphone = #{mphone}
+   </select>
+   
+   <!-- 운영진 회원정보수정 -->
+   <update id="updateAdmin" parameterType="Member">
+   		update member set
+   			mpassword = #{mpassword}, memail = #{memail}, mphone = #{mphone}
+   		where mid = #{mid}
+   </update>
+   
+   <!-- 회원 비활성화 -->
+   <update id="inActivation" parameterType="Member">
+   		update member set
+   			menable = #{menable}
+   		where mid = #{mid}
+   </update>
    
 </mapper>
