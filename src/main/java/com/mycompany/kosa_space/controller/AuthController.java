@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /*
 	로그인, 회원가입, 아이디 찾기, 비밀번호 찾기
@@ -50,7 +51,9 @@ public class AuthController {
 	
 	// (공통) 아이디 찾기 ------------------------------------
 	@GetMapping("/find/id")
-	public String findId(String mphone, String memail) {
+	public String findId(@RequestParam String mphone, @RequestParam String memail) {
+		log.info(mphone); // 확인
+		log.info(memail); // 확인
 		log.info("findId 리턴값 확인 == " + authService.readMemberId(mphone, memail));
 		return authService.readMemberId(mphone, memail);
 	}

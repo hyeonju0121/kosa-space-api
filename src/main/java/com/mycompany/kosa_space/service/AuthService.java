@@ -116,16 +116,26 @@ public class AuthService {
 	// ---------------------------------------------------------------------------
 	// 아이디 찾기
 	public String readMemberId(String mphone, String memail) {
+		log.info("readMemberId 실행");
 		// 핸드폰 번호는 중복될 수 없다는 전제.
 		// --> 회원가입시 구현하진 않았음. 팀 논의 후 수정 결정
-		Member member = memberDao.selectByMphone(mphone);
-		log.info(member.getMemail());
-		log.info(member.getMid());
+		log.info("mphone: " + mphone); // 확인
+		log.info("memail: " + memail); // 확인
 		
-		if(memail.equals(member.getMemail())) {
-			return member.getMid();
+		if(memberDao.selectByMphone(mphone) == null) {
+			log.info("휴대폰 번호가 등록되어있지 않음");
+			return "none";
 		} else {
-			return null;
+			log.info("memberDao.selectByMphone(mphone) = " + memberDao.selectByMphone(mphone).toString());
+			log.info("member.getMid() = " + memberDao.selectByMphone(mphone).getMid());			
+			log.info("member.getMid() = " + memberDao.selectByMphone(mphone).getMemail());
+			Member member = memberDao.selectByMphone(mphone);
+			if(memail.equals(member.getMemail())) {
+				return member.getMid();
+			} else {
+				log.info("휴대폰 번호는 존재하나, 이메일이 일치하지 않음");
+				return "none";
+			}
 		}
 	}
 	
