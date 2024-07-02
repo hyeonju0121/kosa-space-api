@@ -21,6 +21,7 @@ import com.mycompany.kosa_space.dto.Course;
 import com.mycompany.kosa_space.dto.EduAttach;
 import com.mycompany.kosa_space.dto.EduCenter;
 import com.mycompany.kosa_space.dto.TrainingRoom;
+import com.mycompany.kosa_space.dto.request.CourseParameterRequestDTO;
 import com.mycompany.kosa_space.dto.request.CreateCourseRequestDTO;
 import com.mycompany.kosa_space.dto.request.CreateEduCenterRequestDTO;
 import com.mycompany.kosa_space.dto.request.CreateTrainingRoomRequestDTO;
@@ -735,6 +736,19 @@ public class EduService {
         
 		return response;
 	}
+	
+	// 파라미터 기준으로 교육과정 조회
+	public List<CourseResponseDTO> listCourse(CourseParameterRequestDTO request) {
+		log.info("request: " + request);
+		
+		List<CourseResponseDTO> response = courseResponseDao.listByParameter(request);
+			
+		log.info("response: " + response);
+		log.info("response.size: " + response.size());
+			
+		return null;
+	}
+		
 
 	// ---- validation method ----------------------------------------------------
 	// ecno 가 유효한지 검사하는 메소드 

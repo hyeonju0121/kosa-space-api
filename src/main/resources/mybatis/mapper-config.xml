@@ -24,5 +24,6 @@
       <typeAlias alias="createcourserequestdto" type="com.mycompany.kosa_space.dto.request.CreateCourseRequestDTO"/>
       <typeAlias alias="eduattach" type="com.mycompany.kosa_space.dto.EduAttach"/>
       <typeAlias alias="courseresponsedto" type="com.mycompany.kosa_space.dto.response.CourseResponseDTO"/>
+      <typeAlias alias="courseparameterrequestdto" type="com.mycompany.kosa_space.dto.request.CourseParameterRequestDTO"/>
    </typeAliases>
 </configuration>

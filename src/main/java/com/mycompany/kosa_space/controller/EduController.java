@@ -1,5 +1,6 @@
 package com.mycompany.kosa_space.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.mycompany.kosa_space.dto.EduCenter;
 import com.mycompany.kosa_space.dto.TrainingRoom;
+import com.mycompany.kosa_space.dto.request.CourseParameterRequestDTO;
 import com.mycompany.kosa_space.dto.request.CreateCourseRequestDTO;
 import com.mycompany.kosa_space.dto.request.CreateEduCenterRequestDTO;
 import com.mycompany.kosa_space.dto.request.CreateTrainingRoomRequestDTO;
@@ -131,6 +133,24 @@ public class EduController {
 	@GetMapping("/course/info")
 	public CourseResponseDTO courseInfo(@RequestParam int cno) {
 		return eduService.infoCourse(cno);
+	}
+	
+	// 파라미터 값으로 교육과정 조회
+	@GetMapping("/course/list")
+	public List<CourseResponseDTO> courseList(@RequestParam(value="ecname", 
+		    required = false, defaultValue="all") String ecname,
+			@RequestParam(value="cstatus", 
+		    required = false, defaultValue="all") String cstatus,
+			@RequestParam(value="cprofessor", 
+		    required = false, defaultValue="all") String cprofessor) {
+		
+		CourseParameterRequestDTO request = CourseParameterRequestDTO.builder()
+				.ecname(ecname)
+				.cstatus(cstatus)
+				.cprofessor(cprofessor)
+				.build();
+		
+		return eduService.listCourse(request);
 	}
 	
 }
