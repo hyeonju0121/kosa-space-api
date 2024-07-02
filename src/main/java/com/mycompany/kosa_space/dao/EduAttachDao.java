@@ -14,6 +14,8 @@ public interface EduAttachDao {
 	
 	public int insertTrainingRoomNewAttach(EduAttach attach);
 	
+	public int insertCourseNewAttach(EduAttach attach);
+	
 	public int insertTrainingRoom(EduAttach attach);
 	
 	public int insertCourse(EduAttach attach);
@@ -29,6 +31,9 @@ public interface EduAttachDao {
 	
 	// trno 기준으로 첨부파일 전체 조회
 	public List<EduAttach> selectTrainingRoomByTrno(int trno);
+	
+	// cno 기준으로 첨부파일 전체 조회
+	public List<EduAttach> selectCourseByCno(int cno);
 	
 	// eano 기준으로 첨부파일 수정
 	public void updateByEano(int eano, EduAttach attach);

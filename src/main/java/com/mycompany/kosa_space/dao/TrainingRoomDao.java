@@ -13,6 +13,8 @@ public interface TrainingRoomDao {
 	
 	public void update(int trno, CreateTrainingRoomRequestDTO room);
 	
+	public void updateByTrenable(int trno, boolean trenable);
+	
 	public void delete();
 	
 	public void deleteByTrno(int trno);

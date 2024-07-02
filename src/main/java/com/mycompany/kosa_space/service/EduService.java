@@ -532,6 +532,178 @@ public class EduService {
 			}
 		}
 	}
+	
+	// 교육과정 수정 
+	@Transactional
+	public void updateCourse(int cno, CreateCourseRequestDTO request) {
+		// cno 가 유효한지 검사
+		validationExistsByCno(cno);
+
+		// 운영진, 강사진 존재여부 검사
+		validationExistsByMname(request.getCmanager());
+		validationExistsByMname(request.getCprofessor());
+				
+		// cstartdate, cenddate String -> Date 변환
+		String startdate = request.getCstartdate().substring(0, 10);
+		String enddate = request.getCenddate().substring(0, 10);
+						
+		// DateTimeFormatter 객체를 생성하여 원하는 출력 포맷 지정
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+	    // LocalDate 객체로 변환
+		LocalDate cstartdate = LocalDate.parse(startdate, formatter);
+		LocalDate cenddate = LocalDate.parse(enddate, formatter);
+		
+		TrainingRoom room = trainingRoomDao.selectByTrno(request.getTrno());
+		boolean trenable = room.isTrenable();
+		
+		Course course = courseDao.selectByCno(cno);
+		
+		int trno = request.getTrno();
+		
+		String cstatus = request.getCstatus();
+		switch(cstatus) {
+			case "진행중" : 
+				// trno 에 해당하는 강의실 trenable 값 검사 수행
+				if(trenable) {
+					throw new RuntimeException("해당 강의실을 사용할 수 없습니다."
+							+ "이미 교육과정이 진행중입니다.");
+				} else {
+					// trno 배정 가능한지 검사
+					validationTrenable(request);
+					
+					// trneable 사용중으로 변경 처리
+					room.setTrenable(true);
+					trenable = true;
+					trainingRoomDao.updateByTrenable(room.getTrno(), trenable);
+				}
+				break;
+				
+			case "진행완료":
+				room.setTrenable(false);
+				trenable = false;
+				trainingRoomDao.updateByTrenable(room.getTrno(), trenable);
+				break;
+				
+			case "진행예정":
+				// 기존에 trno 와 request 로 들어온 trno가 다른 경우
+				if (course.getTrno() != request.getTrno()) {
+					// trno 배정 가능한지 검사
+					validationTrenable(request);
+					
+					trno = request.getTrno();
+					request.setTrno(trno);
+				}
+				break;
+		}
+		
+		// Course 객체 생성
+		Course courseData = Course.builder()
+				.trno(request.getTrno())
+				.cname(request.getCname())
+				.ccode(request.getCcode())
+				.ctotalnum(request.getCtotalnum())
+				.cstartdate(cstartdate)
+				.cenddate(cenddate)
+				.crequireddate(request.getCrequireddate())
+				.cstatus(request.getCstatus())
+				.cprofessor(request.getCprofessor())
+				.cmanager(request.getCmanager())
+				.ctrainingdate(request.getCtrainingdate())
+				.ctrainingtime(request.getCtrainingtime())
+				.build();
+		
+		// 첨부파일이 넘어왔을 경우 처리
+		List<MultipartFile> attachList = request.getCattachdata();
+					 	
+	    // cno 에 해당하는 첨부파일 전체 가져오기
+		List<EduAttach> data = eduAttachDao.selectCourseByCno(cno);
+		
+		if (attachList.size() > 1) { // 첨부파일이 있는 경우
+			if (attachList.size() > data.size()) { 
+				// 기존 첨부파일 목록보다 request 로 들어온 첨부파일 사이즈가 더 큰 경우
+				for (int i = 0; i < data.size(); i++) {
+					// 사이즈가 동일한 만큼, 기존 첨부파일 목록 덮어쓰기 
+					EduAttach attach = data.get(i);
+					
+					MultipartFile mf = attachList.get(i);
+					
+					// 파일 이름 설정
+					attach.setEaattachoname(mf.getOriginalFilename());
+					// 파일 종류 설정
+					attach.setEaattachtype(mf.getContentType());
+					
+					try {
+		 				// 파일 데이터 설정
+		 				attach.setEaattach(mf.getBytes());
+		 			} catch (IOException e) {
+		 			}
+					
+					// 수정된 EduAttach 객체를 DB 에 update
+		 			eduAttachDao.updateByEano(attach.getEano(), attach);
+		 			
+		 			attachList.remove(i);
+				}
+				// 남은 첨부파일 목록 DB 에 삽입하기 
+				log.info("남은 attachList: " + attachList.toString());
+				for (int i = 0; i < attachList.size(); i++) {
+					EduAttach attach = new EduAttach();
+					int cnoNum = attach.getCno();
+					MultipartFile mf = attachList.get(i);
+					
+					// 파일 이름 설정
+					attach.setEaattachoname(mf.getOriginalFilename());
+					// 파일 종류 설정
+					attach.setEaattachtype(mf.getContentType());
+					
+					try {
+						// 파일 데이터 설정
+						attach.setEaattach(mf.getBytes());
+					} catch (IOException e) {
+					}
+					
+					// trno 세팅
+					attach.setCno(cnoNum);
+					// EduAttach 객체 DB 에 저장
+					eduAttachDao.insertCourseNewAttach(attach);
+				}
+			} else {
+				// 기존 첨부파일 목록보다 request 로 들어온 첨부파일 사이즈가 더 작은 경우
+				for (int i = 0; i < attachList.size(); i++) {
+					// 사이즈가 동일한 만큼, 기존 첨부파일 목록 덮어쓰기 
+					EduAttach attach = data.get(i);
+					
+					MultipartFile mf = attachList.get(i);
+					
+					// 파일 이름 설정
+					attach.setEaattachoname(mf.getOriginalFilename());
+					// 파일 종류 설정
+					attach.setEaattachtype(mf.getContentType());
+					
+					try {
+		 				// 파일 데이터 설정
+		 				attach.setEaattach(mf.getBytes());
+		 			} catch (IOException e) {
+		 			}
+					
+					// 수정된 EduAttach 객체를 DB 에 update
+		 			eduAttachDao.updateByEano(attach.getEano(), attach);
+		 			
+		 			data.remove(i);
+				}
+				// 남은 첨부파일 목록 DB 에서 삭제하기
+				for (int i = 0; i < data.size(); i++) {
+					EduAttach attach = data.get(i);
+					int eano = attach.getEano();
+					
+					// 기존에 남아있던 첨부파일을 DB 에서 delete 처리
+					eduAttachDao.deleteByEano(eano);
+				}
+			}
+		} 
+		// Course 객체 DB 업데이트
+		courseDao.update(cno, courseData);
+	}
 
 	// ecno 가 유효한지 검사하는 메소드 
 	public boolean validationExistsByEcno(int ecno) {
@@ -656,6 +828,14 @@ public class EduService {
 			throw new RuntimeException("존재하지 않는 이름입니다.");
 		}
 		
+		return true;
+	}
+	
+	// cno 가 유효한지 검사하는 메소드
+	public boolean validationExistsByCno(int cno) {
+		if (courseDao.selectByCno(cno) == null) {
+			throw new RuntimeException("존재하지 않는 교육과정입니다. ");
+		}
 		return true;
 	}
 	

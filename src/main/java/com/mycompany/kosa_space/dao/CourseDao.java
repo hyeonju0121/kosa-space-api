@@ -8,5 +8,9 @@ import com.mycompany.kosa_space.dto.Course;
 public interface CourseDao {
 	public int insert(Course course);
 	
+	public void update(int cno, Course course);
+	
 	public int selectByCnameAndCstatus(int trno, String cstatus, String cname);
+
+	public Course selectByCno(int cno);
 }

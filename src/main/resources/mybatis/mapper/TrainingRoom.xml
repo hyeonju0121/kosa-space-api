@@ -41,6 +41,12 @@
 		where trno=#{trno}
 	</update>
 	
+	<update id="updateByTrno" parameterType="map">
+		update trainingroom set
+			trenable=#{trenable}
+		where trno=#{trno}
+	</update>
+	
 	<select id="selectAllRoom" resultType="trainingroom">
 		select trno, ecno, trname, trcapacity, trenable,
 			trcreatedat, trupdatedat

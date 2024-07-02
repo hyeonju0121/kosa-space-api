@@ -38,6 +38,18 @@
 		)
 	</insert>
 	
+	<insert id="insertCourseNewAttach" parameterType="eduattach">
+		<selectKey keyProperty="eano" resultType="int" order="BEFORE">
+			select seq_eano.nextval from dual
+		</selectKey>
+		insert into eduattach(
+			eano, cno, eaattach, eaattachoname, eaattachtype, eacreatedat, eaupdatedat
+		)
+		values (
+			#{eano}, #{cno}, #{eaattach}, #{eaattachoname}, #{eaattachtype}, sysdate, sysdate
+		)
+	</insert>
+	
 	<insert id="insertTrainingRoom" parameterType="eduattach">
 		<selectKey keyProperty="eano" resultType="int" order="BEFORE">
 			select seq_eano.nextval from dual
@@ -84,6 +96,12 @@
 		select eano, trno, eaattach, eaattachoname, eaattachtype
 		from eduattach
 		where trno=#{trno}
+	</select>
+	
+	<select id="selectCourseByCno" parameterType="int" resultType="eduattach">
+		select eano, cno, eaattach, eaattachoname, eaattachtype
+		from eduattach
+		where cno=#{cno}
 	</select>
 	
 	<update id="updateByEano" parameterType="map">
