@@ -17,6 +17,7 @@ import com.mycompany.kosa_space.dto.TrainingRoom;
 import com.mycompany.kosa_space.dto.request.CreateCourseRequestDTO;
 import com.mycompany.kosa_space.dto.request.CreateEduCenterRequestDTO;
 import com.mycompany.kosa_space.dto.request.CreateTrainingRoomRequestDTO;
+import com.mycompany.kosa_space.dto.response.CourseResponseDTO;
 import com.mycompany.kosa_space.service.EduService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -124,6 +125,12 @@ public class EduController {
 	public void courseUpdate(@RequestParam int cno, 
 			CreateCourseRequestDTO request) {
 		eduService.updateCourse(cno, request);
+	}
+	
+	// 교육과정 단건조회
+	@GetMapping("/course/info")
+	public CourseResponseDTO courseInfo(@RequestParam int cno) {
+		return eduService.infoCourse(cno);
 	}
 	
 }

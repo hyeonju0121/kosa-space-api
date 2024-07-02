@@ -717,7 +717,26 @@ public class EduService {
 		courseDao.update(cno, courseData);
 		
 	}
+	
+	// 교육과정 cno 기준으로 단건조회
+	public CourseResponseDTO infoCourse(int cno) {
+		// cno 가 유효한지 검사
+		validationExistsByCno(cno);
+		
+		CourseResponseDTO response = courseResponseDao.selectByCno(cno);
+		
+		String cstartdate = response.getCstartdate().substring(0, 10);
+		String cenddate = response.getCenddate().substring(0, 10);
+	
+		response.setCstartdate(cstartdate);
+		response.setCenddate(cenddate);
+		
+        log.info(response.toString());
+        
+		return response;
+	}
 
+	// ---- validation method ----------------------------------------------------
 	// ecno 가 유효한지 검사하는 메소드 
 	public boolean validationExistsByEcno(int ecno) {
 		if (educenterDao.selectByEcno(ecno) == null) {
@@ -785,12 +804,14 @@ public class EduService {
 			for (int i = 0; i < data.size(); i++) {
 				CourseResponseDTO courseData = data.get(i);
 				
-				String format = "yyyy-MM-dd";
-				SimpleDateFormat sdf = new SimpleDateFormat(format);
+				// String format = "yyyy-MM-dd";
+				// SimpleDateFormat sdf = new SimpleDateFormat(format);
 				
 				// A
-				String courseCstartdate = sdf.format(courseData.getCstartdate());
-				String courseCenddate = sdf.format(courseData.getCenddate());
+				// String courseCstartdate = sdf.format(courseData.getCstartdate());
+				// String courseCenddate = sdf.format(courseData.getCenddate());
+				String courseCstartdate = courseData.getCstartdate().substring(0, 10);
+				String courseCenddate = courseData.getCenddate().substring(0, 10);
 				
 				// B
 				String strCstartdate = request.getCstartdate().substring(0, 10);

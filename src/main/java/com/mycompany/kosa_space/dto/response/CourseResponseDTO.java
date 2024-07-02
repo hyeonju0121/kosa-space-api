@@ -19,17 +19,17 @@ public class CourseResponseDTO {
 	private String cname;
 	private String ccode;
 	private int ctotalnum;
-	private Date cstartdate;
-	private Date cenddate;
+	private String cstartdate;
+	private String cenddate;
 	private int crequireddate;
 	private String cstatus;
 	private String cprofessor;
 	private String cmanager;
-	private Date ccreatedat;
-	private Date cupdatedat;
+	private String ccreatedat;
+	private String cupdatedat;
 	private String ctrainingdate;
 	private String ctrainingtime;
 	private int trcapacity;
-	private char trenable;
+	private boolean trenable;
 
 }

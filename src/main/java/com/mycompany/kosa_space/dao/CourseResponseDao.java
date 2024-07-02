@@ -13,4 +13,7 @@ public interface CourseResponseDao {
 	public Course selectByEcnoAndCname(int ecno, String cname);
 
 	public List<CourseResponseDTO> selectByEcnoAndTrno(int ecno, int trno);
+
+	public CourseResponseDTO selectByCno(int cno);
+	
 }
