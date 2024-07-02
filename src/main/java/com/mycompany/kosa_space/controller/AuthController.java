@@ -60,9 +60,10 @@ public class AuthController {
 	
 	// (공통) 비밀번호 찾기 ------------------------------------
 	@GetMapping("/find/password")
-	public String findPassword(String mname, String mid, String memail) {
-		log.info("mid : " + mid);
+	public String findPassword(String mid, String mname, String memail) { 
+		// 프론트의 authAPI의 함수 findPassword에서 인자값을 params로 "mname":mname 식으로 지정해주었기 때문에 순서에 상관없이 파라미터 변수명이 일치한다면 잘 받아진다.
 		log.info("mname : " + mname);
+		log.info("mid : " + mid);
 		log.info("memail : " + memail);
 		return authService.readMemberPassword(mname, mid, memail);
 	}

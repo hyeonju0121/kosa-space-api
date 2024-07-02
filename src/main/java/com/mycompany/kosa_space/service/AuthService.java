@@ -148,14 +148,14 @@ public class AuthService {
 		Member member = memberDao.selectByMid(mid);
 		
 		if(member == null) {
-			return "존재하지 않는 아이디입니다.";
+			return "none";
 		} else if(member.getMname().equals(mname) && member.getMemail().equals(memail)) {
 			PasswordEncoder passwordEncoder = 
 					PasswordEncoderFactories.createDelegatingPasswordEncoder();
 			member.setMpassword(passwordEncoder.encode("12345"));
-			return "12345";
+			return member.getMid();
 		} else {
-			return "회원의 정보가 일치하지 않습니다. 다시 확인해주세요.";
+			return "none";
 		}
 	}
 	
