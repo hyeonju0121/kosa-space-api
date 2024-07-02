@@ -41,9 +41,9 @@
 		where trno=#{trno}
 	</update>
 	
-	<update id="updateByTrno" parameterType="map">
+	<update id="updateByTrenable" parameterType="map">
 		update trainingroom set
-			trenable=#{trenable}
+			trenable=#{trenable}, trupdatedat=sysdate
 		where trno=#{trno}
 	</update>
 	

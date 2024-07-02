@@ -377,7 +377,7 @@ public class EduService {
 				log.info("남은 attachList: " + attachList.toString());
 				for (int i = 0; i < attachList.size(); i++) {
 					EduAttach attach = new EduAttach();
-					int trnoNum = attach.getTrno();
+					//int trnoNum = attach.getTrno();
 					MultipartFile mf = attachList.get(i);
 					
 					// 파일 이름 설정
@@ -392,7 +392,7 @@ public class EduService {
 					}
 					
 					// trno 세팅
-					attach.setTrno(trnoNum);
+					attach.setTrno(trno);
 					// EduAttach 객체 DB 에 저장
 					eduAttachDao.insertTrainingRoomNewAttach(attach);
 				}
@@ -536,6 +536,8 @@ public class EduService {
 	// 교육과정 수정 
 	@Transactional
 	public void updateCourse(int cno, CreateCourseRequestDTO request) {
+		log.info("request: " + request.toString());
+		
 		// cno 가 유효한지 검사
 		validationExistsByCno(cno);
 
@@ -554,14 +556,17 @@ public class EduService {
 		LocalDate cstartdate = LocalDate.parse(startdate, formatter);
 		LocalDate cenddate = LocalDate.parse(enddate, formatter);
 		
+		// trno 강의실 사용여부 조사 
 		TrainingRoom room = trainingRoomDao.selectByTrno(request.getTrno());
 		boolean trenable = room.isTrenable();
 		
+		// cno 에 해당하는 교육과정 정보 가져오기 
 		Course course = courseDao.selectByCno(cno);
 		
 		int trno = request.getTrno();
 		
 		String cstatus = request.getCstatus();
+
 		switch(cstatus) {
 			case "진행중" : 
 				// trno 에 해당하는 강의실 trenable 값 검사 수행
@@ -573,30 +578,32 @@ public class EduService {
 					validationTrenable(request);
 					
 					// trneable 사용중으로 변경 처리
-					room.setTrenable(true);
 					trenable = true;
 					trainingRoomDao.updateByTrenable(room.getTrno(), trenable);
 				}
 				break;
-				
+			
 			case "진행완료":
-				room.setTrenable(false);
+				// 해당 강의실 사용여부 검사
+				if(trenable) {
+					throw new RuntimeException("해당 강의실을 사용할 수 없습니다."
+							+ "이미 다른 교육과정이 진행중입니다. 진행완료로 변경하실 수 없습니다.");
+				} 
+				
 				trenable = false;
 				trainingRoomDao.updateByTrenable(room.getTrno(), trenable);
 				break;
-				
+
 			case "진행예정":
 				// 기존에 trno 와 request 로 들어온 trno가 다른 경우
 				if (course.getTrno() != request.getTrno()) {
+					log.info("기존 trno 와 다릅니다. 기존 trno : " + course.getTrno() + ", request trno : " + request.getTrno());
 					// trno 배정 가능한지 검사
 					validationTrenable(request);
-					
-					trno = request.getTrno();
-					request.setTrno(trno);
 				}
 				break;
 		}
-		
+
 		// Course 객체 생성
 		Course courseData = Course.builder()
 				.trno(request.getTrno())
@@ -613,6 +620,8 @@ public class EduService {
 				.ctrainingtime(request.getCtrainingtime())
 				.build();
 		
+		log.info(courseData.toString());
+
 		// 첨부파일이 넘어왔을 경우 처리
 		List<MultipartFile> attachList = request.getCattachdata();
 					 	
@@ -648,7 +657,7 @@ public class EduService {
 				log.info("남은 attachList: " + attachList.toString());
 				for (int i = 0; i < attachList.size(); i++) {
 					EduAttach attach = new EduAttach();
-					int cnoNum = attach.getCno();
+					// int cnoNum = attach.getCno();
 					MultipartFile mf = attachList.get(i);
 					
 					// 파일 이름 설정
@@ -663,7 +672,7 @@ public class EduService {
 					}
 					
 					// trno 세팅
-					attach.setCno(cnoNum);
+					attach.setCno(cno);
 					// EduAttach 객체 DB 에 저장
 					eduAttachDao.insertCourseNewAttach(attach);
 				}
@@ -701,8 +710,12 @@ public class EduService {
 				}
 			}
 		} 
+		
+		
+		
 		// Course 객체 DB 업데이트
 		courseDao.update(cno, courseData);
+		
 	}
 
 	// ecno 가 유효한지 검사하는 메소드 

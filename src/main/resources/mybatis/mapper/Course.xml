@@ -23,7 +23,7 @@
 			cenddate=#{course.cenddate}, crequireddate=#{course.crequireddate},
 			cstatus=#{course.cstatus}, cprofessor=#{course.cprofessor},
 			cmanager=#{course.cmanager}, ctrainingdate=#{course.ctrainingdate},
-			ctrainingtime=#{ctrainingtime}, cupdatedat=sysdate
+			ctrainingtime=#{course.ctrainingtime}, cupdatedat=sysdate
 		where cno=#{cno}
 	</update>
 	
