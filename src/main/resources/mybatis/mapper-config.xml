@@ -21,6 +21,8 @@
       <typeAlias alias="dailynote" type="com.mycompany.kosa_space.dto.DailyNote"/>
       <typeAlias alias="createtrainingroomrequestdto" type="com.mycompany.kosa_space.dto.request.CreateTrainingRoomRequestDTO"/>
       <typeAlias alias="createeducenterrequestdto" type="com.mycompany.kosa_space.dto.request.CreateEduCenterRequestDTO"/>
+      <typeAlias alias="createcourserequestdto" type="com.mycompany.kosa_space.dto.request.CreateCourseRequestDTO"/>
       <typeAlias alias="eduattach" type="com.mycompany.kosa_space.dto.EduAttach"/>
+      <typeAlias alias="courseresponsedto" type="com.mycompany.kosa_space.dto.response.CourseResponseDTO"/>
    </typeAliases>
 </configuration>

@@ -39,4 +39,11 @@
    		where mid = #{mid}
    </update>
    
+   <!-- 이름으로 회원 조회 -->
+   <select id="selectByMname" parameterType="String" resultType="Member">
+   		select *
+   		from member
+   		where mname=#{mname}
+   </select>
+   
 </mapper>

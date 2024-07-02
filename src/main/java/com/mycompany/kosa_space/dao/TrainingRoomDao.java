@@ -28,5 +28,6 @@ public interface TrainingRoomDao {
 	
 	// 저장된 trno 찾기
 	public int selectByEcnoAndTrname(int ecno, String trname);
+	
 
 }

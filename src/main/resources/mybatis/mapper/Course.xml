@@ -2,5 +2,24 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mycompany.kosa_space.dao.CourseDao">
    
+   <insert id="insert" parameterType="course">
+		<selectKey keyProperty="cno" resultType="int" order="BEFORE">
+			select seq_cno.nextval from dual
+		</selectKey>
+		insert into course(
+			cno, trno, cname, ccode, ctotalnum, cstartdate, cenddate, crequireddate,
+			cstatus, cprofessor, cmanager, ctrainingdate, ctrainingtime, ccreatedat
+		)
+		values (
+			#{cno}, #{trno}, #{cname}, #{ccode}, #{ctotalnum}, #{cstartdate}, #{cenddate}, #{crequireddate}, 
+			#{cstatus}, #{cprofessor}, #{cmanager}, #{ctrainingdate}, #{ctrainingtime}, sysdate
+		)
+	</insert>
+	
+	<select id="selectByCnameAndCstatus" parameterType="map" resultType="int">
+		select cno
+		from course
+		where trno=#{trno} and cstatus=#{cstatus} and cname=#{cname}
+	</select>
    
 </mapper>

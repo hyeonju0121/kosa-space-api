@@ -16,6 +16,8 @@ public interface EduAttachDao {
 	
 	public int insertTrainingRoom(EduAttach attach);
 	
+	public int insertCourse(EduAttach attach);
+	
 	public int deleteByEano(int eano);
 	
 	public int deleteEduCenterByEcno(int ecno);

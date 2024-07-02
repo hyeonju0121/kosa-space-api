@@ -16,5 +16,7 @@ public interface MemberDao {
 	public void updateAdmin(Member member);
 	// (공통) 회원 비활성화
 	public void inActivation(Member member);
-
+	
+	// 이름으로 회원 조회
+	public Member selectByMname(String mname);
 }

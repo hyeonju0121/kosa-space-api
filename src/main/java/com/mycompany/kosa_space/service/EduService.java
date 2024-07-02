@@ -1,6 +1,9 @@
 package com.mycompany.kosa_space.service;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,14 +11,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.mycompany.kosa_space.dao.CourseDao;
+import com.mycompany.kosa_space.dao.CourseResponseDao;
 import com.mycompany.kosa_space.dao.EduAttachDao;
 import com.mycompany.kosa_space.dao.EduCenterDao;
+import com.mycompany.kosa_space.dao.MemberDao;
 import com.mycompany.kosa_space.dao.TrainingRoomDao;
+import com.mycompany.kosa_space.dto.Course;
 import com.mycompany.kosa_space.dto.EduAttach;
 import com.mycompany.kosa_space.dto.EduCenter;
 import com.mycompany.kosa_space.dto.TrainingRoom;
+import com.mycompany.kosa_space.dto.request.CreateCourseRequestDTO;
 import com.mycompany.kosa_space.dto.request.CreateEduCenterRequestDTO;
 import com.mycompany.kosa_space.dto.request.CreateTrainingRoomRequestDTO;
+import com.mycompany.kosa_space.dto.response.CourseResponseDTO;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,6 +39,15 @@ public class EduService {
 	
 	@Autowired
 	private EduAttachDao eduAttachDao;
+	
+	@Autowired
+	private CourseDao courseDao;
+	
+	@Autowired
+	private CourseResponseDao courseResponseDao;
+	
+	@Autowired
+	private MemberDao memberDao;
 	
 	
 	// 교육장 관련 ------------------------------------------------
@@ -88,9 +106,8 @@ public class EduService {
 		}
 	}
 	
-	/*
-	 * 교육장 ecno 기준으로 단건 조회
-	 */
+
+	// 교육장 ecno 기준으로 단건 조회
 	public EduCenter infoCenter(int ecno) {
 		// ecno 유효한지 검증
 		validationExistsByEcno(ecno);
@@ -98,17 +115,14 @@ public class EduService {
 		return educenterDao.selectByEcno(ecno);
 	}
 	
-	/*
-	 * 교육장 전체 조회
-	 */
+
+	// 교육장 전체 조회
 	public List<EduCenter> listCenter() {
 		
 		return educenterDao.selectAllCenter();
 	}
-	
-	/*
-	 * 교육장 ecno 기준으로 수정
-	 */
+
+	// 교육장 ecno 기준으로 수정
 	@Transactional
 	public void updateCenter(int ecno, CreateEduCenterRequestDTO request) {
 		// ecno 유효한지 검증
@@ -215,9 +229,7 @@ public class EduService {
 		educenterDao.update(ecno, request);
 	}
 	
-	/*
-	 * 교육장 ecno 기준으로 단건 삭제
-	 */
+	// 교육장 ecno 기준으로 단건 삭제
 	@Transactional
 	public void deleteCenter(int ecno) {
 		// ecno 유효한지 검증
@@ -230,9 +242,8 @@ public class EduService {
 		educenterDao.deleteByEcno(ecno);
 	}
 	
-	/*
-	 * 교육장 이름 전체 조회
-	 */
+
+	// 교육장 이름 전체 조회
 	public List<String> listCenterName() {
 		return educenterDao.selectAllCenterName();
 	}
@@ -300,9 +311,7 @@ public class EduService {
 		
 	}
 	
-	/**
-	 * 강의실 단건조회 ***********************************
-	 */
+	// 강의실 단건조회 
 	public TrainingRoom infoRoom(int trno) {
 		TrainingRoom response = trainingRoomDao.selectByTrno(trno);
 		if (response == null) {
@@ -312,9 +321,7 @@ public class EduService {
 		return response;	
 	}
 	
-	/*
-	 * 교육장 이름으로 강의실 목록 조회 ********************
-	 */
+	// 교육장 이름으로 강의실 목록 조회
 	public List<TrainingRoom> listRoom(String ecname) {
 		EduCenter center = educenterDao.selectByEcname(ecname);
 		
@@ -327,9 +334,7 @@ public class EduService {
 	}
 	
 	
-	/*
-	 * 강의실 수정 ***************************************
-	 */
+	// 강의실 수정
 	@Transactional
 	public void updateRoom(int trno, CreateTrainingRoomRequestDTO request) {
 		// trno 가 유효한지 검사
@@ -429,17 +434,13 @@ public class EduService {
 		trainingRoomDao.update(trno, request);
 	}
 	
-	/*
-	 * 강의실 전체 목록 조회 ***************************************
-	 */
+	// 강의실 전체 목록 조회
 	public List<TrainingRoom> listAllRoom() {
 
 		return trainingRoomDao.selectAllRoom();
 	}
 	
-	/*
-	 * 강의실 trno 기준으로 단건삭제 ***************************************
-	 */
+	// 강의실 trno 기준으로 단건삭제
 	@Transactional
 	public void deleteRoom(int trno) {
 		// trno 가 유효한지 검사
@@ -453,9 +454,86 @@ public class EduService {
 	}
 	
 	
-	/*
-	 * ecno 가 유효한지 검사하는 메소드 
-	 */
+	// 교육과정 관련 ------------------------------------------------
+
+	//교육과정 등록 
+	@Transactional
+	public void createCourse(CreateCourseRequestDTO request) {
+		int trno = request.getTrno();
+		
+		// 교육과정명 중복 검사 (교육장명&교육진행상태 여부가 진행중 및 진행예정이면 에러처리)
+		validationDuplicatedCname(request.getEcname(), request.getCname());
+		
+		// trno 배정 가능한지 검사
+		validationTrenable(request);
+		
+		// 운영진, 강사진 존재여부 검사
+		validationExistsByMname(request.getCmanager());
+		validationExistsByMname(request.getCprofessor());
+		
+		// cstartdate, cenddate String -> Date 변환
+		String startdate = request.getCstartdate().substring(0, 10);
+		String enddate = request.getCenddate().substring(0, 10);
+				
+		// DateTimeFormatter 객체를 생성하여 원하는 출력 포맷 지정
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+	    // LocalDate 객체로 변환
+		LocalDate cstartdate = LocalDate.parse(startdate, formatter);
+		LocalDate cenddate = LocalDate.parse(enddate, formatter);
+		
+		// Course 객체 생성
+		Course course = Course.builder()
+				.trno(request.getTrno())
+				.cname(request.getCname())
+				.ccode(request.getCcode())
+				.ctotalnum(request.getCtotalnum())
+				.cstatus("진행예정")
+				.cstartdate(cstartdate)
+				.cenddate(cenddate)
+				.crequireddate(request.getCrequireddate())
+				.cprofessor(request.getCprofessor())
+				.cmanager(request.getCmanager())
+				.ctrainingdate(request.getCtrainingdate())
+				.ctrainingtime(request.getCtrainingtime())
+				.build();
+
+		log.info("course: " + course.toString());
+			
+		// Course 객체 DB 에 저장
+		courseDao.insert(course);
+		
+		// 저장된 Course cno 를 찾고, 변수에 저장
+		int cno = courseDao.selectByCnameAndCstatus(request.getTrno(), 
+						course.getCstatus(), request.getCname());
+		
+		// 첨부파일이 넘어왔을 경우 처리
+		List<MultipartFile> attachList = request.getCattachdata();
+		if (attachList.size() > 0) { // 첨부파일이 있는 경우
+			for (int i = 0; i < attachList.size(); i++) {
+				EduAttach attach = new EduAttach();
+				MultipartFile mf = attachList.get(i);
+						
+				// 파일 이름 설정
+				attach.setEaattachoname(mf.getOriginalFilename());
+				// 파일 종류 설정
+				attach.setEaattachtype(mf.getContentType());
+						
+				try {
+					// 파일 데이터 설정
+					attach.setEaattach(mf.getBytes());
+				} catch (IOException e) {
+				}
+						
+				// ecno 세팅
+				attach.setCno(cno);
+				// EduAttach 객체 DB 에 저장
+				eduAttachDao.insertCourse(attach);
+			}
+		}
+	}
+
+	// ecno 가 유효한지 검사하는 메소드 
 	public boolean validationExistsByEcno(int ecno) {
 		if (educenterDao.selectByEcno(ecno) == null) {
 			throw new RuntimeException("존재하지 않는 교육장입니다. ");
@@ -463,9 +541,7 @@ public class EduService {
 		return true;
 	}
 	
-	/*
-	 * trno 가 유효한지 검사하는 메소드 
-	 */
+	// trno 가 유효한지 검사하는 메소드 
 	public boolean validationExistsByTrno(int trno) {
 		if (trainingRoomDao.selectByTrno(trno) == null) {
 			throw new RuntimeException("존재하지 않는 강의실입니다. ");
@@ -473,12 +549,7 @@ public class EduService {
 		return true;
 	}
 	
-	/**
-	 * 교육장 명 중복 검사 메소드
-	 * @param ecno 교육장 식별번호
-	 * @param ecname 교육장 명
-	 * @return 
-	 */
+	// 교육장 명 중복 검사 메소드
 	public boolean validationDuplicatedEcname(String ecname) {
 		if (educenterDao.selectByEcname(ecname) != null) {
 			throw new RuntimeException("이미 존재하는 교육장 명입니다. ");
@@ -487,17 +558,102 @@ public class EduService {
 	}
 
 	
-	/**
-	 * 교육장 내에 강의실 명 중복 검사 메소드
-	 * @param ecno 교육장 식별번호
-	 * @param trname 강의실 명
-	 * @return 
-	 */
+	// 교육장 내에 강의실 명 중복 검사 메소드
 	public boolean validationDuplicatedTrname(int ecno, String trname) {
 		int val = trainingRoomDao.selectCntByTrname(ecno, trname);
 		
 		if(val == 1) {
 			throw new RuntimeException("이미 존재하는 강의실입니다. ");
+		}
+		
+		return true;
+	}
+	
+	// 교육과정명 중복 검사 메소드 
+	public boolean validationDuplicatedCname(String ecname, String cname) {
+		EduCenter center = educenterDao.selectByEcname(ecname);
+		int ecno = center.getEcno();
+		
+		if(courseResponseDao.selectByEcnoAndCname(ecno, cname) != null) {
+			throw new RuntimeException("이미 존재하는 교육과정입니다.");
+		}
+		
+		return true;
+	}
+	
+	// trno 배정 가능여부 검사 메소드
+	public boolean validationTrenable(CreateCourseRequestDTO request) {
+		String ecname = request.getEcname();
+		int trno = request.getTrno();
+		
+		EduCenter center = educenterDao.selectByEcname(ecname);
+		int ecno = center.getEcno();
+		
+		// trno 에 해당하는 진행예정 교육과정 조회 
+		List<CourseResponseDTO> data = courseResponseDao.selectByEcnoAndTrno(ecno, trno);
+		
+		boolean answer = false;
+		if (data.size() == 0) {
+			return true;
+		} else {
+			// cstartdate 와 cenddate 비교
+			for (int i = 0; i < data.size(); i++) {
+				CourseResponseDTO courseData = data.get(i);
+				
+				String format = "yyyy-MM-dd";
+				SimpleDateFormat sdf = new SimpleDateFormat(format);
+				
+				// A
+				String courseCstartdate = sdf.format(courseData.getCstartdate());
+				String courseCenddate = sdf.format(courseData.getCenddate());
+				
+				// B
+				String strCstartdate = request.getCstartdate().substring(0, 10);
+				String strCenddate = request.getCenddate().substring(0, 10);
+				
+				// DateTimeFormatter 객체를 생성하여 원하는 출력 포맷 지정
+		        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+		        // LocalDate 객체로 변환
+		        LocalDate dataCstartdate = LocalDate.parse(courseCstartdate, formatter);
+		        LocalDate dataCenddate = LocalDate.parse(courseCenddate, formatter);
+		        
+		        LocalDate cstartdate = LocalDate.parse(strCstartdate, formatter);
+		        LocalDate cenddate = LocalDate.parse(strCenddate, formatter);
+				
+				// cstartdate 와 cenddate 비교
+				// isBefore, isAfter: LocalDate 객체가 인수보다 이전, 이후 또는 동일한지 비교하며 Boolean 값을 반환
+				boolean result = cstartdate.isBefore(dataCstartdate);
+				boolean result2 = cstartdate.isAfter(dataCstartdate);
+
+				if (result) {
+					boolean temp = cenddate.isBefore(dataCstartdate);
+					if (temp) {
+						answer = true;
+					} else {
+						throw new RuntimeException("해당 강의실을 사용할 수 없습니다. 진행 예정인 교육과정이 존재합니다.");
+					}
+				} else {
+					boolean temp = dataCenddate.isBefore(cstartdate);
+					if (temp) {
+						answer = true;
+					} else {
+						throw new RuntimeException("해당 강의실을 사용할 수 없습니다. 진행 예정인 교육과정이 존재합니다.");
+					}
+				}
+			}
+			if (answer) {
+				return true;
+			}
+		}
+		return true;
+	}
+	
+	// 사용자 이름 존재 여부 검사 
+	public boolean validationExistsByMname(String mname) {
+		
+		if(memberDao.selectByMname(mname) == null) {
+			throw new RuntimeException("존재하지 않는 이름입니다.");
 		}
 		
 		return true;

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.mycompany.kosa_space.dto.EduCenter;
 import com.mycompany.kosa_space.dto.TrainingRoom;
+import com.mycompany.kosa_space.dto.request.CreateCourseRequestDTO;
 import com.mycompany.kosa_space.dto.request.CreateEduCenterRequestDTO;
 import com.mycompany.kosa_space.dto.request.CreateTrainingRoomRequestDTO;
 import com.mycompany.kosa_space.service.EduService;
@@ -108,6 +109,14 @@ public class EduController {
 	@DeleteMapping("/room/delete")
 	public void roomDelete(@RequestParam int trno) {
 		eduService.deleteRoom(trno);
+	}
+	
+	// 교육과정 관련 -------------------------------------
+	
+	// 교육과정 등록
+	@PostMapping("/course/create")
+	public void courseCreate(CreateCourseRequestDTO request) {
+		eduService.createCourse(request);
 	}
 	
 }

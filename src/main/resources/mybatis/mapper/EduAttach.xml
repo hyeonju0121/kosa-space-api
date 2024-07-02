@@ -50,6 +50,18 @@
 		)
 	</insert>
 	
+	<insert id="insertCourse" parameterType="eduattach">
+		<selectKey keyProperty="eano" resultType="int" order="BEFORE">
+			select seq_eano.nextval from dual
+		</selectKey>
+		insert into eduattach(
+			eano, cno, eaattach, eaattachoname, eaattachtype, eacreatedat
+		)
+		values (
+			#{eano}, #{cno}, #{eaattach}, #{eaattachoname}, #{eaattachtype}, sysdate
+		)
+	</insert>
+	
 	<delete id="deleteByEano" parameterType="int">
 		delete from eduattach where eano=#{eano}
 	</delete>
