@@ -1,7 +1,8 @@
-package com.mycompany.kosa_space.dto;
+package com.mycompany.kosa_space.dto.request;
 
-import java.time.LocalDate;
-import java.util.Date;
+import java.util.List;
+
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,23 +13,22 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Course {
-	private int cno;
-	private int trno;
+public class CreateCourseRequestDTO {
+	private String ecname;
 	private String cname;
 	private String ccode;
-	private int ctotalnum;
-	private LocalDate cstartdate;
-	private LocalDate cenddate;
+	private int trno;
 	private int crequireddate;
+	private int ctotalnum;
 	private String cstatus;
 	private String cprofessor;
 	private String cmanager;
 	
+	private String cstartdate;
+	private String cenddate;
 	private String ctrainingdate;
 	private String ctrainingtime;
-	
-	private Date ccreatedat;
-	private Date cupdatedat;
-	
+
+	private List<MultipartFile> cattachdata;
+
 }

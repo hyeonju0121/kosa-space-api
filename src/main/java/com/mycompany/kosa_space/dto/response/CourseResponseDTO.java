@@ -1,6 +1,5 @@
-package com.mycompany.kosa_space.dto;
+package com.mycompany.kosa_space.dto.response;
 
-import java.time.LocalDate;
 import java.util.Date;
 
 import lombok.AllArgsConstructor;
@@ -12,23 +11,25 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Course {
-	private int cno;
+public class CourseResponseDTO {
+	private int ecno;
 	private int trno;
+	private int cno;
+	private String trname;
 	private String cname;
 	private String ccode;
 	private int ctotalnum;
-	private LocalDate cstartdate;
-	private LocalDate cenddate;
+	private Date cstartdate;
+	private Date cenddate;
 	private int crequireddate;
 	private String cstatus;
 	private String cprofessor;
 	private String cmanager;
-	
-	private String ctrainingdate;
-	private String ctrainingtime;
-	
 	private Date ccreatedat;
 	private Date cupdatedat;
-	
+	private String ctrainingdate;
+	private String ctrainingtime;
+	private int trcapacity;
+	private char trenable;
+
 }
