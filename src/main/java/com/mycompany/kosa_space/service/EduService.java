@@ -746,7 +746,17 @@ public class EduService {
 		log.info("request: " + request);
 		
 		List<CourseResponseDTO> response = courseResponseDao.listByParameter(request);
-			
+		
+		// cstartdate, cenddate 세팅 
+		for (CourseResponseDTO data : response) {
+			String cstartdate = data.getCstartdate().substring(0, 10);
+			String cenddate = data.getCenddate().substring(0, 10);
+		
+			data.setCstartdate(cstartdate);
+			data.setCenddate(cenddate);
+		}
+		
+		
 		log.info("response: " + response);
 		log.info("response.size: " + response.size());
 			
