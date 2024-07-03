@@ -129,8 +129,12 @@ public class EduService {
 		// ecno 유효한지 검증
 		validationExistsByEcno(ecno);
 		
-		// 교육장 명 중복 여부 검사
-		validationDuplicatedEcname(request.getEcname());
+		// 기존 교육장 명과 request 로 들어온 교육장명이 다를 경우 교육장 명 중복 여부 검사
+		EduCenter center = educenterDao.selectByEcno(ecno);
+		
+		if (!center.getEcname().equals(request.getEcname())) {
+			validationDuplicatedEcname(request.getEcname());
+		}
 		
 		// 도로명 주소 + 상세주소 합치기
 	    String address = request.getEcaddress() + ", " + request.getEcdetailaddress();
