@@ -750,7 +750,7 @@ public class EduService {
 		log.info("response: " + response);
 		log.info("response.size: " + response.size());
 			
-		return null;
+		return response;
 	}
 		
 
