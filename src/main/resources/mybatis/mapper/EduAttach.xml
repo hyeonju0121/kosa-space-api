@@ -86,6 +86,12 @@
 		delete from eduattach where trno=#{trno}
 	</delete>
 	
+	<select id="selectByEano" parameterType="int" resultType="eduattach">
+		select eano, ecno, trno, cno, eaattach, eaattachoname, eaattachtype
+		from eduattach
+		where eano=#{eano}
+	</select>
+	
 	<select id="selectEduCenterByEcno" parameterType="int" resultType="eduattach">
 		select eano, ecno, eaattach, eaattachoname, eaattachtype
 		from eduattach
@@ -103,6 +109,25 @@
 		from eduattach
 		where cno=#{cno}
 	</select>
+	
+	<select id="selectEduCenterByEano" parameterType="int" resultType="eduattach">
+		select eano, ecno, eaattach, eaattachoname, eaattachtype
+		from eduattach
+		where eano=#{eano}
+	</select>
+	
+	<select id="selectCourseByEano" parameterType="int" resultType="eduattach">
+		select eano, cno, eaattach, eaattachoname, eaattachtype
+		from eduattach
+		where eano=#{eano}
+	</select>
+	
+	<select id="selectTrainingRoomByEano" parameterType="int" resultType="eduattach">
+		select eano, trno, eaattach, eaattachoname, eaattachtype
+		from eduattach
+		where eano=#{eano}
+	</select>
+
 	
 	<update id="updateByEano" parameterType="map">
 		update eduattach set

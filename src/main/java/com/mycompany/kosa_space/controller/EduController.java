@@ -1,11 +1,15 @@
 package com.mycompany.kosa_space.controller;
 
-import java.util.ArrayList;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mycompany.kosa_space.dto.EduAttach;
 import com.mycompany.kosa_space.dto.EduCenter;
 import com.mycompany.kosa_space.dto.TrainingRoom;
 import com.mycompany.kosa_space.dto.request.CourseParameterRequestDTO;
@@ -20,6 +25,7 @@ import com.mycompany.kosa_space.dto.request.CreateCourseRequestDTO;
 import com.mycompany.kosa_space.dto.request.CreateEduCenterRequestDTO;
 import com.mycompany.kosa_space.dto.request.CreateTrainingRoomRequestDTO;
 import com.mycompany.kosa_space.dto.response.CourseResponseDTO;
+import com.mycompany.kosa_space.dto.response.EduCenterResponseDTO;
 import com.mycompany.kosa_space.service.EduService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -42,13 +48,13 @@ public class EduController {
 	
 	// 교육장 단건 조회
 	@GetMapping("/center/info")
-	public EduCenter centerInfo(@RequestParam int ecno) {
+	public EduCenterResponseDTO centerInfo(@RequestParam int ecno) {
 		return eduService.infoCenter(ecno);
 	}
 	
 	// 교육장 전체 조회
 	@GetMapping("/center/list")
-	public List<EduCenter> centerList() {
+	public List<EduCenterResponseDTO> centerList() {
 		return eduService.listCenter();
 	}
 	
@@ -152,5 +158,33 @@ public class EduController {
 		
 		return eduService.listCourse(request);
 	}
+	
+	// 다운로드
+	@GetMapping("/download/attach/{eano}")
+	public void download(@PathVariable int eano, HttpServletResponse response) {
+		EduAttach attach = eduService.attachDownload(eano);
+		
+		// 파일 이름이 한글일 경우, 브라우저에서 한글 이름으로 다운로드 받기 위해 헤더에 추가할 내용
+		try {
+			// 한글 파일의 이름 -> 인코딩 변경
+			String fileName = new String(
+					attach.getEaattachoname().getBytes("UTF-8"), "ISO-8859-1");
+					
+			response.setHeader("Content-Disposition", 
+					"attachment; filename=\"" + fileName + "\"");
+					
+			// 파일 타입을 헤더에 추가
+			response.setContentType(attach.getEaattachtype());
+					
+			// 응답 바디에 파일 데이터를 출력
+			OutputStream os = response.getOutputStream();
+			os.write(attach.getEaattach());
+			os.flush();
+			os.close();
+					
+			} catch (IOException e) {
+				log.error(e.getMessage()); // error 출력
+			}
+		}
 	
 }

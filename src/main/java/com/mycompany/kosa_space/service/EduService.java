@@ -1,10 +1,15 @@
 package com.mycompany.kosa_space.service;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +31,7 @@ import com.mycompany.kosa_space.dto.request.CreateCourseRequestDTO;
 import com.mycompany.kosa_space.dto.request.CreateEduCenterRequestDTO;
 import com.mycompany.kosa_space.dto.request.CreateTrainingRoomRequestDTO;
 import com.mycompany.kosa_space.dto.response.CourseResponseDTO;
+import com.mycompany.kosa_space.dto.response.EduCenterResponseDTO;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -109,18 +115,108 @@ public class EduService {
 	
 
 	// 교육장 ecno 기준으로 단건 조회
-	public EduCenter infoCenter(int ecno) {
+	public EduCenterResponseDTO infoCenter(int ecno) {
 		// ecno 유효한지 검증
 		validationExistsByEcno(ecno);
 		
-		return educenterDao.selectByEcno(ecno);
+		EduCenter center = educenterDao.selectByEcno(ecno);
+		
+		List<Integer> eanoList = new ArrayList<>();
+		
+		int ecnoNum = center.getEcno();
+		
+		// 각 ecno 에 해당하는 eano 정보 가져오기
+		List<EduAttach> list = eduAttachDao.selectEduCenterByEcno(ecno);
+		for (EduAttach attach : list) {
+			eanoList.add(attach.getEano());
+		}
+		
+		// 주소 분리 
+		String[] arr = center.getEcaddress().split(",");
+		String ecaddress = arr[0];
+		String ecdetailaddress = arr[1].substring(1, arr[1].length());
+					
+		// 생성일시, 수정일시 Date to String
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
+					
+		Date createdat = center.getEccreatedat();
+		Date updatedat = new Date();
+		String ecupdatedat = "";
+		if (center.getEcupdatedat() != null) {
+				updatedat = center.getEcupdatedat();
+				ecupdatedat = sdf.format(updatedat);
+		}
+		String eccreatedat = sdf.format(createdat);
+					
+		EduCenterResponseDTO response = EduCenterResponseDTO.builder()
+					.ecno(ecno)
+					.ecname(center.getEcname())
+					.ecpostcode(center.getEcpostcode())
+					.ecaddress(ecaddress)
+					.ecdetailaddress(ecdetailaddress)
+					.eccreatedat(eccreatedat)
+					.ecupdatedat(ecupdatedat)
+					.eanoList(eanoList)
+					.build();
+		
+		return response;
 	}
 	
 
 	// 교육장 전체 조회
-	public List<EduCenter> listCenter() {
+	public List<EduCenterResponseDTO> listCenter() {
+	
+		List<EduCenterResponseDTO> response = new ArrayList<>();
 		
-		return educenterDao.selectAllCenter();
+		List<EduCenter> centerList = educenterDao.selectAllCenter();
+		
+		for (EduCenter center : centerList) {
+			log.info("center: " + center.toString());
+			
+			List<Integer> eanoList = new ArrayList<>();
+			
+			int ecno = center.getEcno();
+			
+			// 각 ecno 에 해당하는 eano 정보 가져오기
+			List<EduAttach> list = eduAttachDao.selectEduCenterByEcno(ecno);
+			for (EduAttach attach : list) {
+				eanoList.add(attach.getEano());
+			}
+			
+			// 주소 분리 
+			String[] arr = center.getEcaddress().split(",");
+			String ecaddress = arr[0];
+			String ecdetailaddress = arr[1].substring(1, arr[1].length());
+			
+			// 생성일시, 수정일시 Date to String
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
+			
+			Date createdat = center.getEccreatedat();
+			Date updatedat = new Date();
+			String ecupdatedat = "";
+			if (center.getEcupdatedat() != null) {
+				updatedat = center.getEcupdatedat();
+				ecupdatedat = sdf.format(updatedat);
+			}
+			String eccreatedat = sdf.format(createdat);
+			
+			EduCenterResponseDTO result = EduCenterResponseDTO.builder()
+					.ecno(ecno)
+					.ecname(center.getEcname())
+					.ecpostcode(center.getEcpostcode())
+					.ecaddress(ecaddress)
+					.ecdetailaddress(ecdetailaddress)
+					.eccreatedat(eccreatedat)
+					.ecupdatedat(ecupdatedat)
+					.eanoList(eanoList)
+					.build();
+			
+			log.info("result: " + result.toString());
+			
+			response.add(result);
+		}
+		
+		return response;
 	}
 
 	// 교육장 ecno 기준으로 수정
@@ -755,12 +851,29 @@ public class EduService {
 			data.setCstartdate(cstartdate);
 			data.setCenddate(cenddate);
 		}
-		
-		
+
 		log.info("response: " + response);
 		log.info("response.size: " + response.size());
 			
 		return response;
+	}
+	
+	// --- 첨부파일 다운로드 ---------------------------------------------------------
+	public EduAttach attachDownload(int eano) {
+		EduAttach attach = eduAttachDao.selectByEano(eano);
+
+		int ecno = attach.getEcno();
+		int trno = attach.getTrno();
+		int cno = attach.getCno();
+		
+		if (ecno > 0) {
+			return eduAttachDao.selectEduCenterByEano(eano);
+		} else if (trno > 0) {
+			return eduAttachDao.selectTrainingRoomByEano(eano);
+		} else if (cno > 0) {
+			return eduAttachDao.selectCourseByEano(eano);
+		}
+		return null;
 	}
 		
 
