@@ -1,15 +1,12 @@
 package com.mycompany.kosa_space.service;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -122,9 +119,7 @@ public class EduService {
 		EduCenter center = educenterDao.selectByEcno(ecno);
 		
 		List<Integer> eanoList = new ArrayList<>();
-		
-		int ecnoNum = center.getEcno();
-		
+
 		// 각 ecno 에 해당하는 eano 정보 가져오기
 		List<EduAttach> list = eduAttachDao.selectEduCenterByEcno(ecno);
 		for (EduAttach attach : list) {
@@ -171,7 +166,7 @@ public class EduService {
 		List<EduCenter> centerList = educenterDao.selectAllCenter();
 		
 		for (EduCenter center : centerList) {
-			log.info("center: " + center.toString());
+			//log.info("center: " + center.toString());
 			
 			List<Integer> eanoList = new ArrayList<>();
 			
@@ -211,7 +206,7 @@ public class EduService {
 					.eanoList(eanoList)
 					.build();
 			
-			log.info("result: " + result.toString());
+			//log.info("result: " + result.toString());
 			
 			response.add(result);
 		}
@@ -238,13 +233,15 @@ public class EduService {
 	    
 	    // 첨부파일이 넘어왔을 경우 처리
 	 	List<MultipartFile> attachList = request.getEcattachdata();
-	 	log.info("attachList: " + attachList.toString());
+
+	    // ecno 에 해당하는 첨부파일 전체 가져오기
+	 	List<EduAttach> data = eduAttachDao.selectEduCenterByEcno(ecno);
 	 	
-	 	// ecno 에 해당하는 첨부파일 전체 가져오기
-		List<EduAttach> data = eduAttachDao.selectEduCenterByEcno(ecno);
-		
-		if (attachList.size() > 0) { // 첨부파일이 있는 경우
-			if (attachList.size() > data.size()) { 
+	 	if (request.getEcattachdata() == null) { // 첨부파일이 들어오지 않은 경우
+	 		// update
+			educenterDao.update(ecno, request);
+	 	} else {
+	 		if (attachList.size() > data.size()) { 
 				// 기존 첨부파일 목록보다 request 로 들어온 첨부파일 사이즈가 더 큰 경우
 				for (int i = 0; i < data.size(); i++) {
 					// 사이즈가 동일한 만큼, 기존 첨부파일 목록 덮어쓰기 
@@ -291,6 +288,9 @@ public class EduService {
 					// EduAttach 객체 DB 에 저장
 					eduAttachDao.insertEduCenterNewAttach(attach);
 				}
+				
+				// update
+				educenterDao.update(ecno, request);
 			} else {
 				// 기존 첨부파일 목록보다 request 로 들어온 첨부파일 사이즈가 더 작은 경우
 				for (int i = 0; i < attachList.size(); i++) {
@@ -323,11 +323,11 @@ public class EduService {
 					// 기존에 남아있던 첨부파일을 DB 에서 delete 처리
 					eduAttachDao.deleteByEano(eano);
 				}
+				
+				// update
+				educenterDao.update(ecno, request);
 			}
 		}
-		
-		// update
-		educenterDao.update(ecno, request);
 	}
 	
 	// 교육장 ecno 기준으로 단건 삭제
@@ -449,90 +449,99 @@ public class EduService {
 	    // trno 에 해당하는 첨부파일 전체 가져오기
 		List<EduAttach> data = eduAttachDao.selectTrainingRoomByTrno(trno);
 		
-		if (attachList.size() > 1) { // 첨부파일이 있는 경우
-			if (attachList.size() > data.size()) { 
-				// 기존 첨부파일 목록보다 request 로 들어온 첨부파일 사이즈가 더 큰 경우
-				for (int i = 0; i < data.size(); i++) {
-					// 사이즈가 동일한 만큼, 기존 첨부파일 목록 덮어쓰기 
-					EduAttach attach = data.get(i);
-					
-					MultipartFile mf = attachList.get(i);
-					
-					// 파일 이름 설정
-					attach.setEaattachoname(mf.getOriginalFilename());
-					// 파일 종류 설정
-					attach.setEaattachtype(mf.getContentType());
-					
-					try {
-		 				// 파일 데이터 설정
-		 				attach.setEaattach(mf.getBytes());
-		 			} catch (IOException e) {
-		 			}
-					
-					// 수정된 EduAttach 객체를 DB 에 update
-		 			eduAttachDao.updateByEano(attach.getEano(), attach);
-		 			
-		 			attachList.remove(i);
-				}
-				// 남은 첨부파일 목록 DB 에 삽입하기 
-				log.info("남은 attachList: " + attachList.toString());
-				for (int i = 0; i < attachList.size(); i++) {
-					EduAttach attach = new EduAttach();
-					//int trnoNum = attach.getTrno();
-					MultipartFile mf = attachList.get(i);
-					
-					// 파일 이름 설정
-					attach.setEaattachoname(mf.getOriginalFilename());
-					// 파일 종류 설정
-					attach.setEaattachtype(mf.getContentType());
-					
-					try {
-						// 파일 데이터 설정
-						attach.setEaattach(mf.getBytes());
-					} catch (IOException e) {
+		if (request.getTrattachdata() == null) { // 첨부파일이 들어오지 않은 경우
+			// update
+			trainingRoomDao.update(trno, request);
+	 	} else {
+	 		if (attachList.size() > 0) { // 첨부파일이 있는 경우
+				if (attachList.size() > data.size()) { 
+					// 기존 첨부파일 목록보다 request 로 들어온 첨부파일 사이즈가 더 큰 경우
+					for (int i = 0; i < data.size(); i++) {
+						// 사이즈가 동일한 만큼, 기존 첨부파일 목록 덮어쓰기 
+						EduAttach attach = data.get(i);
+						
+						MultipartFile mf = attachList.get(i);
+						
+						// 파일 이름 설정
+						attach.setEaattachoname(mf.getOriginalFilename());
+						// 파일 종류 설정
+						attach.setEaattachtype(mf.getContentType());
+						
+						try {
+			 				// 파일 데이터 설정
+			 				attach.setEaattach(mf.getBytes());
+			 			} catch (IOException e) {
+			 			}
+						
+						// 수정된 EduAttach 객체를 DB 에 update
+			 			eduAttachDao.updateByEano(attach.getEano(), attach);
+			 			
+			 			attachList.remove(i);
+					}
+					// 남은 첨부파일 목록 DB 에 삽입하기 
+					log.info("남은 attachList: " + attachList.toString());
+					for (int i = 0; i < attachList.size(); i++) {
+						EduAttach attach = new EduAttach();
+						//int trnoNum = attach.getTrno();
+						MultipartFile mf = attachList.get(i);
+						
+						// 파일 이름 설정
+						attach.setEaattachoname(mf.getOriginalFilename());
+						// 파일 종류 설정
+						attach.setEaattachtype(mf.getContentType());
+						
+						try {
+							// 파일 데이터 설정
+							attach.setEaattach(mf.getBytes());
+						} catch (IOException e) {
+						}
+						
+						// trno 세팅
+						attach.setTrno(trno);
+						// EduAttach 객체 DB 에 저장
+						eduAttachDao.insertTrainingRoomNewAttach(attach);
 					}
 					
-					// trno 세팅
-					attach.setTrno(trno);
-					// EduAttach 객체 DB 에 저장
-					eduAttachDao.insertTrainingRoomNewAttach(attach);
+					// update
+					trainingRoomDao.update(trno, request);
+				} else {
+					// 기존 첨부파일 목록보다 request 로 들어온 첨부파일 사이즈가 더 작은 경우
+					for (int i = 0; i < attachList.size(); i++) {
+						// 사이즈가 동일한 만큼, 기존 첨부파일 목록 덮어쓰기 
+						EduAttach attach = data.get(i);
+						
+						MultipartFile mf = attachList.get(i);
+						
+						// 파일 이름 설정
+						attach.setEaattachoname(mf.getOriginalFilename());
+						// 파일 종류 설정
+						attach.setEaattachtype(mf.getContentType());
+						
+						try {
+			 				// 파일 데이터 설정
+			 				attach.setEaattach(mf.getBytes());
+			 			} catch (IOException e) {
+			 			}
+						
+						// 수정된 EduAttach 객체를 DB 에 update
+			 			eduAttachDao.updateByEano(attach.getEano(), attach);
+			 			
+			 			data.remove(i);
+					}
+					// 남은 첨부파일 목록 DB 에서 삭제하기
+					for (int i = 0; i < data.size(); i++) {
+						EduAttach attach = data.get(i);
+						int eano = attach.getEano();
+						
+						// 기존에 남아있던 첨부파일을 DB 에서 delete 처리
+						eduAttachDao.deleteByEano(eano);
+					}
+					
+					// update
+					trainingRoomDao.update(trno, request);
 				}
-			} else {
-				// 기존 첨부파일 목록보다 request 로 들어온 첨부파일 사이즈가 더 작은 경우
-				for (int i = 0; i < attachList.size(); i++) {
-					// 사이즈가 동일한 만큼, 기존 첨부파일 목록 덮어쓰기 
-					EduAttach attach = data.get(i);
-					
-					MultipartFile mf = attachList.get(i);
-					
-					// 파일 이름 설정
-					attach.setEaattachoname(mf.getOriginalFilename());
-					// 파일 종류 설정
-					attach.setEaattachtype(mf.getContentType());
-					
-					try {
-		 				// 파일 데이터 설정
-		 				attach.setEaattach(mf.getBytes());
-		 			} catch (IOException e) {
-		 			}
-					
-					// 수정된 EduAttach 객체를 DB 에 update
-		 			eduAttachDao.updateByEano(attach.getEano(), attach);
-		 			
-		 			data.remove(i);
-				}
-				// 남은 첨부파일 목록 DB 에서 삭제하기
-				for (int i = 0; i < data.size(); i++) {
-					EduAttach attach = data.get(i);
-					int eano = attach.getEano();
-					
-					// 기존에 남아있던 첨부파일을 DB 에서 delete 처리
-					eduAttachDao.deleteByEano(eano);
-				}
-			}
-		} 
-		// update
-		trainingRoomDao.update(trno, request);
+			} 
+	 	}
 	}
 	
 	// 강의실 전체 목록 조회
@@ -560,8 +569,6 @@ public class EduService {
 	//교육과정 등록 
 	@Transactional
 	public void createCourse(CreateCourseRequestDTO request) {
-		int trno = request.getTrno();
-		
 		// 교육과정명 중복 검사 (교육장명&교육진행상태 여부가 진행중 및 진행예정이면 에러처리)
 		validationDuplicatedCname(request.getEcname(), request.getCname());
 		
@@ -643,9 +650,7 @@ public class EduService {
 		
 		// cno 에 해당하는 교육과정 정보 가져오기 
 		Course course = courseDao.selectByCno(cno);
-		
-		int trno = request.getTrno();
-		
+			
 		String cstatus = request.getCstatus();
 
 		switch(cstatus) {
@@ -709,7 +714,7 @@ public class EduService {
 	    // cno 에 해당하는 첨부파일 전체 가져오기
 		List<EduAttach> data = eduAttachDao.selectCourseByCno(cno);
 		
-		if (attachList.size() > 1) { // 첨부파일이 있는 경우
+		if (attachList.size() > 0) { // 첨부파일이 있는 경우
 			if (attachList.size() > data.size()) { 
 				// 기존 첨부파일 목록보다 request 로 들어온 첨부파일 사이즈가 더 큰 경우
 				for (int i = 0; i < data.size(); i++) {
@@ -757,6 +762,9 @@ public class EduService {
 					// EduAttach 객체 DB 에 저장
 					eduAttachDao.insertCourseNewAttach(attach);
 				}
+				// Course 객체 DB 업데이트
+				courseDao.update(cno, courseData);
+				
 			} else {
 				// 기존 첨부파일 목록보다 request 로 들어온 첨부파일 사이즈가 더 작은 경우
 				for (int i = 0; i < attachList.size(); i++) {
@@ -789,11 +797,10 @@ public class EduService {
 					// 기존에 남아있던 첨부파일을 DB 에서 delete 처리
 					eduAttachDao.deleteByEano(eano);
 				}
+				// Course 객체 DB 업데이트
+				courseDao.update(cno, courseData);
 			}
 		} 
-		
-		// Course 객체 DB 업데이트
-		courseDao.update(cno, courseData);
 		
 	}
 	
@@ -971,7 +978,6 @@ public class EduService {
 				// cstartdate 와 cenddate 비교
 				// isBefore, isAfter: LocalDate 객체가 인수보다 이전, 이후 또는 동일한지 비교하며 Boolean 값을 반환
 				boolean result = cstartdate.isBefore(dataCstartdate);
-				boolean result2 = cstartdate.isAfter(dataCstartdate);
 
 				if (result) {
 					boolean temp = cenddate.isBefore(dataCstartdate);
