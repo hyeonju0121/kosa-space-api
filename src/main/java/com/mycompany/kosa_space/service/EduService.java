@@ -804,9 +804,18 @@ public class EduService {
 		
 		CourseResponseDTO response = courseResponseDao.selectByCno(cno);
 		
+		List<Integer> eanoList = new ArrayList<>();
+		
+		// 각 cno 에 해당하는 eano 정보 가졍괴
+		List<EduAttach> list = eduAttachDao.selectCourseByCno(cno);
+		for (EduAttach attach : list) {
+			eanoList.add(attach.getEano());
+		}
+		
 		String cstartdate = response.getCstartdate().substring(0, 10);
 		String cenddate = response.getCenddate().substring(0, 10);
 	
+		response.setEanoList(eanoList);
 		response.setCstartdate(cstartdate);
 		response.setCenddate(cenddate);
 		
@@ -821,18 +830,29 @@ public class EduService {
 		
 		List<CourseResponseDTO> response = courseResponseDao.listByParameter(request);
 		
-		// cstartdate, cenddate 세팅 
-		for (CourseResponseDTO data : response) {
-			String cstartdate = data.getCstartdate().substring(0, 10);
-			String cenddate = data.getCenddate().substring(0, 10);
-		
-			data.setCstartdate(cstartdate);
-			data.setCenddate(cenddate);
-		}
-
-		log.info("response: " + response);
-		log.info("response.size: " + response.size());
+		for (CourseResponseDTO course : response) {
+			log.info("course: " + course.toString());
 			
+			List<Integer> eanoList = new ArrayList<>();
+			
+			int cno = course.getCno();
+			
+			// 각 cno 에 해당하는 eano 정보 가져오기
+			List<EduAttach> list = eduAttachDao.selectCourseByCno(cno);
+			for (EduAttach attach : list) {
+				eanoList.add(attach.getEano());
+			}
+			course.setEanoList(eanoList);
+			
+			// cstartdate, cenddate 세팅 
+			String cstartdate = course.getCstartdate().substring(0, 10);
+			String cenddate = course.getCenddate().substring(0, 10);
+		
+			course.setCstartdate(cstartdate);
+			course.setCenddate(cenddate);
+		}
+		log.info("response: " + response);
+		
 		return response;
 	}
 	

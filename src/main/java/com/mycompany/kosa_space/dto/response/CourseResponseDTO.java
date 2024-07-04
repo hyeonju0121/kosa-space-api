@@ -1,6 +1,6 @@
 package com.mycompany.kosa_space.dto.response;
 
-import java.util.Date;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,5 +31,7 @@ public class CourseResponseDTO {
 	private String ctrainingtime;
 	private int trcapacity;
 	private boolean trenable;
+	
+	private List<Integer> eanoList;
 
 }
