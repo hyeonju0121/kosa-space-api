@@ -57,12 +57,14 @@ public class AuthService {
 		 */
 		
 		// 회원가입은 운영진, 강사만 가능하다.
-		if(member.getMid().substring(0,4).equals("kosa")) {
+		if(member.getMid().contains("kosa")) {
 			member.setMrole("ROLE_ADMIN");			
-		} else {
+		} else if (member.getMid().contains("pro")){
 			member.setMrole("ROLE_MANAGER");
+		} else {
+			member.setMrole("Not_User");
 		}
-		
+
 		// 아이디 활성화
 		member.setMenable(true);
 		
@@ -75,8 +77,8 @@ public class AuthService {
 	public Map<String, String> memberCheck(String mid, String mpassword) {
 		log.info("userCheck 실행");
 		// # 사용자 상세 정보 얻기 (KosaUserDetailsService에서 유저의 아이디가 없다면 예외를 발생시키도록 했음.)
-		// 1. loadUserByUsername(mid)는 DB로부터 사용자가 입력한 mid에 해당하는 Member 객체를 가져온다.
-		// 2. 강제 형변환을 사용하여 userDetails 객체에 Member 객체의 값을 저장한다. 
+		// 1. loadUserByUsername(mid)는 DB로부터 사용자가 입력한 mid에 해당하는 Member 객체를 가져온다. (아이디와 권한의 정보가 담겨있음)
+		// 2. 강제 형변환을 사용하여 userDetails 객체에 Member 객체의 값을 저장한다.
 		KosaUserDetails userDetails = (KosaUserDetails) userDetailsService.loadUserByUsername(mid);
 		
 		// 비밀번호 체크 ( DB에서 '{알고리즘} 암호화된 비밀번호' 형식을 기억해보자. )
@@ -106,6 +108,7 @@ public class AuthService {
 			map.put("result", "success");
 			map.put("mid", mid);
 			map.put("accessToken", accessToken);
+			map.put("mrole", userDetails.getMember().getMrole());
 		} else {
 			map.put("result", "fail");
 		}

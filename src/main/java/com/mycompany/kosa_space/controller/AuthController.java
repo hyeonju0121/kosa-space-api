@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /*
@@ -29,11 +30,12 @@ public class AuthController {
 	// 로그인 ------------------------------------
 	// 로그인 요청 컨트롤러
 	@PostMapping("/login")
-	public Map<String, String> login(String mid, String mpassword) {
+	public Map<String, String> login(@RequestBody Member member) {
 		log.info("login 컨트롤러 실행");
-		log.info("패스워드 : " + mpassword);
+		log.info("Mid : " + member.getMid());
+		log.info("Mpassword : " + member.getMpassword());
 		// 응답 생성과 동시에 매핑
-		Map<String, String> map = authService.memberCheck(mid, mpassword);
+		Map<String, String> map = authService.memberCheck(member.getMid(), member.getMpassword());
 		
 		log.info("응답 생성 완료");
 		return map;
