@@ -18,8 +18,8 @@ public class Course {
 	private String cname;
 	private String ccode;
 	private int ctotalnum;
-	private LocalDate cstartdate;
-	private LocalDate cenddate;
+	private Date cstartdate;
+	private Date cenddate;
 	private int crequireddate;
 	private String cstatus;
 	private String cprofessor;

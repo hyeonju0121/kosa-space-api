@@ -125,6 +125,10 @@ public class EduController {
 	// 교육과정 등록
 	@PostMapping("/course/create")
 	public void courseCreate(CreateCourseRequestDTO request) {
+		log.info("request: " + request.toString());
+		
+		
+		
 		eduService.createCourse(request);
 	}
 	
@@ -132,7 +136,7 @@ public class EduController {
 	@PutMapping("/course/update")
 	public void courseUpdate(@RequestParam int cno, 
 			CreateCourseRequestDTO request) {
-		eduService.updateCourse(cno, request);
+		//eduService.updateCourse(cno, request);
 	}
 	
 	// 교육과정 단건조회

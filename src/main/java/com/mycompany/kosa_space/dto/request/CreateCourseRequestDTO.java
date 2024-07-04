@@ -1,5 +1,7 @@
 package com.mycompany.kosa_space.dto.request;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -24,8 +26,10 @@ public class CreateCourseRequestDTO {
 	private String cprofessor;
 	private String cmanager;
 	
-	private String cstartdate;
-	private String cenddate;
+	//private String cstartdate;
+	//private String cenddate;
+	private Date cstartdate;
+	private Date cenddate;
 	private String ctrainingdate;
 	private String ctrainingtime;
 

@@ -571,18 +571,7 @@ public class EduService {
 		// 운영진, 강사진 존재여부 검사
 		validationExistsByMname(request.getCmanager());
 		validationExistsByMname(request.getCprofessor());
-		
-		// cstartdate, cenddate String -> Date 변환
-		String startdate = request.getCstartdate().substring(0, 10);
-		String enddate = request.getCenddate().substring(0, 10);
-				
-		// DateTimeFormatter 객체를 생성하여 원하는 출력 포맷 지정
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-	    // LocalDate 객체로 변환
-		LocalDate cstartdate = LocalDate.parse(startdate, formatter);
-		LocalDate cenddate = LocalDate.parse(enddate, formatter);
-		
 		// Course 객체 생성
 		Course course = Course.builder()
 				.trno(request.getTrno())
@@ -590,8 +579,8 @@ public class EduService {
 				.ccode(request.getCcode())
 				.ctotalnum(request.getCtotalnum())
 				.cstatus("진행예정")
-				.cstartdate(cstartdate)
-				.cenddate(cenddate)
+				.cstartdate(request.getCstartdate())
+				.cenddate(request.getCenddate())
 				.crequireddate(request.getCrequireddate())
 				.cprofessor(request.getCprofessor())
 				.cmanager(request.getCmanager())
@@ -634,6 +623,7 @@ public class EduService {
 		}
 	}
 	
+	
 	// 교육과정 수정 
 	@Transactional
 	public void updateCourse(int cno, CreateCourseRequestDTO request) {
@@ -646,16 +636,6 @@ public class EduService {
 		validationExistsByMname(request.getCmanager());
 		validationExistsByMname(request.getCprofessor());
 				
-		// cstartdate, cenddate String -> Date 변환
-		String startdate = request.getCstartdate().substring(0, 10);
-		String enddate = request.getCenddate().substring(0, 10);
-						
-		// DateTimeFormatter 객체를 생성하여 원하는 출력 포맷 지정
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
-	    // LocalDate 객체로 변환
-		LocalDate cstartdate = LocalDate.parse(startdate, formatter);
-		LocalDate cenddate = LocalDate.parse(enddate, formatter);
 		
 		// trno 강의실 사용여부 조사 
 		TrainingRoom room = trainingRoomDao.selectByTrno(request.getTrno());
@@ -711,8 +691,8 @@ public class EduService {
 				.cname(request.getCname())
 				.ccode(request.getCcode())
 				.ctotalnum(request.getCtotalnum())
-				.cstartdate(cstartdate)
-				.cenddate(cenddate)
+				.cstartdate(request.getCstartdate())
+				.cenddate(request.getCenddate())
 				.crequireddate(request.getCrequireddate())
 				.cstatus(request.getCstatus())
 				.cprofessor(request.getCprofessor())
@@ -811,8 +791,6 @@ public class EduService {
 				}
 			}
 		} 
-		
-		
 		
 		// Course 객체 DB 업데이트
 		courseDao.update(cno, courseData);
@@ -926,6 +904,7 @@ public class EduService {
 		return true;
 	}
 	
+	
 	// trno 배정 가능여부 검사 메소드
 	public boolean validationTrenable(CreateCourseRequestDTO request) {
 		String ecname = request.getEcname();
@@ -945,18 +924,16 @@ public class EduService {
 			for (int i = 0; i < data.size(); i++) {
 				CourseResponseDTO courseData = data.get(i);
 				
-				// String format = "yyyy-MM-dd";
-				// SimpleDateFormat sdf = new SimpleDateFormat(format);
-				
+				String format = "yyyy-MM-dd";
+				SimpleDateFormat sdf = new SimpleDateFormat(format);
+
 				// A
-				// String courseCstartdate = sdf.format(courseData.getCstartdate());
-				// String courseCenddate = sdf.format(courseData.getCenddate());
 				String courseCstartdate = courseData.getCstartdate().substring(0, 10);
 				String courseCenddate = courseData.getCenddate().substring(0, 10);
 				
 				// B
-				String strCstartdate = request.getCstartdate().substring(0, 10);
-				String strCenddate = request.getCenddate().substring(0, 10);
+				String strCstartdate = sdf.format(request.getCstartdate());
+				String strCenddate = sdf.format(request.getCenddate());			
 				
 				// DateTimeFormatter 객체를 생성하여 원하는 출력 포맷 지정
 		        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -967,7 +944,10 @@ public class EduService {
 		        
 		        LocalDate cstartdate = LocalDate.parse(strCstartdate, formatter);
 		        LocalDate cenddate = LocalDate.parse(strCenddate, formatter);
-				
+		        
+		        log.info("cstartdate: " + cstartdate);
+		        log.info("cenddate: " + cenddate);
+		        
 				// cstartdate 와 cenddate 비교
 				// isBefore, isAfter: LocalDate 객체가 인수보다 이전, 이후 또는 동일한지 비교하며 Boolean 값을 반환
 				boolean result = cstartdate.isBefore(dataCstartdate);
@@ -995,6 +975,7 @@ public class EduService {
 		}
 		return true;
 	}
+	
 	
 	// 사용자 이름 존재 여부 검사 
 	public boolean validationExistsByMname(String mname) {
