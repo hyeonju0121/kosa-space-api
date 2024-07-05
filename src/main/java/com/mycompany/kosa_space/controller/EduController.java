@@ -23,6 +23,7 @@ import com.mycompany.kosa_space.dto.request.CreateCourseRequestDTO;
 import com.mycompany.kosa_space.dto.request.CreateEduCenterRequestDTO;
 import com.mycompany.kosa_space.dto.request.CreateTraineeRequestDto;
 import com.mycompany.kosa_space.dto.request.CreateTrainingRoomRequestDTO;
+import com.mycompany.kosa_space.dto.request.UpdateTraineeRequestDto;
 import com.mycompany.kosa_space.dto.response.CourseResponseDTO;
 import com.mycompany.kosa_space.dto.response.EduCenterResponseDTO;
 import com.mycompany.kosa_space.dto.response.TraineeResponseDto;
@@ -214,4 +215,12 @@ public class EduController {
  	   return eduService.infoTrainee(mid);
     }
     
+    // 교육생 수정
+    @PutMapping("/admin/trainee/update")
+    public void traineeUpdate(@RequestParam String mid, UpdateTraineeRequestDto request) {
+ 	   log.info("교육생 수정 실행");
+ 	   log.info("mid = " + mid);
+ 	   log.info("request = " + request);
+ 	   eduService.updateTrainee(mid, request);
+    }
 }

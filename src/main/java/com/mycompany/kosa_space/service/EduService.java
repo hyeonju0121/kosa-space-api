@@ -33,6 +33,7 @@ import com.mycompany.kosa_space.dto.request.CreateCourseRequestDTO;
 import com.mycompany.kosa_space.dto.request.CreateEduCenterRequestDTO;
 import com.mycompany.kosa_space.dto.request.CreateTraineeRequestDto;
 import com.mycompany.kosa_space.dto.request.CreateTrainingRoomRequestDTO;
+import com.mycompany.kosa_space.dto.request.UpdateTraineeRequestDto;
 import com.mycompany.kosa_space.dto.response.CourseResponseDTO;
 import com.mycompany.kosa_space.dto.response.EduCenterResponseDTO;
 import com.mycompany.kosa_space.dto.response.TraineeResponseDto;
@@ -984,6 +985,40 @@ public class EduService {
 		log.info("response 데이터 = " + response.toString());
 
 		return response;
+	}
+	
+	// 교육생 수정 (성민)
+	@Transactional
+	public void updateTrainee(String mid, UpdateTraineeRequestDto request) {
+		log.info("updateTrainee 실행");
+		log.info("mid = " + mid);
+	    log.info("request = " + request);
+	    
+	    // 값에 예외가 있는지는 우선 프론트에서 유효성을 검사.
+	    // 7.5 현재는 수정버튼을 눌렀을 때, 조회된 값을 띄워주고 그 부분에 변경된 값을 넣어주기만 한다.
+	    
+		if(request.getTprofiledata() != null && !request.getTprofiledata().isEmpty()) {
+			// 첨부파일이 넘어왔을 경우 처리
+			MultipartFile mf = request.getTprofiledata();
+			// 파일 이름을 설정
+			request.setTprofileoname(mf.getOriginalFilename());
+			// 파일 종류를 설정
+			request.setTprofiletype(mf.getContentType());
+			try {
+				// 파일 데이터를 설정
+				request.setTprofileimg(mf.getBytes());
+			} catch (IOException e) {
+			}
+		}
+		
+		log.info("traineeInfoDao.updateTrainee(request) 실행 전");
+		traineeInfoDao.updateTrainee(request);
+		log.info("traineeInfoDao.updateTrainee(request) 실행 완료");
+		
+		log.info("memberDao.updateTrainee(request) 실행 전");
+		memberDao.updateTrainee(request);
+		log.info("memberDao.updateTrainee(request) 실행 완료");
+		
 	}
 
 	// ---- validation method ----------------------------------------------------

@@ -33,6 +33,7 @@
    		where mid = #{mid}
    </select>
    
+   <!-- 교육생 상세보기 -->
    <select id="detailInfo" parameterType="String" resultType="traineeResponsedto">
 			select *
 			from (
@@ -54,5 +55,19 @@
 			)
 			where mid=#{mid}
    </select>
+   
+   <!-- 운영진 > 교육생 수정 -->
+   <update id="updateTrainee" parameterType="updatetraineerequestdto">
+   		update traineeinfo set
+   			tsex=#{tsex}, tage=#{tage}, tpostcode=#{tpostcode}, taddress=#{taddress}, 
+   			tfield=#{tfield}, tacademic=#{tacademic}, tschoolname=#{tschoolname},
+   			tmajor=#{tmajor}, tminor=#{tminor}, tgrade=#{tgrade}, tstatus=#{tstatus}
+   			<if test="tprofileoname != null">
+            , tprofileoname=#{tprofileoname}
+            , tprofiletype=#{tprofiletype}
+            , tprofileimg=#{tprofileimg}
+         	</if>
+         where mid = #{mid}
+   </update>
    
 </mapper>
