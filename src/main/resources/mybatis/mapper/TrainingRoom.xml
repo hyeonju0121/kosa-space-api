@@ -35,6 +35,13 @@
 		where ecno=#{ecno}
 	</select>
 	
+	<select id="selectByEcnoAndTrenable" parameterType="map" resultType="trainingroom">
+		select trno, ecno, trname, trcapacity, trenable,
+			trcreatedat, trupdatedat
+		from trainingroom
+		where ecno=#{ecno} and trenable=#{trenable}
+	</select>
+	
 	<update id="update" parameterType="map">
 		update trainingroom set
 			trname=#{room.trname}, trcapacity=#{room.trcapacity}, trenable=#{room.trenable}, trupdatedat=sysdate

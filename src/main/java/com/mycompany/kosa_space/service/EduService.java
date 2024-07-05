@@ -337,7 +337,7 @@ public class EduService {
 	public List<String> listCenterName() {
 		List<String> response = new ArrayList<>();
 		response.add("전체");
-		
+
 		List<String> data = educenterDao.selectAllCenterName();
 		for (String temp : data) {
 			response.add(temp);
@@ -412,7 +412,10 @@ public class EduService {
 	}
 
 	// 교육장 이름으로 강의실 목록 조회
-	public List<TrainingRoomListResponseDTO> listRoom(String ecname) {
+	@Transactional
+	public List<TrainingRoomListResponseDTO> listRoom(List<String> request) {
+		String ecname = request.get(0);
+
 		EduCenter center = educenterDao.selectByEcname(ecname);
 
 		// 존재하지 않는 교육장명일 경우 에러 처리
@@ -420,11 +423,27 @@ public class EduService {
 			throw new RuntimeException("존재하지 않는 교육장 이름입니다.");
 		}
 
-		List<TrainingRoom> room = trainingRoomDao.selectByEcno(center.getEcno());
+		// 전체, 사용중, 사용가능에 대한 조건절을 적용하여 조회한 결과
+		List<TrainingRoom> data = new ArrayList<>();
+		boolean trenable = false;
+
+		int ecno = center.getEcno();
+
+		String trenableStr = request.get(1);
+		if (trenableStr.equals("전체")) {
+			data = trainingRoomDao.selectByEcno(ecno);
+		} else if (trenableStr.equals("사용중")) {
+			trenable = true;
+			data = trainingRoomDao.selectByEcnoAndTrenable(ecno, trenable);
+		} else {
+			data = trainingRoomDao.selectByEcnoAndTrenable(ecno, trenable);
+		}
+
+		// List<TrainingRoom> room = trainingRoomDao.selectByEcno(center.getEcno());
 
 		List<TrainingRoomListResponseDTO> response = new ArrayList<>();
 
-		for (TrainingRoom temp : room) {
+		for (TrainingRoom temp : data) {
 			// 해당 ecnam과 trno 에 해당하는 진행중인 교육과정 정보 가져오기
 			CourseResponseDTO course = courseResponseDao.listByEcnameAndTrno(ecname, temp.getTrno());
 
@@ -470,10 +489,20 @@ public class EduService {
 				eanoList.add(attach.getEano());
 			}
 
-			TrainingRoomListResponseDTO roomData = TrainingRoomListResponseDTO.builder().trno(temp.getTrno())
-					.trname(temp.getTrname()).ecno(center.getEcno()).ecname(ecname).cname(cname).cstartdate(cstartdate)
-					.cenddate(cenddate).trcapacity(temp.getTrcapacity()).trenable(temp.isTrenable())
-					.trenableResult(trenableResult).trcreatedat(trcreatedat).trupdatedat(trupdatedat).eanoList(eanoList)
+			TrainingRoomListResponseDTO roomData = TrainingRoomListResponseDTO.builder()
+					.trno(temp.getTrno())
+					.trname(temp.getTrname())
+					.ecno(center.getEcno())
+					.ecname(ecname)
+					.cname(cname)
+					.cstartdate(cstartdate)
+					.cenddate(cenddate)
+					.trcapacity(temp.getTrcapacity())
+					.trenable(temp.isTrenable())
+					.trenableResult(trenableResult)
+					.trcreatedat(trcreatedat)
+					.trupdatedat(trupdatedat)
+					.eanoList(eanoList)
 					.build();
 
 			response.add(roomData);
@@ -967,37 +996,37 @@ public class EduService {
 		}
 
 	}
-	
-    // 교육생 단건 조회 (성민)
+
+	// 교육생 단건 조회 (성민)
 	public TraineeResponseDto infoTrainee(String mid) {
 		log.info("infoTrainee 서비스 실행");
 		log.info("mid = " + mid);
-		
+
 		Member member = memberDao.selectByMid(mid);
 		log.info("member = " + member.toString());
-		
+
 		TraineeInfo traineeInfo = traineeInfoDao.selectByMid(mid);
 		log.info("traineeInfo = " + traineeInfo.toString());
-		
+
 		// 조인문 만들어서 단번에 TraineeResponseDTO 객체에 삽입하여 반환할 수 있는지?
-		
+
 		TraineeResponseDto response = traineeInfoDao.detailInfo(mid);
 		log.info("response 데이터 = " + response.toString());
 
 		return response;
 	}
-	
+
 	// 교육생 수정 (성민)
 	@Transactional
 	public void updateTrainee(String mid, UpdateTraineeRequestDto request) {
 		log.info("updateTrainee 실행");
 		log.info("mid = " + mid);
-	    log.info("request = " + request);
-	    
-	    // 값에 예외가 있는지는 우선 프론트에서 유효성을 검사.
-	    // 7.5 현재는 수정버튼을 눌렀을 때, 조회된 값을 띄워주고 그 부분에 변경된 값을 넣어주기만 한다.
-	    
-		if(request.getTprofiledata() != null && !request.getTprofiledata().isEmpty()) {
+		log.info("request = " + request);
+
+		// 값에 예외가 있는지는 우선 프론트에서 유효성을 검사.
+		// 7.5 현재는 수정버튼을 눌렀을 때, 조회된 값을 띄워주고 그 부분에 변경된 값을 넣어주기만 한다.
+
+		if (request.getTprofiledata() != null && !request.getTprofiledata().isEmpty()) {
 			// 첨부파일이 넘어왔을 경우 처리
 			MultipartFile mf = request.getTprofiledata();
 			// 파일 이름을 설정
@@ -1010,33 +1039,33 @@ public class EduService {
 			} catch (IOException e) {
 			}
 		}
-		
+
 		log.info("traineeInfoDao.updateTrainee(request) 실행 전");
 		traineeInfoDao.updateTrainee(request);
 		log.info("traineeInfoDao.updateTrainee(request) 실행 완료");
-		
+
 		log.info("memberDao.updateTrainee(request) 실행 전");
 		memberDao.updateTrainee(request);
 		log.info("memberDao.updateTrainee(request) 실행 완료");
-		
+
 	}
-	
+
 	// 교육생 (교육장, 교육과정) 목록 조회 (성민)
 	public List<TraineeResponseDto> listTrainee(String ecname, String cname) {
 		log.info("ecname = " + ecname);
 		log.info("cname = " + cname);
-		
+
 		// ecname으로 필요없이 들어오는 cname 기준으로 cno를 가져와야한다.
 		// 그리고 그 cno에 해당하는 member와 traineeinfo를 합친 테이블에서 where절로 cno를 찾은 cno로 교육생을 조회
-		//List<TraineeResponseDto> list = traineeInfoDao.listTrainee(ecname, cname);
-		//log.info("listTrainee(ecname, cname) 실행 완료");
-		
+		// List<TraineeResponseDto> list = traineeInfoDao.listTrainee(ecname, cname);
+		// log.info("listTrainee(ecname, cname) 실행 완료");
+
 		// cname 을 기준으로 cno 찾기
 		Course course = courseDao.readCourse(cname);
 		int cno = course.getCno();
-		
+
 		List<TraineeResponseDto> response = traineeInfoDao.listTraineeByCno(cno);
-		
+
 		log.info("response.size(): " + response.size());
 		return response;
 	}
