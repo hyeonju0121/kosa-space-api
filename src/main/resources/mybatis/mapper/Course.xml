@@ -38,5 +38,10 @@
 		from course
 		where cno=#{cno}
 	</select>
-   
+
+   <select id="readCourse" parameterType="String" resultType="course">
+   		select cno, ccode, ctotalnum, cstatus
+   		from course
+   		where cname = #{cname}
+   </select>
 </mapper>
