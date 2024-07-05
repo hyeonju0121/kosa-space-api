@@ -14,11 +14,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mycompany.kosa_space.dto.EduAttach;
-import com.mycompany.kosa_space.dto.EduCenter;
 import com.mycompany.kosa_space.dto.TrainingRoom;
 import com.mycompany.kosa_space.dto.request.CourseParameterRequestDTO;
 import com.mycompany.kosa_space.dto.request.CreateCourseRequestDTO;
@@ -27,6 +25,7 @@ import com.mycompany.kosa_space.dto.request.CreateTraineeRequestDto;
 import com.mycompany.kosa_space.dto.request.CreateTrainingRoomRequestDTO;
 import com.mycompany.kosa_space.dto.response.CourseResponseDTO;
 import com.mycompany.kosa_space.dto.response.EduCenterResponseDTO;
+import com.mycompany.kosa_space.dto.response.TraineeResponseDto;
 import com.mycompany.kosa_space.dto.response.TrainingRoomListResponseDTO;
 import com.mycompany.kosa_space.service.EduService;
 
@@ -206,4 +205,13 @@ public class EduController {
 	    log.info("cname = " + cname);
 	    eduService.createTrainee(request);
     }
+    
+    // 교육생 단건 조회
+    @GetMapping("/admin/trainee/info")
+    public TraineeResponseDto traineeInfo(@RequestParam String mid) {
+ 	   log.info("교육생 단건 조회 실행");
+ 	   log.info("mid = " + mid);
+ 	   return eduService.infoTrainee(mid);
+    }
+    
 }

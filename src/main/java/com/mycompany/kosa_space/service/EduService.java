@@ -35,6 +35,7 @@ import com.mycompany.kosa_space.dto.request.CreateTraineeRequestDto;
 import com.mycompany.kosa_space.dto.request.CreateTrainingRoomRequestDTO;
 import com.mycompany.kosa_space.dto.response.CourseResponseDTO;
 import com.mycompany.kosa_space.dto.response.EduCenterResponseDTO;
+import com.mycompany.kosa_space.dto.response.TraineeResponseDto;
 import com.mycompany.kosa_space.dto.response.TrainingRoomListResponseDTO;
 
 import lombok.extern.slf4j.Slf4j;
@@ -957,6 +958,25 @@ public class EduService {
 			log.info("traineeInfo 삽입 성공");
 		}
 
+	}
+	
+    // 교육생 단건 조회 (성민)
+	public TraineeResponseDto infoTrainee(String mid) {
+		log.info("infoTrainee 서비스 실행");
+		log.info("mid = " + mid);
+		
+		Member member = memberDao.selectByMid(mid);
+		log.info("member = " + member.toString());
+		
+		TraineeInfo traineeInfo = traineeInfoDao.selectByMid(mid);
+		log.info("traineeInfo = " + traineeInfo.toString());
+		
+		// 조인문 만들어서 단번에 TraineeResponseDTO 객체에 삽입하여 반환할 수 있는지?
+		
+		TraineeResponseDto response = traineeInfoDao.detailInfo(mid);
+		log.info("response 데이터 = " + response.toString());
+
+		return response;
 	}
 
 	// ---- validation method ----------------------------------------------------

@@ -3,6 +3,7 @@ package com.mycompany.kosa_space.dao;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.mycompany.kosa_space.dto.TraineeInfo;
+import com.mycompany.kosa_space.dto.response.TraineeResponseDto;
 
 @Mapper
 public interface TraineeInfoDao {
@@ -12,4 +13,6 @@ public interface TraineeInfoDao {
 	public void insert(TraineeInfo traineeInfo);
 	// mid를 검색하여 TraineeInfo 객체 반환
 	public TraineeInfo selectByMid(String mid);
+	// 교육생 단건 조회
+	public TraineeResponseDto detailInfo(String mid);
 }
