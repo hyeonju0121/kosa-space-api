@@ -334,7 +334,14 @@ public class EduService {
 
 	// 교육장 이름 전체 조회
 	public List<String> listCenterName() {
-		return educenterDao.selectAllCenterName();
+		List<String> response = new ArrayList<>();
+		response.add("전체");
+		
+		List<String> data = educenterDao.selectAllCenterName();
+		for (String temp : data) {
+			response.add(temp);
+		}
+		return response;
 	}
 
 	// 강의실 관련 ------------------------------------------------
