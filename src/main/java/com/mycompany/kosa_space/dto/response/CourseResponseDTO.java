@@ -13,8 +13,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CourseResponseDTO {
 	private int ecno;
+	private String ecname;
 	private int trno;
 	private int cno;
+
 	private String trname;
 	private String cname;
 	private String ccode;

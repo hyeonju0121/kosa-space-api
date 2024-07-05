@@ -854,6 +854,9 @@ public class EduService {
 		for (CourseResponseDTO course : response) {
 			log.info("course: " + course.toString());
 
+			EduCenter center = educenterDao.selectByEcno(course.getEcno());
+			course.setEcname(center.getEcname());
+
 			List<Integer> eanoList = new ArrayList<>();
 
 			int cno = course.getCno();
