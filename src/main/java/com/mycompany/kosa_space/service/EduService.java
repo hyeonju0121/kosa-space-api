@@ -9,6 +9,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,14 +20,18 @@ import com.mycompany.kosa_space.dao.CourseResponseDao;
 import com.mycompany.kosa_space.dao.EduAttachDao;
 import com.mycompany.kosa_space.dao.EduCenterDao;
 import com.mycompany.kosa_space.dao.MemberDao;
+import com.mycompany.kosa_space.dao.TraineeInfoDao;
 import com.mycompany.kosa_space.dao.TrainingRoomDao;
 import com.mycompany.kosa_space.dto.Course;
 import com.mycompany.kosa_space.dto.EduAttach;
 import com.mycompany.kosa_space.dto.EduCenter;
+import com.mycompany.kosa_space.dto.Member;
+import com.mycompany.kosa_space.dto.TraineeInfo;
 import com.mycompany.kosa_space.dto.TrainingRoom;
 import com.mycompany.kosa_space.dto.request.CourseParameterRequestDTO;
 import com.mycompany.kosa_space.dto.request.CreateCourseRequestDTO;
 import com.mycompany.kosa_space.dto.request.CreateEduCenterRequestDTO;
+import com.mycompany.kosa_space.dto.request.CreateTraineeRequestDto;
 import com.mycompany.kosa_space.dto.request.CreateTrainingRoomRequestDTO;
 import com.mycompany.kosa_space.dto.response.CourseResponseDTO;
 import com.mycompany.kosa_space.dto.response.EduCenterResponseDTO;
@@ -52,6 +58,9 @@ public class EduService {
 	
 	@Autowired
 	private MemberDao memberDao;
+	
+	@Autowired
+	private TraineeInfoDao traineeInfoDao;
 	
 	
 	// 교육장 관련 ------------------------------------------------
@@ -880,6 +889,86 @@ public class EduService {
 		}
 		return null;
 	}
+	
+	// 교육과정 관련 ------------------------------------------------
+	
+    // 교육생 등록 (성민)
+    @Transactional
+	public void createTrainee(CreateTraineeRequestDto request) {
+		
+		// 프론트 단에서 데이터 유효성을 거쳐 받은 데이터로 가정.
+		// 해당 교육생의 mid 만들어주기. --> 등록되어있는 ccode에서 가져오면 됨
+		// cname을 넘기고, 현재 등록되어 있는 인원수 세기 --> 현재 교육생을 등록하는 과정이기 때문에 조회를 못함
+		int cnt = traineeInfoDao.readTraineeCnt(request.getCname()) + 1;
+		log.info(String.valueOf(cnt)); // O
+		// cno, ccode, ctotalnum, cstatus 값 가져오기. 
+		Course course = courseDao.readCourse(request.getCname());
+		log.info(course.toString()); // O
+		
+		if(cnt < course.getCtotalnum()) {
+			// mid생성. "연도 + 과정코드 + 등록순" -> ex) "2024M2001"
+			String formatter = String.format("%03d", cnt);
+			String mid = course.getCcode() + formatter;
+			log.info("mid = " + mid);
+			
+			PasswordEncoder passwordEncoder = PasswordEncoderFactories
+					.createDelegatingPasswordEncoder();
+
+			// member에 값 넣어주기 --> builder()이용
+			Member member = Member.builder()
+					.mid(mid)
+					.mpassword(passwordEncoder.encode("12345"))
+					.mname(request.getMname())
+					.mphone(request.getMphone())
+					.memail(request.getMemail())
+					.mrole("ROLE_USER")
+					.menable(true)
+					.build();
+			
+			// DB에 값 넣기.
+			memberDao.insert(member);
+			log.info("member 삽입 성공");
+			
+			// traineeinfo에 값 넣어주기
+			TraineeInfo traineeInfo = TraineeInfo.builder()
+					.mid(mid)
+					.cno(course.getCno())
+					.tsex(request.isTsex())
+					.tage(request.getTage())
+					.tpostcode(request.getTpostcode())
+					.taddress(request.getTaddress() +  " " + request.getTaddressdetail())
+					.tfield(request.isTfield())
+					.tacademic(request.getTacademic())
+					.tschoolname(request.getTschoolname())
+					.tmajor(request.getTmajor())
+					.tminor(request.getTminor())
+					.tgrade(request.getTgrade())
+					.tstatus(course.getCstatus())
+					.build();
+			
+			
+			// 프로필 이미지 첨부는 필수이기 때문에 if문을 쓸 이유가 없다. 추후에 바꿔보자.
+			if(request.getTprofiledata() != null && !request.getTprofiledata().isEmpty()) {
+				// 첨부파일이 넘어왔을 경우 처리
+				MultipartFile mf = request.getTprofiledata();
+				// 파일 이름을 설정
+				traineeInfo.setTprofileoname(mf.getOriginalFilename());
+				// 파일 종류를 설정
+				traineeInfo.setTprofiletype(mf.getContentType());
+				try {
+					// 파일 데이터를 설정
+					traineeInfo.setTprofileimg(mf.getBytes());
+				} catch (IOException e) {
+				}
+			}
+			
+			// DB에 값 넣기.
+			traineeInfoDao.insert(traineeInfo);
+			log.info("traineeInfo 삽입 성공");
+		}
+
+	}
+
 		
 
 	// ---- validation method ----------------------------------------------------
@@ -1020,5 +1109,6 @@ public class EduService {
 		}
 		return true;
 	}
+	
 	
 }

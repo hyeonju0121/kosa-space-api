@@ -23,6 +23,7 @@ import com.mycompany.kosa_space.dto.TrainingRoom;
 import com.mycompany.kosa_space.dto.request.CourseParameterRequestDTO;
 import com.mycompany.kosa_space.dto.request.CreateCourseRequestDTO;
 import com.mycompany.kosa_space.dto.request.CreateEduCenterRequestDTO;
+import com.mycompany.kosa_space.dto.request.CreateTraineeRequestDto;
 import com.mycompany.kosa_space.dto.request.CreateTrainingRoomRequestDTO;
 import com.mycompany.kosa_space.dto.response.CourseResponseDTO;
 import com.mycompany.kosa_space.dto.response.EduCenterResponseDTO;
@@ -191,4 +192,17 @@ public class EduController {
 			}
 		}
 	
+	
+	// 교육생 관련 -------------------------------------
+	
+	// 교육생 등록
+    @PostMapping("/admin/trainee/register")
+    public void traineeRegister(@RequestParam("ecname") String ecname,
+ 		   @RequestParam("cname") String cname, CreateTraineeRequestDto request) {
+	    log.info("traineeRegister 실행");
+	    log.info("createTraineeDTO = " + request);
+	    log.info("ecname = " + ecname);
+	    log.info("cname = " + cname);
+	    eduService.createTrainee(request);
+    }
 }

@@ -1,6 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mycompany.kosa_space.dao.TraineeInfoDao">
+
+   <select id="readTraineeCnt" parameterType="String" resultType="int">
+   		<![CDATA[
+      		select count(mid)
+      		from traineeinfo
+			where cno = (
+	    		select cno
+	    		from course
+	    		where cname = #{cname}
+    		)
+      ]]>
+   </select>
    
+   <insert id="insert" parameterType="traineeInfo">
+   		insert into traineeinfo(
+   			mid, cno, tsex, tage, tpostcode, taddress, tfield, tacademic,
+   			tschoolname, tmajor, tminor, tgrade, tstatus, tprofileimg,
+   			tprofileoname, tprofiletype
+   		)
+   		values (
+   			#{mid}, #{cno}, #{tsex}, #{tage}, #{tpostcode}, #{taddress}, #{tfield}, 
+   			#{tacademic}, #{tschoolname}, #{tmajor}, #{tminor}, #{tgrade}, #{tstatus}, 
+   			#{tprofileimg}, #{tprofileoname}, #{tprofiletype}
+   		)
+   </insert>
+   
+   <select id="selectByMid" parameterType="String" resultType="traineeinfo">
+   		select *
+   		from traineeinfo
+   		where mid = #{mid}
+   </select>  
    
 </mapper>
