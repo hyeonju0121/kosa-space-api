@@ -87,31 +87,22 @@
 	          </if>
 	</select>
    
-   <!--
-   <select id="listByParameter" parameterType="courseparameterrequestdto" resultType="courseresponsedto">
-	    select e.ecno, e.ecname, t1.trno, t1.cno, t1.trname, t1.cname, t1.ccode, t1.ctotalnum,
-	           t1.cstartdate, t1.cenddate, t1.crequireddate, t1.cstatus,
-	           t1.cprofessor, t1.cmanager, t1.ccreatedat, t1.cupdatedat, t1.ctrainingdate, t1.ctrainingtime,
-	           t1.trcapacity, t1.trenable
-	    from educenter e, (
-	        select c.cno, r.ecno, r.trno, r.trname, c.cname, c.ccode, c.ctotalnum,
-	               c.cstartdate, c.cenddate, c.crequireddate, c.cstatus,
-	               c.cprofessor, c.cmanager, c.ccreatedat, c.cupdatedat, c.ctrainingdate, c.ctrainingtime,
-	               r.trcapacity, r.trenable
-	        from course c, trainingroom r
-	        where c.trno = r.trno
-	          <if test="ecname != 'all'">
-	            and c.ecname=#{ecname}
-	          </if>
-	          <if test="cstatus != 'all'">
-	            and c.cstatus=#{cstatus}
-	          </if>
-	          <if test="cprofessor != 'all'">
-	            and c.cprofessor=#{cprofessor}
-	          </if>
-	    ) t1
+	<select id="listByEcnameAndTrno" parameterType="map" resultType="courseresponsedto">
+	     select e.ecno, e.ecname, t1.trno, t1.cno, t1.trname, t1.cname, t1.ccode, t1.ctotalnum,
+		        t1.cstartdate, t1.cenddate, t1.crequireddate, t1.cstatus,
+		        t1.cprofessor, t1.cmanager, t1.ccreatedat, t1.cupdatedat, t1.ctrainingdate, ctrainingtime,
+		        t1.trcapacity, t1.trenable
+		    from educenter e, (
+		            select c.cno, r.ecno, r.trno, r.trname, c.cname, c.ccode, c.ctotalnum,
+		            c.cstartdate, c.cenddate, c.crequireddate, c.cstatus,
+		            c.cprofessor, c.cmanager, c.ccreatedat, c.cupdatedat, c.ctrainingdate, c.ctrainingtime,
+		            r.trcapacity, r.trenable
+		            from course c, trainingroom r
+		            where c.trno = r.trno 
+		    ) t1
+		    where e.ecno = t1.ecno
+            and e.ecname=#{ecname} and t1.trno=#{trno} and t1.cstatus='진행중'
 	</select>
-	-->
 
    
 </mapper>

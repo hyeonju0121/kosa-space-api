@@ -27,6 +27,7 @@ import com.mycompany.kosa_space.dto.request.CreateTraineeRequestDto;
 import com.mycompany.kosa_space.dto.request.CreateTrainingRoomRequestDTO;
 import com.mycompany.kosa_space.dto.response.CourseResponseDTO;
 import com.mycompany.kosa_space.dto.response.EduCenterResponseDTO;
+import com.mycompany.kosa_space.dto.response.TrainingRoomListResponseDTO;
 import com.mycompany.kosa_space.service.EduService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -96,7 +97,7 @@ public class EduController {
 	
 	// 교육장 이름 기준으로 강의실 목록 조회
 	@GetMapping("/room/list")
-	public List<TrainingRoom> roomList(@RequestParam String ecname) {
+	public List<TrainingRoomListResponseDTO> roomList(@RequestParam String ecname) {
 		
 		return eduService.listRoom(ecname);
 	}
