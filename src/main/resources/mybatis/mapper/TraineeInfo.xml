@@ -70,4 +70,26 @@
          where mid = #{mid}
    </update>
    
+   <!-- 교육생 (교육장, 교육과정) 리스트 -->
+   <select id="listTraineeByCno" parameterType="int" resultType="traineeResponsedto">
+   		select *
+			from (
+			    select c.cno, c.cname, c.ccode, c.trno, c.ctotalnum, c.cstartdate, c.cenddate, c.crequireddate, 
+			        c.cprofessor, c.cmanager, c.ctrainingdate, c.ctrainingtime,
+			        t1.mid, t1.tstatus, t1.mname, t1.mphone, t1.memail, t1.tpostcode, t1.taddress, t1.tage,
+			        t1.tsex, t1.tfield, t1.tacademic, t1.tschoolname, t1.tmajor, t1.tminor, t1.tgrade,
+			        t1.mrole, t1.menable, t1.mcreatedat, t1.mupdatedat, 
+			            t1.tprofileimg, t1.tprofileoname, t1.tprofiletype
+			    from course c, (
+			        select m.mid, t.cno, t.tstatus, m.mname, m.mphone, m.memail, t. tpostcode, t.taddress,
+			            t.tage, t.tsex, t.tfield, t.tacademic, t.tschoolname, t.tmajor, t.tminor, t.tgrade,
+			            m.mpassword, m.mrole, m.menable, m.mcreatedat, m.mupdatedat, 
+			            t.tprofileimg, t.tprofileoname, t.tprofiletype
+			        from member m, traineeinfo t
+			        where m.mid = t.mid
+			    ) t1
+			    where c.cno = t1.cno
+			)
+			where cno=#{cno}
+   </select>
 </mapper>

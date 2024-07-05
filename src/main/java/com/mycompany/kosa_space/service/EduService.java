@@ -1020,6 +1020,26 @@ public class EduService {
 		log.info("memberDao.updateTrainee(request) 실행 완료");
 		
 	}
+	
+	// 교육생 (교육장, 교육과정) 목록 조회 (성민)
+	public List<TraineeResponseDto> listTrainee(String ecname, String cname) {
+		log.info("ecname = " + ecname);
+		log.info("cname = " + cname);
+		
+		// ecname으로 필요없이 들어오는 cname 기준으로 cno를 가져와야한다.
+		// 그리고 그 cno에 해당하는 member와 traineeinfo를 합친 테이블에서 where절로 cno를 찾은 cno로 교육생을 조회
+		//List<TraineeResponseDto> list = traineeInfoDao.listTrainee(ecname, cname);
+		//log.info("listTrainee(ecname, cname) 실행 완료");
+		
+		// cname 을 기준으로 cno 찾기
+		Course course = courseDao.readCourse(cname);
+		int cno = course.getCno();
+		
+		List<TraineeResponseDto> response = traineeInfoDao.listTraineeByCno(cno);
+		
+		log.info("response.size(): " + response.size());
+		return response;
+	}
 
 	// ---- validation method ----------------------------------------------------
 	// ecno 가 유효한지 검사하는 메소드

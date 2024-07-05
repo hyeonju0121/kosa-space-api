@@ -223,4 +223,16 @@ public class EduController {
  	   log.info("request = " + request);
  	   eduService.updateTrainee(mid, request);
     }
+    
+    // 교육생 (교육장, 교육과정) 목록 조회
+    @GetMapping("/admin/trainee/list")
+    public List<TraineeResponseDto> traineeList(
+ 		   @RequestParam(defaultValue = "all", required = false) String ecname,
+ 		   @RequestParam(defaultValue = "all", required = false) String cname) {
+ 	   log.info("traineeList 실행");
+ 	   log.info("ecname = " + ecname);
+ 	   log.info("cname = " + cname);
+
+ 	   return eduService.listTrainee(ecname, cname);
+    }
 }

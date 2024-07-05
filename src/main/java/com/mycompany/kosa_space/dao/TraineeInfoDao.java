@@ -1,5 +1,7 @@
 package com.mycompany.kosa_space.dao;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 
 import com.mycompany.kosa_space.dto.TraineeInfo;
@@ -18,4 +20,6 @@ public interface TraineeInfoDao {
 	public TraineeResponseDto detailInfo(String mid);
 	// (교육생) 운영진 -> 교육생 수정
 	public void updateTrainee(UpdateTraineeRequestDto request);
+	// 교육생 (교육장, 교육과정) 기준으로 리스트 가져오기
+	public List<TraineeResponseDto> listTraineeByCno(int cno);
 }
