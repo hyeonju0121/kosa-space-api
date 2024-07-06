@@ -24,8 +24,8 @@ public class AttendanceController {
 	// 교육생 입실 기능
 	@PostMapping("/checkin")
 	public void userCheckIn(@RequestBody AttendanceTraineeRequestDTO attendance,
-			HttpServletRequest reqeust) throws Exception {
-		String clientIP = reqeust.getHeader("clientIP");
+			HttpServletRequest request) throws Exception {
+		String clientIP = request.getHeader("clientIP");
 		
 		log.info("clientIP: " + clientIP);
 		
@@ -33,6 +33,15 @@ public class AttendanceController {
 		log.info("attendance: " + attendance.toString());
 		
 		attendanceService.checkin(clientIP, attendance);
+	}
+	
+	// 교육생 퇴실 기능
+	@PostMapping("/checkout")
+	public void userCheckOut(@RequestBody AttendanceTraineeRequestDTO attendance,
+			HttpServletRequest request) throws Exception{
+		String clientIP = request.getHeader("clientIP");
+		
+		attendanceService.checkout(clientIP, attendance);
 	}
 	
 	/*

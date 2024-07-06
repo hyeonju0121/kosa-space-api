@@ -20,4 +20,10 @@
 		)
    </insert>
    
+   <update id="updateCheckout" parameterType="attendance">
+   		update attendance set
+   			acheckout=#{acheckout}
+   		where mid=#{mid} and adate=#{adate}
+   </update>
+   
 </mapper>

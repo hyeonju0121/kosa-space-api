@@ -9,4 +9,6 @@ public interface AttendanceDao {
 	public Attendance selectByMid(String mid);
 	
 	public int insert(Attendance attendance);
+	
+	public void updateCheckout(Attendance attendance);
 }
