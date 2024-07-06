@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mycompany.kosa_space.dto.EduAttach;
+import com.mycompany.kosa_space.dto.TraineeInfo;
 import com.mycompany.kosa_space.dto.TrainingRoom;
 import com.mycompany.kosa_space.dto.request.CourseParameterRequestDTO;
 import com.mycompany.kosa_space.dto.request.CreateCourseRequestDTO;
@@ -232,5 +233,31 @@ public class EduController {
 		log.info("cname = " + cname);
 
 		return eduService.listTrainee(ecname, cname);
+	}
+	
+	// 교육생 이미지 첨부파일 다운로드
+	@GetMapping("/download/traineeattach/{mid}")
+	public void traineeImgDownload(@PathVariable String mid, HttpServletResponse response) {
+		TraineeInfo traineeInfo = eduService.tattachDownload(mid);
+		
+		// 파일 이름이 한글일 경우, 브라우저에서 한글 이름으로 다운로드 받기 위해 헤더에 추가할 내용
+		try {
+			// 한글 파일의 이름 -> 인코딩 변경
+			String fileName = new String(traineeInfo.getTprofileoname().getBytes("UTF-8"), "ISO-8859-1");
+
+			response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+
+			// 파일 타입을 헤더에 추가
+			response.setContentType(traineeInfo.getTprofiletype());
+
+			// 응답 바디에 파일 데이터를 출력
+			OutputStream os = response.getOutputStream();
+			os.write(traineeInfo.getTprofileimg()); // byte 배열 타입을 받아서 저장
+			os.flush();
+			os.close();
+
+		} catch (IOException e) {
+			log.error(e.getMessage()); // error 출력
+		}
 	}
 }

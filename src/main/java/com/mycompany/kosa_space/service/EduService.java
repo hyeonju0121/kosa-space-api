@@ -1084,6 +1084,12 @@ public class EduService {
 		log.info("response.size(): " + response.size());
 		return response;
 	}
+	
+	// 교육생 이미지 첨부파일 정보 받아오기
+	public TraineeInfo tattachDownload(String mid) {
+		TraineeInfo traineeInfo = traineeInfoDao.selectByMid(mid);
+		return null;
+	}
 
 	// ---- validation method ----------------------------------------------------
 	// ecno 가 유효한지 검사하는 메소드
