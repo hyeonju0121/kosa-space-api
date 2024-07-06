@@ -1085,10 +1085,11 @@ public class EduService {
 		return response;
 	}
 	
-	// 교육생 이미지 첨부파일 정보 받아오기
+	// 교육생 이미지 첨부파일 정보 받아오기 (성민)
 	public TraineeInfo tattachDownload(String mid) {
 		TraineeInfo traineeInfo = traineeInfoDao.selectByMid(mid);
-		return null;
+		log.info("traineeInfo = " + traineeInfo);
+		return traineeInfo;
 	}
 
 	// ---- validation method ----------------------------------------------------

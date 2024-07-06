@@ -238,7 +238,10 @@ public class EduController {
 	// 교육생 이미지 첨부파일 다운로드
 	@GetMapping("/download/traineeattach/{mid}")
 	public void traineeImgDownload(@PathVariable String mid, HttpServletResponse response) {
+		log.info("mid = " + mid);
+		
 		TraineeInfo traineeInfo = eduService.tattachDownload(mid);
+		log.info("traineeInfo = " + traineeInfo.toString());
 		
 		// 파일 이름이 한글일 경우, 브라우저에서 한글 이름으로 다운로드 받기 위해 헤더에 추가할 내용
 		try {
