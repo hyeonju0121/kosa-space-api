@@ -14,4 +14,8 @@ public class Attendance {
 	private boolean aconfirm;
 	private int cno;
 	
+	
+	private int approvecnt; // 정상 출결 일수
+	private int latenesscnt; // 총 지각 일수
+	private int absensecnt; // 총 결석 일수
 }
