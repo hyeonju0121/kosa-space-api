@@ -42,6 +42,8 @@
    <select id="readCourse" parameterType="String" resultType="course">
    		select cno, ccode, ctotalnum, cstatus
    		from course
+   		<if test="cname != 'all'">
    		where cname = #{cname}
+   		</if>
    </select>
 </mapper>
