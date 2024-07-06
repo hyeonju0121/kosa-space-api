@@ -158,7 +158,15 @@ public class EduController {
 
 		return eduService.listCourse(request);
 	}
-
+	
+	@GetMapping("course/cnamelist")
+	public List<String> courseCnameList(@RequestParam(value="ecname", required=false,
+								defaultValue = "all")String ecname) {
+		
+		return eduService.listCnameCourse(ecname);
+	}
+	
+	
 	// 다운로드
 	@GetMapping("/download/attach/{eano}")
 	public void download(@PathVariable int eano, HttpServletResponse response) {

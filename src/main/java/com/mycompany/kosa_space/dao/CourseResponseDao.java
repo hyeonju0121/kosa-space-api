@@ -19,5 +19,7 @@ public interface CourseResponseDao {
 	
 	public List<CourseResponseDTO> listByParameter(CourseParameterRequestDTO params);
 	
+	public List<String> listByEcname(String ecname);
+	
 	public CourseResponseDTO listByEcnameAndTrno(String ecname, int trno);
 }
