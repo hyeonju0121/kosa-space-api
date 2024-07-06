@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.mycompany.kosa_space.dao.AttendanceDao;
 import com.mycompany.kosa_space.dao.TraineeInfoDao;
 import com.mycompany.kosa_space.dto.Attendance;
+import com.mycompany.kosa_space.dto.AttendanceNotes;
 import com.mycompany.kosa_space.dto.TraineeInfo;
 import com.mycompany.kosa_space.dto.request.AttendanceTraineeRequestDTO;
 
@@ -42,7 +43,7 @@ public class AttendanceService {
 		int absenceCnt = 0;
 		
 		Attendance attendanceInfo = attendanceDao.selectByMid(attendance.getMid());
-		log.info("attendanceInfo: " + attendanceInfo.toString());
+		//log.info("attendanceInfo: " + attendanceInfo.toString());
 		
 		if (attendanceInfo != null) {
 			approveCnt = attendanceInfo.getApprovecnt();
@@ -168,12 +169,26 @@ public class AttendanceService {
         		.adate(adate)
         		.acheckout(acheckout)
         		.build();
-		
+        
 		// DB 업데이트
         attendanceDao.updateCheckout(data);
 		
 	}
 	
+	// 교육생 사유 작성 기능
+	@Transactional
+	public void createReason(AttendanceNotes request) {
+		
+		// attendance 테이블 정보 업데이트 필요
+		// 교육생이 입력한 출결 사유 카테고리에 따른 astatus 값 업데이트 필요
+		String category = request.getAcnategory();
+		String astatus = "";
+		if (category.equals("결석")) {
+			astatus = "결석";
+		}
+		
+		// attendancenotes 테이블 정보 업데이트 필요
+	}
 	
 	// 클라이언트 IP 와 교육장 IP 비교하는 메소드
 	public boolean validationIPMatch(String clientIP) {

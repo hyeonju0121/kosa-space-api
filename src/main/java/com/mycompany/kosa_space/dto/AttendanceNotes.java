@@ -13,10 +13,10 @@ public class AttendanceNotes {
 	private String acnategory;
 	private String anreason;
 	
-	private MultipartFile anattach;
+	private MultipartFile anattachdata;
 	private String anattachoname; // 파일 원래 이름
 	private String anattachtype; // 파일 종류
-	private byte[] anattachdata;
+	private byte[] anattach;
 	
 	private Date ancreatedat;
 	private Date anupdatedat;

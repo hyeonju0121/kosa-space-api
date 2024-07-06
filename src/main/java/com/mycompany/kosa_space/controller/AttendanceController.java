@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mycompany.kosa_space.dto.AttendanceNotes;
 import com.mycompany.kosa_space.dto.request.AttendanceTraineeRequestDTO;
 import com.mycompany.kosa_space.service.AttendanceService;
 
@@ -43,6 +44,17 @@ public class AttendanceController {
 		
 		attendanceService.checkout(clientIP, attendance);
 	}
+	
+	// 교육생 사유 작성 기능
+	@PostMapping("/reason/create")
+	public void reasonCreate(AttendanceNotes request) {
+		log.info("request: " + request.toString());
+		attendanceService.createReason(request);
+	}
+	
+	// 파라미터에 해당하는 교육생 출결 목록 조회
+	// parameter: ecname, cname, startdate, enddate, checkinstatus, chechoutstatus, mname
+	
 	
 	/*
 	@GetMapping("/test/getClientIP")
