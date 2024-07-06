@@ -1067,13 +1067,20 @@ public class EduService {
 		// 그리고 그 cno에 해당하는 member와 traineeinfo를 합친 테이블에서 where절로 cno를 찾은 cno로 교육생을 조회
 		// List<TraineeResponseDto> list = traineeInfoDao.listTrainee(ecname, cname);
 		// log.info("listTrainee(ecname, cname) 실행 완료");
-
+		
+		int cno = 0;
+		
 		// cname 을 기준으로 cno 찾기
-		Course course = courseDao.readCourse(cname);
-		int cno = course.getCno();
-
+		if(cname.equals("all")) {
+			cno = 0;
+		} else {
+			Course course = courseDao.readCourse(cname);
+			cno = course.getCno();
+		}
+		log.info("cno = " + String.valueOf(cno));
+		
 		List<TraineeResponseDto> response = traineeInfoDao.listTraineeByCno(cno);
-
+		
 		log.info("response.size(): " + response.size());
 		return response;
 	}

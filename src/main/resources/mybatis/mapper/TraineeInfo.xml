@@ -90,7 +90,7 @@
 			    ) t1
 			    where c.cno = t1.cno
 			)
-			<if test="cno != 'all'">
+			<if test="cno != 0">
 			where cno=#{cno}
 			</if>
    </select>
