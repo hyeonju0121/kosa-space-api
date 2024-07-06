@@ -33,10 +33,9 @@ public class AttendanceController {
 		log.info("attendance: " + attendance.toString());
 		
 		attendanceService.checkin(clientIP, attendance);
-		
-		
 	}
 	
+	/*
 	@GetMapping("/test/getClientIP")
 	public String getClientIP(HttpServletRequest request) {
 		
@@ -44,4 +43,5 @@ public class AttendanceController {
 		String clientIP = request.getRemoteAddr();
 		return clientIP;
 	}
+	*/
 }
