@@ -30,18 +30,13 @@ public class AttendanceController {
 		attendanceService.active(adate);	
 	}
 	
-	
 	// 교육생 입실 기능
 	@PostMapping("/checkin")
 	public void userCheckIn(@RequestBody AttendanceTraineeRequestDTO attendance,
 			HttpServletRequest request) throws Exception {
 		String clientIP = request.getHeader("clientIP");
 		
-		log.info("clientIP: " + clientIP);
-		
-		//log.info("mid: " + mid);
-		log.info("attendance: " + attendance.toString());
-		
+		//log.info("clientIP: " + clientIP);
 		attendanceService.checkin(clientIP, attendance);
 	}
 	

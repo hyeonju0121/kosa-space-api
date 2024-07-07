@@ -32,7 +32,7 @@ public class AttendanceService {
 	private static final String CENTERIP = "125.131.208.230";
 	
 	
-	// 운영진 교육생 출결 활성화 기능 
+	// (운영진) 교육생 출결 활성화 기능 
 	@Transactional
 	public void active(String adate) throws Exception{
 		// adate 세팅 String to Date
@@ -90,6 +90,7 @@ public class AttendanceService {
 	}
 	
 	
+	// (교육생) 입실 기능
 	@Transactional
 	public void checkin(String clientIP, 
 			AttendanceTraineeRequestDTO attendance) throws Exception {
@@ -114,8 +115,6 @@ public class AttendanceService {
 		
 		// 시간에 대한 처리 (09: 10 분 이후이면 사용자의 astatus 지각 처리로 업데이트)
 		// 09: 10 분 이전이면, 사용자의 astatus 를 정상 출결로 업데이트
-		String astatus = "";
-		
 		SimpleDateFormat format = new SimpleDateFormat("HH:mm");
 
         String absenceTimeStr = "09:10";
@@ -136,12 +135,10 @@ public class AttendanceService {
         
         if (minutes > 0 && hours >= 0) { // 지각 처리
         	log.info("지각입니다.");
-        	astatus = "지각";
         	latenessCnt++; // 총 지각일수 +1 
         	
         } else { // 정상 출결 처리 
         	log.info("정상 출결입니다.");
-        	astatus = "정상출결";
         }
         
         // adate 생성
@@ -153,19 +150,13 @@ public class AttendanceService {
         // checkin 시간 string to date
         SimpleDateFormat format3 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date acheckin = format3.parse(attendance.getAttendancetime());
-        
-        // 교육생이 현재 이수중인 교육과정 정보 가져오기 (cno)
-        TraineeInfo trainee = traineeInfoDao.selectByMid(attendance.getMid());
-        int cno = trainee.getCno();
-        
+
         // Attendance 객체 생성
         Attendance data = Attendance.builder()
         		.mid(attendance.getMid())
         		.adate(adate)
+        		.acheckinstatus(true)
         		.acheckin(acheckin)
-        		.astatus(astatus)
-        		.aconfirm(false)
-        		.cno(cno)
         		.approvecnt(approveCnt)
         		.latenesscnt(latenessCnt)
         		.absencecnt(absenceCnt)
@@ -174,10 +165,10 @@ public class AttendanceService {
         // DB 업데이트
         log.info(data.toString());
         
-        attendanceDao.insert(data);
+        attendanceDao.checkin(data);
 	}
 	
-	// 교육생 퇴실 기능
+	// (교육생) 퇴실 기능
 	@Transactional
 	public void checkout(String clientIP, 
 			AttendanceTraineeRequestDTO attendance) throws Exception{
@@ -205,7 +196,7 @@ public class AttendanceService {
 		int hours = (int) (difference / (1000 * 60 * 60));
 		int minutes = (int) ((difference / (1000 * 60)) % 60);
 	
-		log.info("hours: " + hours + ", minites: " + minutes);
+		//log.info("hours: " + hours + ", minites: " + minutes);
 		
 		if (minutes >= 0 && hours >= 0) { // 정상 출결 처리 (17: 50분 ~)
 		      log.info("정상으로 퇴실 완료됐습니다.");
@@ -229,10 +220,11 @@ public class AttendanceService {
         		.mid(attendance.getMid())
         		.adate(adate)
         		.acheckout(acheckout)
+        		.acheckoutstatus(true)
         		.build();
         
 		// DB 업데이트
-        attendanceDao.updateCheckout(data);
+        attendanceDao.checkout(data);
 		
 	}
 	

@@ -27,20 +27,19 @@
 		where adate=#{adate}
    </select>
    
-   <insert id="insert" parameterType="attendance">
-  		insert into attendance(
-			mid, adate, acheckin, astatus, aconfirm, cno, 
-			approvecnt, latenesscnt, absencecnt
-		)
-		values (
-			#{mid}, #{adate}, #{acheckin}, #{astatus}, #{aconfirm}, #{cno},
-			#{approvecnt}, #{latenesscnt}, #{absencecnt}
-		)
-   </insert>
-   
-   <update id="updateCheckout" parameterType="attendance">
+   <!-- 입실 기능 -->
+   <update id="checkin" parameterType="attendance">
    		update attendance set
-   			acheckout=#{acheckout}
+   			acheckinstatus=#{acheckinstatus}, acheckin=#{acheckin},
+   			approvecnt=#{approvecnt}, latenesscnt=#{latenesscnt},
+   			absencecnt=#{absencecnt}
+   		where adate=#{adate} and mid=#{mid}
+   </update>
+   
+   <!-- 퇴실 기능 -->
+   <update id="checkout" parameterType="attendance">
+   		update attendance set
+   			acheckout=#{acheckout}, acheckoutstatus=#{acheckoutstatus}
    		where mid=#{mid} and adate=#{adate}
    </update>
    
