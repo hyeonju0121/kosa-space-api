@@ -20,6 +20,7 @@ import com.mycompany.kosa_space.dto.request.AttendanceTraineeRequestDTO;
 import com.mycompany.kosa_space.dto.response.AttendanceInfoResponseDTO;
 import com.mycompany.kosa_space.dto.response.AttendanceNotesResponseDTO;
 import com.mycompany.kosa_space.dto.response.AttendanceReasonDashboardResponseDTO;
+import com.mycompany.kosa_space.dto.response.CombineEduTraineeAttendanceDTO;
 import com.mycompany.kosa_space.dto.response.TraineeResponseDto;
 
 import lombok.extern.slf4j.Slf4j;
@@ -418,11 +419,45 @@ public class AttendanceService {
 	
 	// ecname, cname 에 해당하는 출결 사유 대시보드 기능
 	@Transactional
-	public AttendanceReasonDashboardResponseDTO dashboard(String ecname, String cname) {
+	public AttendanceReasonDashboardResponseDTO dashboard(String ecname, String cname, String adate) throws Exception{
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");        
+        Date date= format.parse(adate);
 		
+		List<CombineEduTraineeAttendanceDTO> data = attendanceNotesDao.selectTotalReasonByEcnameAndCname(ecname, cname, date);
 		
+		// 오늘 제출된 출결 사유 건수
+		int todayReasonCnt = 0;
+		// 출결 사유 승인 건수
+		int approveCnt = 0;
+		// 출결 사유 미승인 건수
+		int notApprovedCnt = 0;
 		
-		
+		if (data.size() == 0) {
+			AttendanceReasonDashboardResponseDTO response = AttendanceReasonDashboardResponseDTO.builder()
+					.todayReasonCnt(todayReasonCnt)
+					.approveCnt(approveCnt)
+					.notApprovedCnt(notApprovedCnt)
+					.build();
+			return response;
+		} else {
+			for (CombineEduTraineeAttendanceDTO info : data) {
+				// 오늘 제출된 출결 사유 건수 구하기
+				todayReasonCnt = data.size();
+				
+				// 출결 사유 승인 건수 
+				approveCnt = attendanceNotesDao.selectReasonApproveCnt(ecname, cname, date);
+				
+				// 출결 사유 미승인 건수
+				notApprovedCnt = attendanceNotesDao.selectReasonNotApprovedCnt(ecname, cname, date);
+				
+				AttendanceReasonDashboardResponseDTO response = AttendanceReasonDashboardResponseDTO.builder()
+						.todayReasonCnt(todayReasonCnt)
+						.approveCnt(approveCnt)
+						.notApprovedCnt(notApprovedCnt)
+						.build();
+				return response;
+			}
+		}
 		return null;
 	}
 	

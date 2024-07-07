@@ -30,5 +30,6 @@
       <typeAlias alias="traineeResponsedto" type="com.mycompany.kosa_space.dto.response.TraineeResponseDto"/>
       <typeAlias alias="updatetraineerequestdto" type="com.mycompany.kosa_space.dto.request.UpdateTraineeRequestDto"/>
        <typeAlias alias="attendanceinforesponsedto" type="com.mycompany.kosa_space.dto.response.AttendanceInfoResponseDTO"/>
+       <typeAlias alias="combineedutraineeattendancedto" type="com.mycompany.kosa_space.dto.response.CombineEduTraineeAttendanceDTO"/>
    </typeAliases>
 </configuration>

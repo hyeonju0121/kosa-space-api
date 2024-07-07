@@ -49,4 +49,125 @@
 		where mid=#{mid} and adate=#{adate}
    </select>
    
+   
+   <!-- ecname, cname 기준으로 해당하는 출결 사유 작성 정보 조회 -->
+   <select id="selectTotalReasonByEcnameAndCname" parameterType="map" resultType="combineedutraineeattendancedto">
+   		select t3.mid, t3.cno, t3.adate, t3.acheckin, t3.acheckout, t3.astatus,
+		        t3.aconfirm, t3.anconfirm, t3.ancategory, t3.anreason, t3.anattach, t3.anattachoname, t3.anattachtype,
+		        t3.approvecnt, t3.latenesscnt, t3.absencecnt, t3.acheckinstatus, t3.acheckoutstatus,
+		        t3.ancreatedat, t3.anupdatedat, 
+		        t3.cname, t3.ccode, t3.trno, t3.ctotalnum, t3.cstartdate, t3.cenddate, t3.crequireddate, t3.cstatus,
+		        t3.cprofessor, t3.cmanager, t3.ccreatedat, t3.cupdatedat, t3.ctrainingdate, t3.ctrainingtime, t3.ecno, ec.ecname
+		from (
+		    select  t2.mid, t2.cno, t2.adate, t2.acheckin, t2.acheckout, t2.astatus,
+		        t2.aconfirm, t2.anconfirm, t2.ancategory, t2.anreason, t2.anattach, t2.anattachoname, t2.anattachtype,
+		        t2.approvecnt, t2.latenesscnt, t2.absencecnt, t2.acheckinstatus, t2.acheckoutstatus,
+		        t2.ancreatedat, t2.anupdatedat, 
+		        t2.cname, t2.ccode, t2.trno, t2.ctotalnum, t2.cstartdate, t2.cenddate, t2.crequireddate, t2.cstatus,
+		        t2.cprofessor, t2.cmanager, t2.ccreatedat, t2.cupdatedat, t2.ctrainingdate, t2.ctrainingtime, tr.ecno
+		    from (
+		        select t1.mid, t1.cno, t1.adate, t1.acheckin, t1.acheckout, t1.astatus,
+		            t1.aconfirm, t1.anconfirm, t1.ancategory, t1.anreason, t1.anattach, t1.anattachoname, t1.anattachtype,
+		            t1.approvecnt, t1.latenesscnt, t1.absencecnt, t1.acheckinstatus, t1.acheckoutstatus,
+		            t1.ancreatedat, t1.anupdatedat, 
+		            c.cname, c.ccode, c.trno, c.ctotalnum, c.cstartdate, c.cenddate, c.crequireddate, c.cstatus,
+		            c.cprofessor, c.cmanager, c.ccreatedat, c.cupdatedat, c.ctrainingdate, c.ctrainingtime
+		        from (
+		            select a.mid, a.cno, a.adate, a.acheckin, a.acheckout, a.astatus, a.aconfirm, an.anconfirm,
+		                an.ancategory, an.anreason, an.anattach, an.anattachoname, an.anattachtype,
+		                a.approvecnt, a.latenesscnt, a.absencecnt, a.acheckinstatus, a.acheckoutstatus,
+		                an.ancreatedat, an.anupdatedat
+		            from attendance a, attendancenotes an
+		            where a.mid = an.mid
+		        ) t1, course c
+		        where t1.cno = c.cno
+		    ) t2, trainingroom tr
+		    where t2.trno = tr.trno
+		)t3, educenter ec
+		where t3.ecno = ec.ecno and t3.adate = #{adate}
+			<if test="ecname != 'all'">
+	            and ec.ecname=#{ecname}
+	        </if>
+	        <if test="cname != 'all'">
+	            and t3.cname=#{cname}
+	        </if>
+   </select>
+   
+   <!-- ecname, cname 기준으로 해당하는 출결 사유 작성 정보 중에 승인된 건수 조회 -->
+   <select id="selectReasonApproveCnt" parameterType="map" resultType="int">
+   		select count(t3.mid)
+		from (
+		    select  t2.mid, t2.cno, t2.adate, t2.acheckin, t2.acheckout, t2.astatus,
+		        t2.aconfirm, t2.anconfirm, t2.ancategory, t2.anreason, t2.anattach, t2.anattachoname, t2.anattachtype,
+		        t2.approvecnt, t2.latenesscnt, t2.absencecnt, t2.acheckinstatus, t2.acheckoutstatus,
+		        t2.ancreatedat, t2.anupdatedat, 
+		        t2.cname, t2.ccode, t2.trno, t2.ctotalnum, t2.cstartdate, t2.cenddate, t2.crequireddate, t2.cstatus,
+		        t2.cprofessor, t2.cmanager, t2.ccreatedat, t2.cupdatedat, t2.ctrainingdate, t2.ctrainingtime, tr.ecno
+		    from (
+		        select t1.mid, t1.cno, t1.adate, t1.acheckin, t1.acheckout, t1.astatus,
+		            t1.aconfirm, t1.anconfirm, t1.ancategory, t1.anreason, t1.anattach, t1.anattachoname, t1.anattachtype,
+		            t1.approvecnt, t1.latenesscnt, t1.absencecnt, t1.acheckinstatus, t1.acheckoutstatus,
+		            t1.ancreatedat, t1.anupdatedat, 
+		            c.cname, c.ccode, c.trno, c.ctotalnum, c.cstartdate, c.cenddate, c.crequireddate, c.cstatus,
+		            c.cprofessor, c.cmanager, c.ccreatedat, c.cupdatedat, c.ctrainingdate, c.ctrainingtime
+		        from (
+		            select a.mid, a.cno, a.adate, a.acheckin, a.acheckout, a.astatus, a.aconfirm, an.anconfirm,
+		                an.ancategory, an.anreason, an.anattach, an.anattachoname, an.anattachtype,
+		                a.approvecnt, a.latenesscnt, a.absencecnt, a.acheckinstatus, a.acheckoutstatus,
+		                an.ancreatedat, an.anupdatedat
+		            from attendance a, attendancenotes an
+		            where a.mid = an.mid
+		        ) t1, course c
+		        where t1.cno = c.cno
+		    ) t2, trainingroom tr
+		    where t2.trno = tr.trno
+		)t3, educenter ec
+		where t3.ecno = ec.ecno and t3.adate = #{adate} and t3.anconfirm=1
+			<if test="ecname != 'all'">
+	            and ec.ecname=#{ecname}
+	        </if>
+	        <if test="cname != 'all'">
+	            and t3.cname=#{cname}
+	        </if>
+   </select>
+   
+   <!-- ecname, cname 기준으로 해당하는 출결 사유 작성 정보 중에 미승인된 건수 조회 -->
+   <select id="selectReasonNotApprovedCnt" parameterType="map" resultType="int">
+   		select count(t3.mid)
+		from (
+		    select  t2.mid, t2.cno, t2.adate, t2.acheckin, t2.acheckout, t2.astatus,
+		        t2.aconfirm, t2.anconfirm, t2.ancategory, t2.anreason, t2.anattach, t2.anattachoname, t2.anattachtype,
+		        t2.approvecnt, t2.latenesscnt, t2.absencecnt, t2.acheckinstatus, t2.acheckoutstatus,
+		        t2.ancreatedat, t2.anupdatedat, 
+		        t2.cname, t2.ccode, t2.trno, t2.ctotalnum, t2.cstartdate, t2.cenddate, t2.crequireddate, t2.cstatus,
+		        t2.cprofessor, t2.cmanager, t2.ccreatedat, t2.cupdatedat, t2.ctrainingdate, t2.ctrainingtime, tr.ecno
+		    from (
+		        select t1.mid, t1.cno, t1.adate, t1.acheckin, t1.acheckout, t1.astatus,
+		            t1.aconfirm, t1.anconfirm, t1.ancategory, t1.anreason, t1.anattach, t1.anattachoname, t1.anattachtype,
+		            t1.approvecnt, t1.latenesscnt, t1.absencecnt, t1.acheckinstatus, t1.acheckoutstatus,
+		            t1.ancreatedat, t1.anupdatedat, 
+		            c.cname, c.ccode, c.trno, c.ctotalnum, c.cstartdate, c.cenddate, c.crequireddate, c.cstatus,
+		            c.cprofessor, c.cmanager, c.ccreatedat, c.cupdatedat, c.ctrainingdate, c.ctrainingtime
+		        from (
+		            select a.mid, a.cno, a.adate, a.acheckin, a.acheckout, a.astatus, a.aconfirm, an.anconfirm,
+		                an.ancategory, an.anreason, an.anattach, an.anattachoname, an.anattachtype,
+		                a.approvecnt, a.latenesscnt, a.absencecnt, a.acheckinstatus, a.acheckoutstatus,
+		                an.ancreatedat, an.anupdatedat
+		            from attendance a, attendancenotes an
+		            where a.mid = an.mid
+		        ) t1, course c
+		        where t1.cno = c.cno
+		    ) t2, trainingroom tr
+		    where t2.trno = tr.trno
+		)t3, educenter ec
+		where t3.ecno = ec.ecno and t3.adate = #{adate} and t3.anconfirm=0
+			<if test="ecname != 'all'">
+	            and ec.ecname=#{ecname}
+	        </if>
+	        <if test="cname != 'all'">
+	            and t3.cname=#{cname}
+	        </if>
+   </select>
+   
+   
 </mapper>

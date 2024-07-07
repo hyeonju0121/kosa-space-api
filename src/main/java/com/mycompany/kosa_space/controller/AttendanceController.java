@@ -92,9 +92,10 @@ public class AttendanceController {
 	@GetMapping("/reason/dashboard")
 	public AttendanceReasonDashboardResponseDTO reasonDashboard(
 			@RequestParam(value = "ecname", required = false, defaultValue = "all") String ecname,
-			@RequestParam(value = "cname", required = false, defaultValue = "all") String cname) {
+			@RequestParam(value = "cname", required = false, defaultValue = "all") String cname,
+			@RequestParam(value = "adate", required = true) String adate) throws Exception{
 		
-		return attendanceService.dashboard(ecname, cname);
+		return attendanceService.dashboard(ecname, cname, adate);
 	}
 	
 	// 파라미터에 해당하는 교육생 출결 목록 조회
