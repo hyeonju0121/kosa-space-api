@@ -1,8 +1,10 @@
-package com.mycompany.kosa_space.dto;
+package com.mycompany.kosa_space.dto.response;
 
 import java.util.Date;
 
 import org.springframework.web.multipart.MultipartFile;
+
+import com.mycompany.kosa_space.dto.AttendanceNotes;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,9 +15,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AttendanceNotes {
+public class AttendanceNotesResponseDTO {
 	private String mid;
-	private Date adate;
+	private String adate;
 	private String ancategory;
 	private String anreason;
 	
@@ -26,7 +28,6 @@ public class AttendanceNotes {
 	private String anattachtype; // 파일 종류
 	private byte[] anattach;
 	
-	private Date ancreatedat;
-	private Date anupdatedat;
-	
+	private String ancreatedat;
+	private String anupdatedat;
 }

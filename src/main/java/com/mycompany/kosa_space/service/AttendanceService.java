@@ -1,5 +1,6 @@
 package com.mycompany.kosa_space.service;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -7,13 +8,17 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.mycompany.kosa_space.dao.AttendanceDao;
+import com.mycompany.kosa_space.dao.AttendanceNotesDao;
 import com.mycompany.kosa_space.dao.TraineeInfoDao;
 import com.mycompany.kosa_space.dto.Attendance;
 import com.mycompany.kosa_space.dto.AttendanceNotes;
 import com.mycompany.kosa_space.dto.TraineeInfo;
+import com.mycompany.kosa_space.dto.request.AttendanceNotesRequestDTO;
 import com.mycompany.kosa_space.dto.request.AttendanceTraineeRequestDTO;
+import com.mycompany.kosa_space.dto.response.AttendanceNotesResponseDTO;
 import com.mycompany.kosa_space.dto.response.TraineeResponseDto;
 
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +29,9 @@ public class AttendanceService {
 	
 	@Autowired
 	private AttendanceDao attendanceDao;
+	
+	@Autowired
+	private AttendanceNotesDao attendanceNotesDao;
 	
 	@Autowired
 	private TraineeInfoDao traineeInfoDao;
@@ -230,19 +238,117 @@ public class AttendanceService {
 	
 	// 교육생 사유 작성 기능
 	@Transactional
-	public void createReason(AttendanceNotes request) {
+	public void createReason(AttendanceNotesRequestDTO request) throws Exception {
+		// adate 생성
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        String adateStr = request.getAdate().substring(0, 10);
+        
+        Date adate = format.parse(adateStr);
 		
-		// attendance 테이블 정보 업데이트 필요
-		// 교육생이 입력한 출결 사유 카테고리에 따른 astatus 값 업데이트 필요
-		String category = request.getAcnategory();
-		String astatus = "";
-		if (category.equals("결석")) {
-			astatus = "결석";
+		AttendanceNotes reason = AttendanceNotes.builder()
+				.mid(request.getMid())
+				.adate(adate)
+				.anconfirm(false)
+				.ancategory(request.getAncategory())
+				.anreason(request.getAnreason())
+				.build();
+		
+		// 첨부가 넘어왔을 경우
+		if (request.getAnattachdata() != null && !request.getAnattachdata().isEmpty()) {
+			MultipartFile mf = request.getAnattachdata();
+			// 파일 이름 설정
+			reason.setAnattachoname(mf.getOriginalFilename());
+			// 파일 종류 설정
+			reason.setAnattachtype(mf.getContentType());
+			try {
+				// 파일 데이터 설정
+				reason.setAnattach(mf.getBytes());
+			} catch(IOException e) {
+				
+			}
 		}
+
+		// DB insert
+		attendanceNotesDao.insert(reason);
 		
-		// attendancenotes 테이블 정보 업데이트 필요
 	}
 	
+	// 교육생 사유 단건 조회 
+	@Transactional
+	public AttendanceNotesResponseDTO detailReason(String mid, String adate) throws Exception{
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");        
+        Date date= format.parse(adate);
+		
+        //  DB에서 mid, adate 에 해당하는 사유 정보 가져오기
+        AttendanceNotes notes = attendanceNotesDao.selectByMidAndAdate(mid, date);
+        
+        // 생성일시, 수정일시 Date to String
+     	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+     	Date createdat = notes.getAncreatedat();
+     	Date updatedat = new Date();
+     	String anupdatedat = "";
+     	if (notes.getAnupdatedat() != null) {
+     		updatedat = notes.getAnupdatedat();
+     		anupdatedat = sdf.format(updatedat);
+     	}
+     	String ancreatedat = sdf.format(createdat);
+        
+        AttendanceNotesResponseDTO response = AttendanceNotesResponseDTO.builder()
+        		.mid(notes.getMid())
+        		.adate(adate)
+        		.ancategory(notes.getAncategory())
+        		.anreason(notes.getAnreason())
+        		// JSON 으로 변환되지 않는 필드는 NULL 처리
+             	// byte[]랑 MultipartFile 은 JSON 으로 변환 X -> NULL 처리 필요
+        		.anattachdata(null)
+        		.anattach(null)
+        		.anattachoname(notes.getAnattachoname())
+        		.anattachtype(notes.getAnattachtype())
+        		.ancreatedat(ancreatedat)
+        		.anupdatedat(anupdatedat)
+        		.build();
+        
+		return response;
+	}
+	
+	// 교육생 사유 수정 기능
+	@Transactional
+	public void updateReason(AttendanceNotesRequestDTO request) throws Exception{
+		// adate 생성
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        String adateStr = request.getAdate().substring(0, 10);
+        
+        Date adate = format.parse(adateStr);
+
+     	AttendanceNotes reason = AttendanceNotes.builder()
+     			.mid(request.getMid())
+     			.adate(adate)
+     			.ancategory(request.getAncategory())
+     			.anreason(request.getAnreason())
+     			.build();
+     	
+     	 // 첨부가 넘어왔을 경우
+     	if (request.getAnattachdata() != null && !request.getAnattachdata().isEmpty()) {
+     		MultipartFile mf = request.getAnattachdata();
+     		// 파일 이름 설정
+     		reason.setAnattachoname(mf.getOriginalFilename());
+     		// 파일 종류 설정
+     		reason.setAnattachtype(mf.getContentType());
+     		try {
+     			// 파일 데이터 설정
+     			reason.setAnattach(mf.getBytes());
+     		} catch(IOException e) {
+     		}
+     	}
+     	
+     	// DB update
+     	attendanceNotesDao.update(reason);
+	}
+	
+	
+	
+	// 검증 메소드 ------------------------------------------------------
 	// 클라이언트 IP 와 교육장 IP 비교하는 메소드
 	public boolean validationIPMatch(String clientIP) {
 		if (clientIP == null) {

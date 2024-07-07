@@ -2,5 +2,32 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mycompany.kosa_space.dao.AttendanceNotesDao">
    
+   <insert id="insert" parameterType="attendancenotes">
+   		insert into attendancenotes(
+			mid, adate, ancategory, anreason, anconfirm,
+			anattachoname, anattachtype, anattach, ancreatedat
+		)
+		values (
+			#{mid}, #{adate}, #{ancategory}, #{anreason}, #{anconfirm},
+			#{anattachoname}, #{anattachtype},#{anattach}, sysdate
+		)	
+   </insert>
+   
+   <select id="selectByMidAndAdate" parameterType="map" resultType="attendancenotes">
+   		select *
+   		from attendancenotes
+   		where mid=#{mid} and adate=#{adate}
+   </select>
+   
+   <update id="update" parameterType="attendancenotes">
+   		update attendancenotes set 
+      	ancategory=#{ancategory}, anreason=#{anreason}, anupdatedat=sysdate
+      	<if test="anattachoname != null">
+      		, anattachoname=#{anattachoname}
+      		, anattachtype=#{anattachtype}
+      		, anattach=#{anattach}
+      	</if>
+      where mid=#{mid} and adate=#{adate}
+   </update>
    
 </mapper>

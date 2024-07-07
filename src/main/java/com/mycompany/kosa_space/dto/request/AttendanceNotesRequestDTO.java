@@ -1,6 +1,4 @@
-package com.mycompany.kosa_space.dto;
-
-import java.util.Date;
+package com.mycompany.kosa_space.dto.request;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,20 +11,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AttendanceNotes {
+public class AttendanceNotesRequestDTO {
 	private String mid;
-	private Date adate;
+	private String adate;
 	private String ancategory;
 	private String anreason;
 	
-	private boolean anconfirm;
-	
 	private MultipartFile anattachdata;
-	private String anattachoname; // 파일 원래 이름
-	private String anattachtype; // 파일 종류
-	private byte[] anattach;
-	
-	private Date ancreatedat;
-	private Date anupdatedat;
-	
 }
