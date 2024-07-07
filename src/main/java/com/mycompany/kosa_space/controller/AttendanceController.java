@@ -1,12 +1,13 @@
 package com.mycompany.kosa_space.controller;
 
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mycompany.kosa_space.dto.AttendanceNotes;
@@ -21,6 +22,14 @@ import lombok.extern.slf4j.Slf4j;
 public class AttendanceController {
 	@Autowired
 	private AttendanceService attendanceService;
+	
+	// (운영진) 교육생 출결 활성화 기능
+	@PostMapping("/active")
+	public void attendanceActive(@RequestParam String adate) throws Exception {
+
+		attendanceService.active(adate);	
+	}
+	
 	
 	// 교육생 입실 기능
 	@PostMapping("/checkin")

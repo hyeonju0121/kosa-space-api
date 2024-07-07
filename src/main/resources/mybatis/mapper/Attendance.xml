@@ -9,6 +9,24 @@
 		order by adate desc
    </select>
    
+   <!-- (운영진) 교육생 활성화 기능  -->
+   <insert id="active" parameterType="attendance">
+  		insert into attendance(
+			mid, adate, acheckin, astatus, aconfirm, cno, 
+			acheckinstatus, acheckoutstatus, approvecnt, latenesscnt, absencecnt
+		)
+		values (
+			#{mid}, #{adate}, #{acheckin}, #{astatus}, #{aconfirm}, #{cno},
+			#{acheckinstatus}, #{acheckoutstatus}, #{approvecnt}, #{latenesscnt}, #{absencecnt}
+		)
+   </insert>
+   
+   <select id="selectCntByAdate" parameterType="date">
+	   	select count(adate)
+		from attendance
+		where adate=#{adate}
+   </select>
+   
    <insert id="insert" parameterType="attendance">
   		insert into attendance(
 			mid, adate, acheckin, astatus, aconfirm, cno, 

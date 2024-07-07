@@ -22,4 +22,7 @@ public interface TraineeInfoDao {
 	public void updateTrainee(UpdateTraineeRequestDto request);
 	// 교육생 (교육장, 교육과정) 기준으로 리스트 가져오기
 	public List<TraineeResponseDto> listTraineeByCno(int cno);
+	
+	// (현주) 모든 교육과정의 교육생 정보 가져오기
+	public List<TraineeResponseDto> allTraineeList();
 }

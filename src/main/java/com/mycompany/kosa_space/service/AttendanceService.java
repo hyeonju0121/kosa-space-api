@@ -2,6 +2,7 @@ package com.mycompany.kosa_space.service;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import com.mycompany.kosa_space.dto.Attendance;
 import com.mycompany.kosa_space.dto.AttendanceNotes;
 import com.mycompany.kosa_space.dto.TraineeInfo;
 import com.mycompany.kosa_space.dto.request.AttendanceTraineeRequestDTO;
+import com.mycompany.kosa_space.dto.response.TraineeResponseDto;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,6 +30,65 @@ public class AttendanceService {
 	
 	
 	private static final String CENTERIP = "125.131.208.230";
+	
+	
+	// 운영진 교육생 출결 활성화 기능 
+	@Transactional
+	public void active(String adate) throws Exception{
+		// adate 세팅 String to Date
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		String adateStr = adate.substring(0, 10);
+			        
+	    Date date = format.parse(adateStr);
+		
+		// 이미 활성화 되어있는 경우는 에러 처리
+	    // (attendance 테이블 내에 adate 기준으로 count 값 조사)
+	    int cnt =  attendanceDao.selectCntByAdate(date);
+
+		if (cnt > 0) {
+			throw new RuntimeException(
+					"이미 오늘 날짜 기준으로 모든 교육생의 출결이 활성화 되어 있습니다.");
+		}
+		
+		// 모든 교육과정의 수강생들의 cno, mid 조사 
+		List<TraineeResponseDto> traineeList = traineeInfoDao.allTraineeList();
+		
+		for (TraineeResponseDto trainee : traineeList) {
+			//log.info("trainee: " + trainee.toString());
+			String mid = trainee.getMid();
+			int cno = trainee.getCno();
+			
+			// 교육생 총 정상출결일, 총 지각일, 총 결석일에 대한 정보 가져오기
+			int approveCnt = 0;
+			int latenessCnt = 0;
+			int absenceCnt = 0;
+			
+			Attendance attendanceInfo = attendanceDao.selectByMid(mid);
+
+			if (attendanceInfo != null) {
+				approveCnt = attendanceInfo.getApprovecnt();
+				latenessCnt = attendanceInfo.getLatenesscnt();
+				absenceCnt = attendanceInfo.getAbsencecnt();
+			} 
+			
+			Attendance attendance = Attendance.builder()
+					.mid(mid)
+					.adate(date)
+					.aconfirm(false)
+					.cno(cno)
+					.acheckinstatus(false)
+					.acheckoutstatus(false)
+					.approvecnt(approveCnt)
+					.latenesscnt(latenessCnt)
+					.absencecnt(absenceCnt)
+					.build();
+			//log.info("attendance: " + attendance.toString());
+
+			// DB insert 
+			attendanceDao.active(attendance);
+		}
+	}
+	
 	
 	@Transactional
 	public void checkin(String clientIP, 
