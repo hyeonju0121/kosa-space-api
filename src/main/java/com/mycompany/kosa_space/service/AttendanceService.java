@@ -15,11 +15,11 @@ import com.mycompany.kosa_space.dao.AttendanceNotesDao;
 import com.mycompany.kosa_space.dao.TraineeInfoDao;
 import com.mycompany.kosa_space.dto.Attendance;
 import com.mycompany.kosa_space.dto.AttendanceNotes;
-import com.mycompany.kosa_space.dto.TraineeInfo;
 import com.mycompany.kosa_space.dto.request.AttendanceNotesRequestDTO;
 import com.mycompany.kosa_space.dto.request.AttendanceTraineeRequestDTO;
 import com.mycompany.kosa_space.dto.response.AttendanceInfoResponseDTO;
 import com.mycompany.kosa_space.dto.response.AttendanceNotesResponseDTO;
+import com.mycompany.kosa_space.dto.response.AttendanceReasonDashboardResponseDTO;
 import com.mycompany.kosa_space.dto.response.TraineeResponseDto;
 
 import lombok.extern.slf4j.Slf4j;
@@ -359,8 +359,6 @@ public class AttendanceService {
 	// (운영진) 교육생 출결 승인 기능
 	@Transactional
 	public void approveAttendance(String mid, String adate) throws Exception{
-		String astatus = "";
-		
 		// 사유를 작성한 교육생이 있다면 먼저 사유에 대한 승인 처리가 있어야 함.
 		// 사유 미승인시 교육생의 출결을 승인 기능을 수행할 수 없음
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");        
@@ -377,7 +375,6 @@ public class AttendanceService {
 
 		// 교육생 총 정상출결일, 총 지각일, 총 결석일에 대한 정보 가져오기
 		int approveCnt = userAttendanceInfo.getApprovecnt();
-		int latenessCnt = userAttendanceInfo.getLatenesscnt();
 		int absenceCnt = userAttendanceInfo.getAbsencecnt();
 			
 		if (attendance != null) { // 사유 작성를 작성한 교육생인 경우
@@ -418,6 +415,16 @@ public class AttendanceService {
 		attendanceDao.approveAttendance(userAttendanceInfo);
 	}
 	
+	
+	// ecname, cname 에 해당하는 출결 사유 대시보드 기능
+	@Transactional
+	public AttendanceReasonDashboardResponseDTO dashboard(String ecname, String cname) {
+		
+		
+		
+		
+		return null;
+	}
 	
 	// 검증 메소드 ------------------------------------------------------
 	// 클라이언트 IP 와 교육장 IP 비교하는 메소드

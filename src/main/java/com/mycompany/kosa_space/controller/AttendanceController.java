@@ -11,11 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.mycompany.kosa_space.dto.Attendance;
-import com.mycompany.kosa_space.dto.AttendanceNotes;
 import com.mycompany.kosa_space.dto.request.AttendanceNotesRequestDTO;
 import com.mycompany.kosa_space.dto.request.AttendanceTraineeRequestDTO;
 import com.mycompany.kosa_space.dto.response.AttendanceNotesResponseDTO;
+import com.mycompany.kosa_space.dto.response.AttendanceReasonDashboardResponseDTO;
 import com.mycompany.kosa_space.service.AttendanceService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -87,6 +86,15 @@ public class AttendanceController {
 	public void attendanceApprove(@RequestParam String mid,
 			@RequestParam String adate) throws Exception {
 		attendanceService.approveAttendance(mid, adate);
+	}
+	
+	// (운영진) 사유 대시보드 
+	@GetMapping("/reason/dashboard")
+	public AttendanceReasonDashboardResponseDTO reasonDashboard(
+			@RequestParam(value = "ecname", required = false, defaultValue = "all") String ecname,
+			@RequestParam(value = "cname", required = false, defaultValue = "all") String cname) {
+		
+		return attendanceService.dashboard(ecname, cname);
 	}
 	
 	// 파라미터에 해당하는 교육생 출결 목록 조회
