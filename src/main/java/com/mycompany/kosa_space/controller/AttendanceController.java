@@ -1,6 +1,8 @@
 package com.mycompany.kosa_space.controller;
 
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.mycompany.kosa_space.dto.request.AttendanceNotesRequestDTO;
 import com.mycompany.kosa_space.dto.request.AttendanceTraineeRequestDTO;
+import com.mycompany.kosa_space.dto.request.TraineeAttendanceDetailRequestDTO;
 import com.mycompany.kosa_space.dto.response.AttendanceNotesResponseDTO;
 import com.mycompany.kosa_space.dto.response.AttendanceReasonDashboardResponseDTO;
+import com.mycompany.kosa_space.dto.response.TraineeAttendanceDetailResponseDTO;
 import com.mycompany.kosa_space.service.AttendanceService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -96,6 +100,14 @@ public class AttendanceController {
 			@RequestParam(value = "adate", required = true) String adate) throws Exception{
 		
 		return attendanceService.dashboard(ecname, cname, adate);
+	}
+	
+	// (운영진, 교육생) 교육생 출결 상세 조회 
+	@GetMapping("/trainee/detail")
+	public List<TraineeAttendanceDetailResponseDTO> traineeAttendanceDetail(
+			TraineeAttendanceDetailRequestDTO request) {
+		
+		return null;
 	}
 	
 	// 파라미터에 해당하는 교육생 출결 목록 조회
