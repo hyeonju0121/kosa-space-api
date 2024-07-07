@@ -30,4 +30,23 @@
       where mid=#{mid} and adate=#{adate}
    </update>
    
+   <update id="approve" parameterType="map">
+   		update attendancenotes set
+   			anconfirm=1
+   		where mid=#{mid} and adate=#{adate}
+   </update>
+   
+   <select id="selectReasonByMid" parameterType="map" resultType="attendanceinforesponsedto">
+   		select *
+		from (
+		    select a.mid, a.cno, a.adate, a.acheckin, a.acheckout, a.astatus, a.aconfirm, an.anconfirm,
+		        an.ancategory, an.anreason, an.anattach, an.anattachoname, an.anattachtype,
+		        a.approvecnt, a.latenesscnt, a.absencecnt, a.acheckinstatus, a.acheckoutstatus,
+		        an.ancreatedat, an.anupdatedat
+		    from attendance a, attendancenotes an
+		    where a.mid = an.mid
+		)
+		where mid=#{mid} and adate=#{adate}
+   </select>
+   
 </mapper>

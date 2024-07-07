@@ -75,6 +75,20 @@ public class AttendanceController {
 		attendanceService.updateReason(request);
 	}
 	
+	// (운영진) 교육생이 등록한 사유에 대한 승인 기능
+	@GetMapping("/reason/approve")
+	public void reasonApprove(@RequestParam String mid,
+			@RequestParam String adate) throws Exception {
+		attendanceService.approveReason(mid, adate);
+	}
+	
+	// (운영진) 교육생 출결 승인 기능 
+	@GetMapping("/approve")
+	public void attendanceApprove(@RequestParam String mid,
+			@RequestParam String adate) throws Exception {
+		attendanceService.approveAttendance(mid, adate);
+	}
+	
 	// 파라미터에 해당하는 교육생 출결 목록 조회
 	// parameter: ecname, cname, startdate, enddate, checkinstatus, chechoutstatus, mname
 	

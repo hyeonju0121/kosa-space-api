@@ -18,6 +18,7 @@ import com.mycompany.kosa_space.dto.AttendanceNotes;
 import com.mycompany.kosa_space.dto.TraineeInfo;
 import com.mycompany.kosa_space.dto.request.AttendanceNotesRequestDTO;
 import com.mycompany.kosa_space.dto.request.AttendanceTraineeRequestDTO;
+import com.mycompany.kosa_space.dto.response.AttendanceInfoResponseDTO;
 import com.mycompany.kosa_space.dto.response.AttendanceNotesResponseDTO;
 import com.mycompany.kosa_space.dto.response.TraineeResponseDto;
 
@@ -346,6 +347,76 @@ public class AttendanceService {
      	attendanceNotesDao.update(reason);
 	}
 	
+	// (운영진) 교육생이 등록한 사유에 대한 승인 기능
+	public void approveReason(String mid, String adate) throws Exception{
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");        
+        Date date= format.parse(adate);
+		
+        //  DB update
+        attendanceNotesDao.approve(mid, date);
+	}
+	
+	// (운영진) 교육생 출결 승인 기능
+	@Transactional
+	public void approveAttendance(String mid, String adate) throws Exception{
+		String astatus = "";
+		
+		// 사유를 작성한 교육생이 있다면 먼저 사유에 대한 승인 처리가 있어야 함.
+		// 사유 미승인시 교육생의 출결을 승인 기능을 수행할 수 없음
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");        
+        Date date= format.parse(adate);
+		
+		// mid 가 adate 에 사유를 작성한게 있는지 조회
+		AttendanceInfoResponseDTO attendance = attendanceNotesDao
+				.selectReasonByMid(mid, date);
+		
+		// 교육생의 adate 에 해당하는 출결 정보 가져오기 
+		Attendance userAttendanceInfo = attendanceDao.selectByMid(mid);
+		
+		//log.info("userAttendanceInfo: " + userAttendanceInfo.toString());
+
+		// 교육생 총 정상출결일, 총 지각일, 총 결석일에 대한 정보 가져오기
+		int approveCnt = userAttendanceInfo.getApprovecnt();
+		int latenessCnt = userAttendanceInfo.getLatenesscnt();
+		int absenceCnt = userAttendanceInfo.getAbsencecnt();
+			
+		if (attendance != null) { // 사유 작성를 작성한 교육생인 경우
+			// 사유가 승인 됐는지 여부 조사
+			if (!attendance.isAnconfirm()) {
+				throw new RuntimeException(
+						"조퇴 및 결석 사유에 대한 승인을 먼저 진행해주세요. 출결을 승인할 수 없습니다.");
+			} 
+			
+			// 사유가 승인된 경우 (사유 카테고리 : 결석, 지각)
+			approveCnt++;
+			userAttendanceInfo.setAstatus("정상출결");
+			userAttendanceInfo.setAconfirm(true);
+			userAttendanceInfo.setApprovecnt(approveCnt); 
+		} else {
+			// 사유가 작성되지 않은 교육생인 경우
+			// acheckinstatus 와 acheckoutstatus 비교 
+			boolean checkinStatus = userAttendanceInfo.isAcheckinstatus();
+			boolean checkoutStatus = userAttendanceInfo.isAcheckoutstatus();
+			if ((checkinStatus && !checkoutStatus) || 
+					(!checkinStatus && !checkoutStatus)) { 
+				// 퇴실을 안찍은 경우, 사유 작성 없이 결석인 경우 -> 결석처리
+				absenceCnt++;
+				userAttendanceInfo.setAstatus("결석");
+				userAttendanceInfo.setApprovecnt(approveCnt);
+				userAttendanceInfo.setAbsencecnt(absenceCnt);
+				userAttendanceInfo.setAconfirm(true);
+			} else {
+				approveCnt++;
+				userAttendanceInfo.setAstatus("정상출결");
+				userAttendanceInfo.setApprovecnt(approveCnt);
+				userAttendanceInfo.setAconfirm(true);
+			}
+			//log.info("userAttendanceInfo: " + userAttendanceInfo.toString());
+		}
+		// DB 업데이트
+		//log.info("userAttendanceInfo: " + userAttendanceInfo.toString());
+		attendanceDao.approveAttendance(userAttendanceInfo);
+	}
 	
 	
 	// 검증 메소드 ------------------------------------------------------

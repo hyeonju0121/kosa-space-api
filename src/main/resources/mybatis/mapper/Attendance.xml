@@ -43,4 +43,11 @@
    		where mid=#{mid} and adate=#{adate}
    </update>
    
+   <!-- 출결 승인 기능 -->
+   <update id="approveAttendance" parameterType="attendance">
+   		update attendance set
+   			approvecnt=#{approvecnt}, absencecnt=#{absencecnt},
+   			astatus=#{astatus}, aconfirm=#{aconfirm}
+   		where mid=#{mid} and adate=#{adate}
+   </update>
 </mapper>

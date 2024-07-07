@@ -5,6 +5,7 @@ import java.util.Date;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.mycompany.kosa_space.dto.Attendance;
+import com.mycompany.kosa_space.dto.response.AttendanceInfoResponseDTO;
 
 @Mapper
 public interface AttendanceDao {
@@ -21,4 +22,8 @@ public interface AttendanceDao {
 	
 	// (교육생) 퇴실 기능
 	public void checkout(Attendance attendance);
+	
+	// (운영진) 교육생 출결 승인 기능 
+	public void approveAttendance(Attendance attendance);
+	
 }
