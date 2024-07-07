@@ -208,7 +208,7 @@ public class EduController {
 	}
 
 	// 교육생 단건 조회
-	@GetMapping("/admin/trainee/info")
+	@GetMapping("/admin/trainee/detail")
 	public TraineeResponseDto traineeInfo(@RequestParam String mid) {
 		log.info("교육생 단건 조회 실행");
 		log.info("mid = " + mid);

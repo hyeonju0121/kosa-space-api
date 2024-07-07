@@ -979,7 +979,7 @@ public class EduService {
 			// traineeinfo에 값 넣어주기
 			TraineeInfo traineeInfo = TraineeInfo.builder().mid(mid).cno(course.getCno()).tsex(request.isTsex())
 					.tage(request.getTage()).tpostcode(request.getTpostcode())
-					.taddress(request.getTaddress() + " " + request.getTaddressdetail()).tfield(request.isTfield())
+					.taddress(request.getTaddress() + ", " + request.getTaddressdetail()).tfield(request.isTfield())
 					.tacademic(request.getTacademic()).tschoolname(request.getTschoolname()).tmajor(request.getTmajor())
 					.tminor(request.getTminor()).tgrade(request.getTgrade()).tstatus(course.getCstatus()).build();
 
@@ -1019,6 +1019,19 @@ public class EduService {
 		// 조인문 만들어서 단번에 TraineeResponseDTO 객체에 삽입하여 반환할 수 있는지?
 
 		TraineeResponseDto response = traineeInfoDao.detailInfo(mid);
+		
+		// Taddrees와 TaddressDetail을 나누기 위한 임시 문자열 배열 변수
+		if(response.getTaddress().contains(",")) {
+			String[] address = response.getTaddress().split(",");
+			response.setTaddress(address[0].trim());
+			response.setTaddressdetail(address[1].trim());
+		} else if(response.getTaddress().contains("null")) {
+			int temp = response.getTaddress().indexOf("null");
+			log.info("temp : " + temp);
+			response.setTaddress(response.getTaddress().substring(0, temp));
+			response.setTaddressdetail("");
+		}
+		
 		log.info("response 데이터 = " + response.toString());
 
 		return response;
