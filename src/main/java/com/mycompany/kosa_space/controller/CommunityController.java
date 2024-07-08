@@ -39,4 +39,20 @@ public class CommunityController {
 			@RequestParam(defaultValue = "1") int pageNo) {
 		return communityService.listNotice(ecname, pageNo);
 	}
+	
+	// ecname, cname, ncategory, pageNo 에 따른 공지사항 목록 조회
+	@PostMapping("/notice/list")
+	public Map<String, Object> noticeAllList(
+			@RequestParam(value = "ecname", required = false, defaultValue = "all") String ecname,
+			@RequestParam(value = "cname", required = false, defaultValue = "all") String cname,
+			@RequestParam(value = "ncategory", required = false, defaultValue = "all") String ncategory,
+			@RequestParam int pageNo) {
+
+		log.info("ecname: " + ecname);
+		log.info("cname: " + cname);
+		log.info("ncategory: " + ncategory);
+		
+		
+		return communityService.listAllNotice(ecname, cname, ncategory, pageNo);
+	}
 }

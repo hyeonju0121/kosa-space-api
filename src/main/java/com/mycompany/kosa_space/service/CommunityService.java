@@ -24,6 +24,7 @@ import com.mycompany.kosa_space.dto.request.CreateCommunityRequestDTO;
 import com.mycompany.kosa_space.dto.response.CourseResponseDTO;
 import com.mycompany.kosa_space.dto.response.DashBoardNoticeDTO;
 import com.mycompany.kosa_space.dto.response.DashBoardResponseDTO;
+import com.mycompany.kosa_space.dto.response.NoticeEduCenterCourseCombineDTO;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -155,4 +156,30 @@ public class CommunityService {
 
 		return map;
 	}
+	
+	// ecname, cname, ncategory, pageNo 에 따른 공지사항 목록 조회
+	public Map<String, Object> listAllNotice(String ecname, String cname, 
+			String ncategory, int pageNo) {
+		
+		// 해당 페이지의 공지사항 정보 가져오기
+		List<NoticeEduCenterCourseCombineDTO> data = noticeDao
+				.selectNoticeByEcnameAndCnameAndNcategory(ecname, cname, ncategory);
+		
+		// 페이징 대상이 되는 전체 행수 얻기
+		int totalRows = data.size();
+		
+		// 페이지 객체 생성
+		Pager pager = new Pager(10, 10, totalRows, pageNo);
+		
+		// 해당 페이지의 공지사항 정보 가져오기
+		List<NoticeEduCenterCourseCombineDTO> response = noticeDao
+				.selectPageNoticeByEcnameAndCnameAndNcategory(ecname, cname, ncategory, pager);
+		
+		Map<String, Object> map = new HashMap<>();
+		map.put("notice", response);
+		map.put("pager",  pager);
+		
+		return map;
+	}
 }
+

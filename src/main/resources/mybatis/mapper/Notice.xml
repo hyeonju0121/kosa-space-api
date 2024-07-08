@@ -40,4 +40,59 @@
    		]]>
    </select>
    
+   <select id="selectNoticeByEcnameAndCnameAndNcategory" parameterType="map" resultType="noticeeducentercoursecombinedto">
+   		select t1.nno, t1.ecno, t1.ecname, t1.cno, c.cname, t1.ncategory,
+		       t1.ntitle, t1.ncontent, t1.nhitcount, t1.nattach, t1.nattachoname, t1.nattachtype,
+		       t1.ncreatedat, t1.nupdatedat
+		from (
+		    select n.nno, ec.ecno, ec.ecname, n.cno, n.ncategory,
+		            n.ntitle, n.ncontent, n.nhitcount, n.nattach, n.nattachoname, n.nattachtype,
+		            n.ncreatedat, n.nupdatedat
+		    from notice n, educenter ec
+		    where n.ecno = ec.ecno
+		)t1, course c
+		where t1.cno = c.cno
+			<if test="ecname != 'all'">
+	            and t1.ecname=#{ecname}
+	         </if>
+	         <if test="cname != 'all'">
+	            and c.cname=#{cname}
+	         </if>
+	         <if test="ncategory != 'all'">
+	            and t1.ncategory=#{ncategory}
+	         </if>
+   </select>
+   
+   <select id="selectPageNoticeByEcnameAndCnameAndNcategory" parameterType="map" resultType="noticeeducentercoursecombinedto">
+   		<![CDATA[
+   			select rnum, nno, ecno, ecname, cno, cname, ncategory,
+			       ntitle, ncontent, nhitcount, nattach, nattachoname, nattachtype,
+			       ncreatedat, nupdatedat
+			from (
+			    select rownum as rnum, t1.nno, t1.ecno, t1.ecname, t1.cno, c.cname, t1.ncategory,
+			       t1.ntitle, t1.ncontent, t1.nhitcount, t1.nattach, t1.nattachoname, t1.nattachtype,
+			       t1.ncreatedat, t1.nupdatedat
+			    from (
+			        select n.nno, ec.ecno, ec.ecname, n.cno, n.ncategory,
+			                n.ntitle, n.ncontent, n.nhitcount, n.nattach, n.nattachoname, n.nattachtype,
+			                n.ncreatedat, n.nupdatedat
+			        from notice n, educenter ec
+			        where n.ecno = ec.ecno
+			        order by n.ncreatedat desc
+			    )t1, course c
+			    where t1.cno = c.cno and rownum <= #{pager.endRowNo}
+			)
+			where rnum >= #{pager.startRowNo}
+   		]]>
+   			<if test="ecname != 'all'">
+		          and ecname=#{ecname}
+			</if>
+			<if test="cname != 'all'">
+			      and cname=#{cname}
+			</if>
+			<if test="ncategory != 'all'">
+			      and ncategory=#{ncategory}
+			</if>
+   </select>
+   
 </mapper>
