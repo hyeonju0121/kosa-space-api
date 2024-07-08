@@ -27,4 +27,6 @@ public interface NoticeDao {
 	
 	public List<NoticeEduCenterCourseCombineDTO> selectPageNoticeByEcnameAndCnameAndNcategory(
 					String ecname, String cname, String ncategory, Pager pager);
+
+	public void deleteByNno(int nno);
 }

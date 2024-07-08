@@ -9,9 +9,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -59,12 +61,30 @@ public class CommunityController {
 		return communityService.listAllNotice(ecname, cname, ncategory, pageNo);
 	}
 
+	// 공지사항 단건조회
 	@GetMapping("/notice/detail/{nno}")
 	public NoticeResponseDTO noticeDetail(@PathVariable int nno) {
 
 		return communityService.detailNotice(nno);
 	}
 
+	
+	// 공지사항 수정
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
+	@PutMapping("/notice/update")
+	public void noticeUpdate(CreateCommunityRequestDTO request) {
+		
+		communityService.updateNotice(request);
+	}
+	
+	// 공지사항 삭제
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
+	@DeleteMapping("/notice/delete/{nno}")
+	public void noticeDelete(@PathVariable int nno) {
+		communityService.deleteNotice(nno);
+	}
+	
+	// 공지사항 첨부파일 다운로드
 	@GetMapping("/notice/download/attach/{nno}")
 	public void noticeAttachDownload(@PathVariable int nno, HttpServletResponse response) {
 		Notice notice = communityService.nattachDownload(nno);

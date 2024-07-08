@@ -196,6 +196,17 @@ public class CommunityService {
 		return notice;
 	}
 	
+	// 공지사항 수정
+	public void updateNotice(CreateCommunityRequestDTO request) {
+	
+	}
+	
+	// 공지사항 삭제
+	public void deleteNotice(int nno) {
+		noticeDao.deleteByNno(nno);
+	}
+	
+	
 	// 공지사항 첨부파일 다운로드
 	public Notice nattachDownload(int nno) {
 		return noticeDao.selectNoticeByNno(nno);

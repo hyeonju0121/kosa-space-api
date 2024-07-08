@@ -107,4 +107,9 @@
 			</if>
    </select>
    
+
+   <delete id="deleteByNno" parameterType="int">
+      delete from notice where nno=#{nno}
+   </delete>  
+   
 </mapper>
