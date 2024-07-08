@@ -50,4 +50,22 @@
    			astatus=#{astatus}, aconfirm=#{aconfirm}
    		where mid=#{mid} and adate=#{adate}
    </update>
+   
+   <!-- 교육생 이름으로 출결 정보 조회 -->
+   <select id="selectTotalAttendanceByMid" parameterType="string" resultType="attendance">
+ 		select *
+		from attendance
+		where mid=#{mid}  
+   </select>
+   
+   <!-- startdate ~ enddate 에 해당하는 교육생의 출결 현황 조회 -->
+   <select id="selectTotalAttendanceByMidAndAdate" parameterType="map" resultType="attendance">
+   		select *
+		from attendance
+		where mid=#{mid}
+		    and adate between to_date(#{startdate}, 'YYYY-MM-DD') 
+		    and to_date(#{enddate}, 'YYYY-MM-DD')
+   
+   </select>
+   
 </mapper>

@@ -1,11 +1,11 @@
 package com.mycompany.kosa_space.dao;
 
 import java.util.Date;
+import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
 import com.mycompany.kosa_space.dto.Attendance;
-import com.mycompany.kosa_space.dto.response.AttendanceInfoResponseDTO;
 
 @Mapper
 public interface AttendanceDao {
@@ -26,4 +26,10 @@ public interface AttendanceDao {
 	// (운영진) 교육생 출결 승인 기능 
 	public void approveAttendance(Attendance attendance);
 	
+	// 교육생 이름으로 모든 출결 현황 조회
+	public List<Attendance> selectTotalAttendanceByMid(String mid);
+	
+	// startdate ~ enddate 에 해당하는 교육생의 출결 현황 조회
+	public List<Attendance> selectTotalAttendanceByMidAndAdate(String mid,
+			String startdate, String enddate);
 }

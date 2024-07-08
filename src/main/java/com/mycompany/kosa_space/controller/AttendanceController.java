@@ -105,9 +105,11 @@ public class AttendanceController {
 	// (운영진, 교육생) 교육생 출결 상세 조회 
 	@GetMapping("/trainee/detail")
 	public List<TraineeAttendanceDetailResponseDTO> traineeAttendanceDetail(
-			TraineeAttendanceDetailRequestDTO request) {
+			@RequestParam(value = "mid", required = true) String mid,
+			@RequestParam(value = "startdate", required = false, defaultValue = "all") String startdate,
+			@RequestParam(value = "enddate", required = false, defaultValue = "all") String enddate) {
 		
-		return null;
+		return attendanceService.detailTraineeAttendance(mid, startdate, enddate);
 	}
 	
 	// 파라미터에 해당하는 교육생 출결 목록 조회

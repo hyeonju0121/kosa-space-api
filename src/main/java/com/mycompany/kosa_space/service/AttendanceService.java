@@ -2,6 +2,7 @@ package com.mycompany.kosa_space.service;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -17,10 +18,12 @@ import com.mycompany.kosa_space.dto.Attendance;
 import com.mycompany.kosa_space.dto.AttendanceNotes;
 import com.mycompany.kosa_space.dto.request.AttendanceNotesRequestDTO;
 import com.mycompany.kosa_space.dto.request.AttendanceTraineeRequestDTO;
+import com.mycompany.kosa_space.dto.request.TraineeAttendanceDetailRequestDTO;
 import com.mycompany.kosa_space.dto.response.AttendanceInfoResponseDTO;
 import com.mycompany.kosa_space.dto.response.AttendanceNotesResponseDTO;
 import com.mycompany.kosa_space.dto.response.AttendanceReasonDashboardResponseDTO;
 import com.mycompany.kosa_space.dto.response.CombineEduTraineeAttendanceDTO;
+import com.mycompany.kosa_space.dto.response.TraineeAttendanceDetailResponseDTO;
 import com.mycompany.kosa_space.dto.response.TraineeResponseDto;
 
 import lombok.extern.slf4j.Slf4j;
@@ -463,6 +466,121 @@ public class AttendanceService {
 		}
 		return null;
 	}
+	
+	// 교육생 출결 상세 조회 
+	@Transactional
+	public List<TraineeAttendanceDetailResponseDTO> detailTraineeAttendance(
+			String mid, String startdate, String enddate) {
+		
+		mid = mid.substring(0, 9);
+			
+		List<Attendance> data = new ArrayList<>();
+		List<TraineeAttendanceDetailResponseDTO> response = new ArrayList<>();
+		
+		SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd"); 
+		SimpleDateFormat format2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		
+		// startdate 와 enddate 를 선택하지 않은 경우, 교육생의 모든 출결 현황 조회
+		if (startdate.equals("all") && enddate.equals("all")) {
+			data = attendanceDao.selectTotalAttendanceByMid(mid);
+			
+			for (Attendance info : data) {        
+				String adate = format1.format(info.getAdate());
+				
+				String acheckin = format2.format(info.getAcheckin()).substring(11, 16);
+				String acheckout = format2.format(info.getAcheckout()).substring(11, 16);
+			
+				String astatus = "";
+				boolean aconfirm = false;
+				
+				if (!info.isAconfirm()) {
+					astatus = "출결 승인 전";
+				} else {
+					aconfirm = true;
+					astatus = info.getAstatus();
+				}
+				
+				boolean anconfirm = false;
+				// mid 가 adate 에 사유를 작성한게 있는지 조회
+				AttendanceInfoResponseDTO reason = attendanceNotesDao
+						.selectReasonByMid(mid, info.getAdate());
+						
+				if (reason != null) { // 사유를 작성한 경우
+					anconfirm = true;
+				} 
+				
+				TraineeAttendanceDetailResponseDTO attendance = TraineeAttendanceDetailResponseDTO.builder()
+						.adate(adate)
+						.acheckin(acheckin)
+						.acheckout(acheckout)
+						.astatus(astatus)
+						.aconfirm(aconfirm)
+						.anconfirm(anconfirm)
+						.build();
+				
+				response.add(attendance);
+			} 
+		} else {
+			// startdate 와 enddate 를 선택한 경우, 기간에 맞는 교육생의 출결 현황 조회
+			startdate = startdate.substring(0, 10);
+			enddate = enddate.substring(0, 10);
+			
+			data = attendanceDao.selectTotalAttendanceByMidAndAdate(mid, startdate, enddate);
+			
+			for (Attendance info : data) {   
+				TraineeAttendanceDetailResponseDTO attendance = new TraineeAttendanceDetailResponseDTO();
+				
+				String adate = format1.format(info.getAdate());
+				attendance.setAdate(adate);
+				
+				// log.info("info: " + info.toString());
+				
+				String acheckin = "";
+				String acheckout = "";
+				
+				// checkin, checkout -> date to string
+				if (info.getAcheckin() != null) {
+					acheckin = format2.format(info.getAcheckin()).substring(11, 16);
+					attendance.setAcheckin(acheckin);
+				} 
+				
+				if (info.getAcheckout() != null) {
+					acheckout = format2.format(info.getAcheckout()).substring(11, 16);
+					attendance.setAcheckout(acheckout);
+				}
+			
+				String astatus = "";
+				boolean aconfirm = false;
+				
+				if (!info.isAconfirm()) {
+					astatus = "출결 승인 전";
+					attendance.setAstatus(astatus);
+					attendance.setAconfirm(aconfirm);
+				} else {
+					aconfirm = true;
+					astatus = info.getAstatus();
+					attendance.setAstatus(astatus);
+					attendance.setAconfirm(aconfirm);
+				}
+				
+				boolean anconfirm = false;
+				// mid 가 adate 에 사유를 작성한게 있는지 조회
+				AttendanceInfoResponseDTO reason = attendanceNotesDao
+						.selectReasonByMid(mid, info.getAdate());
+						
+				if (reason != null) { // 사유를 작성한 경우
+					anconfirm = true;
+					attendance.setAconfirm(aconfirm);
+				} else {
+					attendance.setAnconfirm(anconfirm);
+				}
+				response.add(attendance);
+			} 
+		}
+		return response;
+	}
+
+	
 	
 	// 검증 메소드 ------------------------------------------------------
 	// 클라이언트 IP 와 교육장 IP 비교하는 메소드
