@@ -1,6 +1,4 @@
-package com.mycompany.kosa_space.dto;
-
-import java.util.Date;
+package com.mycompany.kosa_space.dto.request;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,22 +11,14 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Notice {
-	private int nno;
-	private int ecno;
-	private int cno;
-	private String mid;
+public class CreateCommunityRequestDTO {
 	private String ncategory;
+	private String ecname;
+	private String cname;
+	
 	private String ntitle;
 	private String ncontent;
-	private int nhitcount;
 	
 	private MultipartFile nattachdata;
-	private String nattachoname;
-	private String nattachtype;
-	private byte[] nattach;
-	
-	private Date ncreatedat;
-	private Date nupdatedat;
 	
 }
