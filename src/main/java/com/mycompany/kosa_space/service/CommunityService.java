@@ -25,6 +25,7 @@ import com.mycompany.kosa_space.dto.response.CourseResponseDTO;
 import com.mycompany.kosa_space.dto.response.DashBoardNoticeDTO;
 import com.mycompany.kosa_space.dto.response.DashBoardResponseDTO;
 import com.mycompany.kosa_space.dto.response.NoticeEduCenterCourseCombineDTO;
+import com.mycompany.kosa_space.dto.response.NoticeResponseDTO;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -180,6 +181,24 @@ public class CommunityService {
 		map.put("pager",  pager);
 		
 		return map;
+	}
+	
+	// 공지사항 단건조회
+	public NoticeResponseDTO detailNotice(int nno) {
+		
+		NoticeResponseDTO notice = noticeDao.selectByNno(nno);
+		// log.info("notice: " + notice);
+		
+		if (notice.getNattach() != null) {
+			notice.setNattach(null);
+		}
+		
+		return notice;
+	}
+	
+	// 공지사항 첨부파일 다운로드
+	public Notice nattachDownload(int nno) {
+		return noticeDao.selectNoticeByNno(nno);
 	}
 }
 

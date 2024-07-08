@@ -18,6 +18,18 @@
 		)
    </insert>
    
+   <select id="selectByNno" parameterType="int" resultType="noticeresponsedto">
+   		select *
+   		from notice
+   		where nno=#{nno}
+   </select>
+   
+   <select id="selectNoticeByNno" parameterType="int" resultType="noticeresponsedto">
+   		select *
+   		from notice
+   		where nno=#{nno}
+   </select>
+   
    <select id="selectNoticeByEcname" parameterType="int" resultType="notice">
    		select distinct ncategory, ntitle, ecno, ncreatedat 
 		from notice
