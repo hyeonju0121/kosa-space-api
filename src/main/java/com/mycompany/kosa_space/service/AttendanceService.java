@@ -369,9 +369,9 @@ public class AttendanceService {
 		AttendanceInfoResponseDTO attendance = attendanceNotesDao
 				.selectReasonByMid(mid, date);
 		
-		log.info("attendance: " + attendance.toString());
+		// log.info("attendance: " + attendance.toString());
 		
-		/*
+		
 		// 교육생의 adate 에 해당하는 출결 정보 가져오기 
 		Attendance userAttendanceInfo = attendanceDao.selectByMid(mid);
 		
@@ -417,7 +417,6 @@ public class AttendanceService {
 		// DB 업데이트
 		//log.info("userAttendanceInfo: " + userAttendanceInfo.toString());
 		attendanceDao.approveAttendance(userAttendanceInfo);
-		*/
 	}
 	
 	

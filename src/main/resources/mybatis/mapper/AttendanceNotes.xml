@@ -44,7 +44,7 @@
 		        a.approvecnt, a.latenesscnt, a.absencecnt, a.acheckinstatus, a.acheckoutstatus,
 		        an.ancreatedat, an.anupdatedat
 		    from attendance a, attendancenotes an
-		    where a.mid = an.mid
+		    where a.mid = an.mid and a.adate = an.adate
 		)
 		where mid=#{mid} and adate=#{adate}
    </select>
@@ -78,7 +78,7 @@
 		                a.approvecnt, a.latenesscnt, a.absencecnt, a.acheckinstatus, a.acheckoutstatus,
 		                an.ancreatedat, an.anupdatedat
 		            from attendance a, attendancenotes an
-		            where a.mid = an.mid
+		            where a.mid = an.mid and a.adate = an.adate
 		        ) t1, course c
 		        where t1.cno = c.cno
 		    ) t2, trainingroom tr
@@ -116,7 +116,7 @@
 		                a.approvecnt, a.latenesscnt, a.absencecnt, a.acheckinstatus, a.acheckoutstatus,
 		                an.ancreatedat, an.anupdatedat
 		            from attendance a, attendancenotes an
-		            where a.mid = an.mid
+		            where a.mid = an.mid and a.adate = an.adate
 		        ) t1, course c
 		        where t1.cno = c.cno
 		    ) t2, trainingroom tr
@@ -154,7 +154,7 @@
 		                a.approvecnt, a.latenesscnt, a.absencecnt, a.acheckinstatus, a.acheckoutstatus,
 		                an.ancreatedat, an.anupdatedat
 		            from attendance a, attendancenotes an
-		            where a.mid = an.mid
+		            where a.mid = an.mid and a.adate = an.adate
 		        ) t1, course c
 		        where t1.cno = c.cno
 		    ) t2, trainingroom tr
