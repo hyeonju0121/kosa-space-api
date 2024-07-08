@@ -1,7 +1,12 @@
 package com.mycompany.kosa_space.service;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -14,8 +19,11 @@ import com.mycompany.kosa_space.dao.EduCenterDao;
 import com.mycompany.kosa_space.dao.NoticeDao;
 import com.mycompany.kosa_space.dto.EduCenter;
 import com.mycompany.kosa_space.dto.Notice;
+import com.mycompany.kosa_space.dto.Pager;
 import com.mycompany.kosa_space.dto.request.CreateCommunityRequestDTO;
 import com.mycompany.kosa_space.dto.response.CourseResponseDTO;
+import com.mycompany.kosa_space.dto.response.DashBoardNoticeDTO;
+import com.mycompany.kosa_space.dto.response.DashBoardResponseDTO;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -111,4 +119,40 @@ public class CommunityService {
 		}
 	}
 
+	// 공지사항 조회
+	public Map<String, Object> listNotice(String ecname, int pageNo) {
+		EduCenter center = eduCenterDao.selectByEcname(ecname);
+		int ecno = center.getEcno();
+		
+		// 해당 페이지의 공지사항 정보 가져오기
+		List<Notice> data = noticeDao.selectNoticeByEcname(ecno);
+		int totalRows = data.size();
+		
+		// Pager 객체 생성
+		Pager pager = new Pager(2, 5, totalRows, pageNo);
+		
+		List<DashBoardNoticeDTO> response = new ArrayList<>();
+		for (Notice notice : data) {
+			DashBoardNoticeDTO temp = DashBoardNoticeDTO.builder()
+					.ncategory(notice.getNcategory())
+					.ntitle(notice.getNtitle())
+					.ecname(center.getEcname())
+					.build();
+			
+			// 생성일시, 수정일시 Date to String
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date createdat = notice.getNcreatedat();
+			String ncreatedat = sdf.format(createdat);
+			
+			temp.setNcreatedat(ncreatedat);
+			
+			response.add(temp);
+		}
+		
+		Map<String, Object> map = new HashMap<>();
+		map.put("noticeInfo", response);
+		map.put("pager", pager);
+
+		return map;
+	}
 }

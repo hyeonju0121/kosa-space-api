@@ -18,4 +18,26 @@
 		)
    </insert>
    
+   <select id="selectNoticeByEcname" parameterType="int" resultType="notice">
+   		select distinct ncategory, ntitle, ecno, ncreatedat 
+		from notice
+		where ecno = #{ecno}
+   </select>
+   
+   <select id="selectNoticePagerByEcname" parameterType="map" resultType="notice">
+   		<![CDATA[
+			select rnum,ncategory, ntitle, ecno, ncreatedat 
+			from (
+			    select rownum as rnum,ncategory, ntitle, ecno, ncreatedat 
+			    from (
+			        select distinct ncategory, ntitle, ecno, ncreatedat 
+			        from notice
+			        where ecno = #{ecno}
+			        order by ncreatedat desc
+			    )
+			    where rownum <= #{pager.endRowNo}
+			) where rnum >= #{pager.startRowNo}
+   		]]>
+   </select>
+   
 </mapper>
