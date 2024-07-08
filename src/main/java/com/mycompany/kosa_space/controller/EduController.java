@@ -273,7 +273,7 @@ public class EduController {
 	}
 	
 	// ecname 기준으로 교육상태에 따른 교육과정 진행 현황 조회
-	@GetMapping("/dashboard/course")
+	@PostMapping("/dashboard/course")
 	public Map<String, Object> courseList(
 			@RequestParam String ecname,
 			@RequestParam String cstatus,
@@ -283,7 +283,7 @@ public class EduController {
 	}
 	
 	// ecname 기준으로 현재 진행중인 교육과정의 교육생 출결 현황 조회
-	@GetMapping("/dashboard/attendance")
+	@PostMapping("/dashboard/attendance")
 	public Map<String, Object> attendanceList(
 			@RequestParam String ecname,
 			@RequestParam(defaultValue = "1") int pageNo, 
