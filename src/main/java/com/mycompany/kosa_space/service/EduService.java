@@ -34,7 +34,9 @@ import com.mycompany.kosa_space.dto.request.CreateEduCenterRequestDTO;
 import com.mycompany.kosa_space.dto.request.CreateTraineeRequestDto;
 import com.mycompany.kosa_space.dto.request.CreateTrainingRoomRequestDTO;
 import com.mycompany.kosa_space.dto.request.UpdateTraineeRequestDto;
+import com.mycompany.kosa_space.dto.response.CourseDashboardResponseDTO;
 import com.mycompany.kosa_space.dto.response.CourseResponseDTO;
+import com.mycompany.kosa_space.dto.response.DashBoardResponseDTO;
 import com.mycompany.kosa_space.dto.response.EduCenterResponseDTO;
 import com.mycompany.kosa_space.dto.response.TraineeResponseDto;
 import com.mycompany.kosa_space.dto.response.TrainingRoomListResponseDTO;
@@ -1104,6 +1106,22 @@ public class EduService {
 		log.info("traineeInfo = " + traineeInfo);
 		return traineeInfo;
 	}
+	
+	// dashboard -------------------------------------------
+	// ecname 기준으로 현재 진행중인 교육과정과 완료된 교육과정 카운트 조회 기능
+	public CourseDashboardResponseDTO totalCnt(String ecname) {
+		
+		int inprogresscnt = courseDao.inProgressCountByEcname(ecname).size();
+		int scheduledcnt = courseDao.scheduledCountByEcname(ecname).size();
+		int completecnt = courseDao.completedCountByEcname(ecname).size();
+				
+		return CourseDashboardResponseDTO.builder()
+				.inprogresscnt(inprogresscnt)
+				.scheduledcnt(scheduledcnt)
+				.completecnt(completecnt)
+				.build();
+	}
+	
 
 	// ---- validation method ----------------------------------------------------
 	// ecno 가 유효한지 검사하는 메소드

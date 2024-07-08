@@ -26,6 +26,7 @@ import com.mycompany.kosa_space.dto.request.CreateEduCenterRequestDTO;
 import com.mycompany.kosa_space.dto.request.CreateTraineeRequestDto;
 import com.mycompany.kosa_space.dto.request.CreateTrainingRoomRequestDTO;
 import com.mycompany.kosa_space.dto.request.UpdateTraineeRequestDto;
+import com.mycompany.kosa_space.dto.response.CourseDashboardResponseDTO;
 import com.mycompany.kosa_space.dto.response.CourseResponseDTO;
 import com.mycompany.kosa_space.dto.response.EduCenterResponseDTO;
 import com.mycompany.kosa_space.dto.response.TraineeResponseDto;
@@ -263,4 +264,11 @@ public class EduController {
 			log.error(e.getMessage()); // error 출력
 		}
 	}
+	
+	// 운영진 대시보드 ----------------------------------------------------------
+	@GetMapping("/dashboard/course/totalcount")
+	public CourseDashboardResponseDTO totalCourseCnt(@RequestParam String ecname) {
+		return eduService.totalCnt(ecname);
+	}
+	
 }

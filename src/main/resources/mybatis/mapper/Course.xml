@@ -46,4 +46,60 @@
    		where cname = #{cname}
    		</if>
    </select>
+   
+   <select id="totalCountByEcname" parameterType="string" resultType="dashboardresponsedto">
+   		select t1.ecno, e.ecname, t1.cno, t1.cname, t1.cstatus, t1.cstartdate, t1.cenddate, t1.crequireddate
+		from educenter e, (
+		    select c.cno, r.ecno, r.trno, r.trname, c.cname, c.ccode, c.ctotalnum,
+		           c.cstartdate, c.cenddate, c.crequireddate, c.cstatus,
+				   c.cprofessor, c.cmanager, c.ccreatedat, c.cupdatedat, c.ctrainingdate, c.ctrainingtime,
+		           r.trcapacity, r.trenable
+			from course c, trainingroom r
+			where c.trno = r.trno
+		) t1
+		where e.ecno = t1.ecno
+		    and e.ecname=#{ecname}
+   </select>
+   
+   <select id="inProgressCountByEcname" parameterType="string" resultType="dashboardresponsedto">
+   		select t1.ecno, e.ecname, t1.cno, t1.cname, t1.cstatus, t1.cstartdate, t1.cenddate, t1.crequireddate
+		from educenter e, (
+		    select c.cno, r.ecno, r.trno, r.trname, c.cname, c.ccode, c.ctotalnum,
+		           c.cstartdate, c.cenddate, c.crequireddate, c.cstatus,
+				   c.cprofessor, c.cmanager, c.ccreatedat, c.cupdatedat, c.ctrainingdate, c.ctrainingtime,
+		           r.trcapacity, r.trenable
+			from course c, trainingroom r
+			where c.trno = r.trno
+		) t1
+		where e.ecno = t1.ecno
+		    and e.ecname=#{ecname} and t1.cstatus='진행중'
+   </select>
+   
+   <select id="scheduledCountByEcname" parameterType="string" resultType="dashboardresponsedto">
+   		select t1.ecno, e.ecname, t1.cno, t1.cname, t1.cstatus, t1.cstartdate, t1.cenddate, t1.crequireddate
+		from educenter e, (
+		    select c.cno, r.ecno, r.trno, r.trname, c.cname, c.ccode, c.ctotalnum,
+		           c.cstartdate, c.cenddate, c.crequireddate, c.cstatus,
+				   c.cprofessor, c.cmanager, c.ccreatedat, c.cupdatedat, c.ctrainingdate, c.ctrainingtime,
+		           r.trcapacity, r.trenable
+			from course c, trainingroom r
+			where c.trno = r.trno
+		) t1
+		where e.ecno = t1.ecno
+		    and e.ecname=#{ecname} and t1.cstatus='진행예정'
+   </select>
+   
+   <select id="completedCountByEcname" parameterType="string" resultType="dashboardresponsedto">
+   		select t1.ecno, e.ecname, t1.cno, t1.cname, t1.cstatus, t1.cstartdate, t1.cenddate, t1.crequireddate
+		from educenter e, (
+		    select c.cno, r.ecno, r.trno, r.trname, c.cname, c.ccode, c.ctotalnum,
+		           c.cstartdate, c.cenddate, c.crequireddate, c.cstatus,
+				   c.cprofessor, c.cmanager, c.ccreatedat, c.cupdatedat, c.ctrainingdate, c.ctrainingtime,
+		           r.trcapacity, r.trenable
+			from course c, trainingroom r
+			where c.trno = r.trno
+		) t1
+		where e.ecno = t1.ecno
+		    and e.ecname=#{ecname} and t1.cstatus='진행완료'
+   </select>
 </mapper>
