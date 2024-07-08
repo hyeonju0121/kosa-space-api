@@ -32,4 +32,9 @@ public interface AttendanceDao {
 	// startdate ~ enddate 에 해당하는 교육생의 출결 현황 조회
 	public List<Attendance> selectTotalAttendanceByMidAndAdate(String mid,
 			String startdate, String enddate);
+	
+	// cno 에 해당하는 현재 날짜의 교육생 전체 출결 정보 가져오기
+	public List<Attendance> selectAttendanceInfoByAdateAndCno(
+			Date adate, int cno);
+	
 }

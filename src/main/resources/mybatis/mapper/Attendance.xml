@@ -64,8 +64,13 @@
 		from attendance
 		where mid=#{mid}
 		    and adate between to_date(#{startdate}, 'YYYY-MM-DD') 
-		    and to_date(#{enddate}, 'YYYY-MM-DD')
+		    and to_date(#{enddate}, 'YYYY-MM-DD') 
+   </select>
    
+   <select id="selectAttendanceInfoByAdateAndCno" parameterType="map" resultType="attendance">
+   		select *
+		from attendance
+		where cno=#{cno} and adate=#{adate}
    </select>
    
 </mapper>

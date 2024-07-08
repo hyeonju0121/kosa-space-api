@@ -282,4 +282,12 @@ public class EduController {
 		return eduService.getDashboardCourseList(ecname, cstatus, pageNo);
 	}
 	
+	// ecname 기준으로 현재 진행중인 교육과정의 교육생 출결 현황 조회
+	@GetMapping("/dashboard/attendance")
+	public Map<String, Object> attendanceList(
+			@RequestParam String ecname,
+			@RequestParam(defaultValue = "1") int pageNo, 
+			@RequestParam String adate) throws Exception{
+		return eduService.getDashboardAttendanceList(ecname, pageNo, adate);
+	}
 }

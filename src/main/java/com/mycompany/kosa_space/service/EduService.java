@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.mycompany.kosa_space.dao.AttendanceDao;
 import com.mycompany.kosa_space.dao.CourseDao;
 import com.mycompany.kosa_space.dao.CourseResponseDao;
 import com.mycompany.kosa_space.dao.EduAttachDao;
@@ -24,6 +25,7 @@ import com.mycompany.kosa_space.dao.EduCenterDao;
 import com.mycompany.kosa_space.dao.MemberDao;
 import com.mycompany.kosa_space.dao.TraineeInfoDao;
 import com.mycompany.kosa_space.dao.TrainingRoomDao;
+import com.mycompany.kosa_space.dto.Attendance;
 import com.mycompany.kosa_space.dto.Course;
 import com.mycompany.kosa_space.dto.EduAttach;
 import com.mycompany.kosa_space.dto.EduCenter;
@@ -39,6 +41,7 @@ import com.mycompany.kosa_space.dto.request.CreateTrainingRoomRequestDTO;
 import com.mycompany.kosa_space.dto.request.UpdateTraineeRequestDto;
 import com.mycompany.kosa_space.dto.response.CourseDashboardResponseDTO;
 import com.mycompany.kosa_space.dto.response.CourseResponseDTO;
+import com.mycompany.kosa_space.dto.response.DashBoardAttendanceDTO;
 import com.mycompany.kosa_space.dto.response.DashBoardResponseDTO;
 import com.mycompany.kosa_space.dto.response.EduCenterResponseDTO;
 import com.mycompany.kosa_space.dto.response.TraineeResponseDto;
@@ -69,6 +72,9 @@ public class EduService {
 
 	@Autowired
 	private TraineeInfoDao traineeInfoDao;
+	
+	@Autowired
+	private AttendanceDao attendanceDao;
 
 	// 교육장 관련 ------------------------------------------------
 	/*
@@ -1146,6 +1152,62 @@ public class EduService {
 		return map;
 	}
 	
+	// ecname 기준으로 현재 진행중인 교육과정의 교육생 출결 현황 조회
+	public Map<String, Object> getDashboardAttendanceList(String ecname, 
+			int pageNo, String adate)  throws Exception{
+		// ecname 에서 진행하는 교육과정명을 리스트로 가져오기
+		List<CourseResponseDTO> courseList = courseResponseDao.listByEcnameAndCstatus(ecname);
+		
+		// 페이징 대상이 되는 전체 행수 얻기
+		int totalRows = courseList.size();
+		
+		// 페이지 객체 생성
+		Pager pager = new Pager(4, 5, totalRows, pageNo);
+		
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");        
+        Date date= format.parse(adate);
+		
+        // 데이터 생성 
+        List<DashBoardAttendanceDTO> response = new ArrayList<>();
+        
+		for (CourseResponseDTO data : courseList) {
+			int cno = data.getCno();
+			
+			DashBoardAttendanceDTO dashboard = new DashBoardAttendanceDTO();
+			dashboard.setCname(data.getCname());
+			dashboard.setTrname(data.getTrname());
+			
+			// cno 에 해당하는 교육생 전체 출결 정보 가져오기
+			List<Attendance> attendanceInfo = attendanceDao.selectAttendanceInfoByAdateAndCno(date, cno);
+		
+			int totalCheckinCnt = 0;
+			int totalCheckoutCnt = 0;
+			int totalAbsenceCnt = 0;
+			
+			for (Attendance temp : attendanceInfo) {
+				if (temp.isAcheckinstatus()) {
+					totalCheckinCnt++;
+				} if (temp.isAcheckoutstatus()) {
+					totalCheckoutCnt++;
+				} if (!temp.isAcheckinstatus() && !temp.isAcheckoutstatus()){
+					totalAbsenceCnt++;
+				}
+			}
+			
+			dashboard.setTotalCheckinCnt(totalCheckinCnt);
+			dashboard.setTotalCheckoutCnt(totalCheckoutCnt);
+			dashboard.setTotalAbsenceCnt(totalAbsenceCnt);
+			
+			response.add(dashboard);
+		}
+		
+		// Map 객체 생성
+		Map<String, Object> map = new HashMap<>();
+		map.put("attendanceInfo", response);
+		map.put("pager", pager);
+		
+		return map;
+	}
 
 	// ---- validation method ----------------------------------------------------
 	// ecno 가 유효한지 검사하는 메소드
