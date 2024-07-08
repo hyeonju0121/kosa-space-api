@@ -6,7 +6,9 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
@@ -26,6 +28,7 @@ import com.mycompany.kosa_space.dto.Course;
 import com.mycompany.kosa_space.dto.EduAttach;
 import com.mycompany.kosa_space.dto.EduCenter;
 import com.mycompany.kosa_space.dto.Member;
+import com.mycompany.kosa_space.dto.Pager;
 import com.mycompany.kosa_space.dto.TraineeInfo;
 import com.mycompany.kosa_space.dto.TrainingRoom;
 import com.mycompany.kosa_space.dto.request.CourseParameterRequestDTO;
@@ -1120,6 +1123,27 @@ public class EduService {
 				.scheduledcnt(scheduledcnt)
 				.completecnt(completecnt)
 				.build();
+	}
+	
+	// ecname 기준으로 교육상태에 따른 교육과정 진행 현황 조회 (페이징 적용)
+	public Map<String, Object> getDashboardCourseList(String ecname, 
+			String cstatus, int pageNo) {
+		
+		// 페이징 대상이 되는 전체 행수 얻기
+		int totalRows = courseDao.getCountByEcnameAndCstatus(ecname, cstatus);
+		
+		// 페이지 객체 생성
+		Pager pager = new Pager(4, 5, totalRows, pageNo);
+		
+		// 해당 페이지의 교육과정 정보 가져오기
+		List<DashBoardResponseDTO> data = courseDao.getCourseList(ecname, cstatus, pager);
+		
+		// Map 객체 생성
+		Map<String, Object> map = new HashMap<>();
+		map.put("course", data);
+		map.put("pager", pager);
+		
+		return map;
 	}
 	
 

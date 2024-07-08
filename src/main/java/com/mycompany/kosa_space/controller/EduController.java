@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -269,6 +270,16 @@ public class EduController {
 	@GetMapping("/dashboard/course/totalcount")
 	public CourseDashboardResponseDTO totalCourseCnt(@RequestParam String ecname) {
 		return eduService.totalCnt(ecname);
+	}
+	
+	// ecname 기준으로 교육상태에 따른 교육과정 진행 현황 조회
+	@GetMapping("/dashboard/course")
+	public Map<String, Object> courseList(
+			@RequestParam String ecname,
+			@RequestParam String cstatus,
+			@RequestParam(defaultValue = "1") int pageNo) {
+
+		return eduService.getDashboardCourseList(ecname, cstatus, pageNo);
 	}
 	
 }

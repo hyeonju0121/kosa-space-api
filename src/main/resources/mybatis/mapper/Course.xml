@@ -102,4 +102,43 @@
 		where e.ecno = t1.ecno
 		    and e.ecname=#{ecname} and t1.cstatus='진행완료'
    </select>
+   
+   <select id="getCountByEcnameAndCstatus" parameterType="map" resultType="int">
+   		select count(t1.cno)
+		from educenter e, (
+		    select c.cno, r.ecno, r.trno, r.trname, c.cname, c.ccode, c.ctotalnum,
+		           c.cstartdate, c.cenddate, c.crequireddate, c.cstatus,
+				   c.cprofessor, c.cmanager, c.ccreatedat, c.cupdatedat, c.ctrainingdate, c.ctrainingtime,
+		           r.trcapacity, r.trenable
+			from course c, trainingroom r
+			where c.trno = r.trno
+		) t1
+		where e.ecno = t1.ecno
+		    and e.ecname=#{ecname} and t1.cstatus=#{cstatus}
+   </select>
+   
+   <select id="getCourseList" parameterType="map" resultType="dashboardresponsedto">
+   		<![CDATA[
+   			select rnum, ecno, ecname, cno, cname, cstatus, cstartdate, cenddate, crequireddate
+			from (
+			    select rownum as rnum, ecno, ecname, cno, cname, cstatus, cstartdate, cenddate, crequireddate
+			from (
+			   select t1.ecno, e.ecname, t1.cno, t1.cname, t1.cstatus, t1.cstartdate, t1.cenddate, t1.crequireddate
+			    from educenter e, (
+			        select c.cno, r.ecno, r.trno, r.trname, c.cname, c.ccode, c.ctotalnum,
+			               c.cstartdate, c.cenddate, c.crequireddate, c.cstatus,
+			               c.cprofessor, c.cmanager, c.ccreatedat, c.cupdatedat, c.ctrainingdate, c.ctrainingtime,
+			               r.trcapacity, r.trenable
+			        from course c, trainingroom r
+			        where c.trno = r.trno
+			    ) t1
+			    where e.ecno = t1.ecno
+			        and e.ecname=#{ecname} and t1.cstatus=#{cstatus}
+			    order by t1.cstartdate
+			    )
+			    where rownum <= #{pager.endRowNo}
+			)
+			where rnum >= #{pager.startRowNo}
+   		]]>
+   </select>
 </mapper>

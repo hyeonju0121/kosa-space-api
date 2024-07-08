@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.mycompany.kosa_space.dto.Course;
+import com.mycompany.kosa_space.dto.Pager;
 import com.mycompany.kosa_space.dto.response.DashBoardResponseDTO;
 
 @Mapper
@@ -30,4 +31,10 @@ public interface CourseDao {
 	
 	// ecname 기준으로 진행완료된 교육과정 조회
 	public List<DashBoardResponseDTO> completedCountByEcname(String ecname);
+
+	// ecname 과 csatus 에 따른 교육과정 행 수 조회
+	public int getCountByEcnameAndCstatus(String ecname, String cstatus);
+
+	// 해당 페이지의 교육과정 정보 조회
+	public List<DashBoardResponseDTO> getCourseList(String ecname, String cstatus, Pager pager);
 }
