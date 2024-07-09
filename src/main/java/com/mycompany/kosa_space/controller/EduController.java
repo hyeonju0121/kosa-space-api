@@ -169,6 +169,12 @@ public class EduController {
 		return eduService.listCnameCourse(ecname);
 	}
 	
+	@GetMapping("course/cnamelist/inprogress")
+	public List<String> courseCnameListInProress(@RequestParam(value="ecname", required=false,
+			defaultValue = "all")String ecname) {
+		return eduService.listCnameCourseInProgress(ecname);
+	}
+	
 	
 	// 다운로드
 	@GetMapping("/download/attach/{eano}")

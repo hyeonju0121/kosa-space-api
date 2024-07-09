@@ -936,6 +936,11 @@ public class EduService {
 		return response;
 	}
 	
+	// ecname 기준으로 진행중인 교육과정 명 리스트 조회
+	public List<String> listCnameCourseInProgress(String ecname) {
+		List<String> response = courseResponseDao.listInProgressByEcname(ecname);
+		return response;
+	}
 
 	// --- 첨부파일 다운로드 ---------------------------------------------------------
 	public EduAttach attachDownload(int eano) {

@@ -21,6 +21,8 @@ public interface CourseResponseDao {
 	
 	public List<String> listByEcname(String ecname);
 	
+	public List<String> listInProgressByEcname(String ecname);
+	
 	public CourseResponseDTO listByEcnameAndTrno(String ecname, int trno);
 	
 	public List<CourseResponseDTO> listByEcnameAndCstatus(String ecname);

@@ -102,6 +102,22 @@
 	            and e.ecname=#{ecname}
 	          </if>
 	</select>
+	
+	<select id="listInProgressByEcname" parameterType="string" resultType="string">
+	    select t1.cname 
+		    from educenter e, (
+		            select c.cno, r.ecno, r.trno, r.trname, c.cname, c.ccode, c.ctotalnum,
+		            c.cstartdate, c.cenddate, c.crequireddate, c.cstatus,
+		            c.cprofessor, c.cmanager, c.ccreatedat, c.cupdatedat, c.ctrainingdate, c.ctrainingtime,
+		            r.trcapacity, r.trenable
+		            from course c, trainingroom r
+		            where c.trno = r.trno
+		    ) t1
+		    where e.ecno = t1.ecno and t1.cstatus='진행중'
+		    	<if test="ecname != 'all'">
+	            and e.ecname=#{ecname} 
+	          </if>
+	</select>
    
 	<select id="listByEcnameAndTrno" parameterType="map" resultType="courseresponsedto">
 	     select e.ecno, e.ecname, t1.trno, t1.cno, t1.trname, t1.cname, t1.ccode, t1.ctotalnum,
