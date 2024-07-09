@@ -2,5 +2,18 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mycompany.kosa_space.dao.ReferenceDataDao">
    
+   <insert id="insert" parameterType="referencedata">
+		<selectKey keyProperty="refno" resultType="int" order="BEFORE">
+			select seq_refno.nextval from dual
+		</selectKey>
+		insert into referencedata(
+			refno, cno, mid, reftitle, refurl, refweek, 
+			refdate, refcreatedat
+		)
+		values (
+			#{refno}, #{cno}, #{mid}, #{reftitle}, #{refurl}, #{refweek},
+			#{refdate}, sysdate
+		)
+	</insert>
    
 </mapper>

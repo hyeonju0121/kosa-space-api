@@ -1,5 +1,7 @@
 package com.mycompany.kosa_space.controller;
 
+import java.text.ParseException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -9,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.mycompany.kosa_space.dto.request.DailyNoteRequestDTO;
 import com.mycompany.kosa_space.service.DailyNoteService;
-import com.mycompany.kosa_space.service.EduService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,8 +24,8 @@ public class DailyNoteController {
 	@PreAuthorize("hasAuthority('ROLE_USER')")
 	@PostMapping("/create")
 	public void noteCreate(DailyNoteRequestDTO request, 
-			Authentication authentication) {
-		
+			Authentication authentication) throws ParseException {
+
 		dailyNoteService.createNotice(request, authentication);
 	}
 	
