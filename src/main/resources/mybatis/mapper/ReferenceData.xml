@@ -16,11 +16,34 @@
 		)
 	</insert>
 	
+	<update id="update" parameterType="map">
+		update referencedata set
+			reftitle=#{dailyNote.reftitle}, refurl=#{dailyNote.refurl},
+			refweek=#{dailyNote.refweek}, refdate=#{dailyNote.refdate}, refupdatedat=sysdate
+		where refno=#{refno}
+	</update>
+	
+	<select id="selectByRefno" parameterType="int" resultType="referencedata">
+		select *
+		from referencedata
+		where refno=#{refno}
+	</select>
+	
+	<select id="selectInfoByRefno" parameterType="int">
+		select reftitle, refurl, refdate
+		from referencedata
+		where refno=#{refno}
+	</select>
+	
 	<select id="selectByMidAndRefWeek" parameterType="map" resultType="dailynotedetailresponsedto">
 			select *
 			from referencedata
 			where mid=#{mid} and refweek=#{refweek}
 			order by refdate desc
 	</select>
+	
+	<delete id="delete" parameterType="int">
+      delete from referencedata where refno=#{refno}
+   </delete>  
    
 </mapper>

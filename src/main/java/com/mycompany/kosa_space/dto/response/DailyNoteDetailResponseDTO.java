@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DailyNoteDetailResponseDTO {
+	private int refno;
 	private String reftitle;
 	private String refurl;
 	private String refweek;

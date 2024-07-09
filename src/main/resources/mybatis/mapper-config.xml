@@ -35,5 +35,6 @@
        <typeAlias alias="noticeeducentercoursecombinedto" type="com.mycompany.kosa_space.dto.response.NoticeEduCenterCourseCombineDTO"/>
        <typeAlias alias="noticeresponsedto" type="com.mycompany.kosa_space.dto.response.NoticeResponseDTO"/>
        <typeAlias alias="dailynotedetailresponsedto" type="com.mycompany.kosa_space.dto.response.DailyNoteDetailResponseDTO"/>
+       <typeAlias alias="dailynoterequestdto" type="com.mycompany.kosa_space.dto.request.DailyNoteRequestDTO"/>
    </typeAliases>
 </configuration>

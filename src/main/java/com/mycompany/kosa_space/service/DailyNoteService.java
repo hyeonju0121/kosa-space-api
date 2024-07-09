@@ -15,6 +15,7 @@ import com.mycompany.kosa_space.dao.CourseDao;
 import com.mycompany.kosa_space.dao.ReferenceDataDao;
 import com.mycompany.kosa_space.dao.TraineeInfoDao;
 import com.mycompany.kosa_space.dto.Course;
+import com.mycompany.kosa_space.dto.DailyNote;
 import com.mycompany.kosa_space.dto.ReferenceData;
 import com.mycompany.kosa_space.dto.TraineeInfo;
 import com.mycompany.kosa_space.dto.request.DailyNoteRequestDTO;
@@ -33,9 +34,9 @@ public class DailyNoteService {
 	
 	@Autowired TraineeInfoDao traineeInfoDao;
 	
-	// 데일리 노트 제출 기능 (create)
+	// 데일리노트 과제 제출 기능 (create)
 	@Transactional
-	public void createNotice(DailyNoteRequestDTO request, 
+	public void createDailyNote(DailyNoteRequestDTO request, 
 			Authentication authentication) throws ParseException {
 		String mid = authentication.getName();
 		
@@ -66,10 +67,48 @@ public class DailyNoteService {
 		// DB insert
 		referenceDataDao.insert(dailyNote);
 
-	}	
+	}
 	
-	// 데일리노트 교육생&해당 주차별 상세조회 기능
-	public List<DailyNoteDetailResponseDTO> detailNotice(String mid, 
+	// refno 기준으로 데일리노트 과제 단건조회 
+	public DailyNoteRequestDTO infoDailyNote(int refno) {
+		
+		DailyNoteRequestDTO note = referenceDataDao.selectInfoByRefno(refno);
+		
+		return note;
+	}
+	
+	
+	// 데일리노트 과제 수정 기능
+	public void updateDailyNote(int refno, 
+			DailyNoteRequestDTO request) throws ParseException {
+		ReferenceData note = referenceDataDao.selectByRefno(refno);
+		
+		// 교육생이 제출한 날짜가 교육과정의 몇주차에 속하는 과제인지 찾기
+		int refweekInt = weeks(note.getCno(), request.getRefdate());
+		String refweek = String.valueOf(refweekInt);
+		refweek += "주차";
+		
+		// refdate String to Date
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		String refDateStr = request.getRefdate().substring(0, 10);
+		
+		Date refdate = format.parse(refDateStr);
+		
+		ReferenceData dailyNote = ReferenceData.builder()
+				.cno(note.getCno())
+				.mid(note.getMid())
+				.reftitle(request.getReftitle())
+				.refurl(request.getRefurl())
+				.refweek(refweek)
+				.refdate(refdate)
+				.build();
+		
+		// DB update
+		referenceDataDao.update(refno, dailyNote);
+	}
+	
+	// 데일리노트 과제 교육생&해당 주차별 상세조회 기능
+	public List<DailyNoteDetailResponseDTO> detailDailyNote(String mid, 
 			String refweek) {
 		
 		List<DailyNoteDetailResponseDTO> response = referenceDataDao
@@ -81,6 +120,12 @@ public class DailyNoteService {
 		}
 		
 		return response;
+	}
+	
+	// 데일리노트 과제 삭제 기능
+	public void deleteDailyNote(int refno) {
+		// DB delete
+		referenceDataDao.delete(refno);
 	}
 
 	

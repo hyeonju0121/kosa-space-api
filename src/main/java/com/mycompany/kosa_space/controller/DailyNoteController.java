@@ -6,8 +6,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,13 +33,30 @@ public class DailyNoteController {
 	public void noteCreate(DailyNoteRequestDTO request, 
 			Authentication authentication) throws ParseException {
 
-		dailyNoteService.createNotice(request, authentication);
+		dailyNoteService.createDailyNote(request, authentication);
 	}
 	
 	@GetMapping("/detail")
 	public List<DailyNoteDetailResponseDTO> noteDetail(@RequestParam String mid,
 			@RequestParam String refweek) {
 		
-		return dailyNoteService.detailNotice(mid, refweek);
+		return dailyNoteService.detailDailyNote(mid, refweek);
+	}
+	
+	@GetMapping("/info")
+	public DailyNoteRequestDTO noteInfo(@RequestParam int refno) {
+		return dailyNoteService.infoDailyNote(refno);
+	}
+	
+	@PutMapping("/update")
+	public void noteUpdate(@RequestParam int refno, 
+			DailyNoteRequestDTO request) throws ParseException {
+	
+		dailyNoteService.updateDailyNote(refno, request);
+	}
+	
+	@DeleteMapping("/delete/{refno}")
+	public void noteDelete(@PathVariable int refno) {
+		dailyNoteService.deleteDailyNote(refno);
 	}
 }
