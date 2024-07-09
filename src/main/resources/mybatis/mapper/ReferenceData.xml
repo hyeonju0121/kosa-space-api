@@ -15,5 +15,12 @@
 			#{refdate}, sysdate
 		)
 	</insert>
+	
+	<select id="selectByMidAndRefWeek" parameterType="map" resultType="dailynotedetailresponsedto">
+			select *
+			from referencedata
+			where mid=#{mid} and refweek=#{refweek}
+			order by refdate desc
+	</select>
    
 </mapper>

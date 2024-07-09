@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -17,6 +18,7 @@ import com.mycompany.kosa_space.dto.Course;
 import com.mycompany.kosa_space.dto.ReferenceData;
 import com.mycompany.kosa_space.dto.TraineeInfo;
 import com.mycompany.kosa_space.dto.request.DailyNoteRequestDTO;
+import com.mycompany.kosa_space.dto.response.DailyNoteDetailResponseDTO;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -65,6 +67,21 @@ public class DailyNoteService {
 		referenceDataDao.insert(dailyNote);
 
 	}	
+	
+	// 데일리노트 교육생&해당 주차별 상세조회 기능
+	public List<DailyNoteDetailResponseDTO> detailNotice(String mid, 
+			String refweek) {
+		
+		List<DailyNoteDetailResponseDTO> response = referenceDataDao
+				.selectByMidAndRefWeek(mid, refweek);
+		
+		for (DailyNoteDetailResponseDTO data : response) {
+			String refdate = data.getRefdate();
+			data.setRefdate(refdate.substring(0, 10));
+		}
+		
+		return response;
+	}
 
 	
 	// Date 객체를 받아 해당 연, 월, 일 을 반환하는 메소드 
