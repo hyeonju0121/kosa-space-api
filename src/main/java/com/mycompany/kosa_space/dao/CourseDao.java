@@ -16,6 +16,8 @@ public interface CourseDao {
 	
 	public int selectByCnameAndCstatus(int trno, String cstatus, String cname);
 
+	public Course selectCourseInfoByCname(String cname);
+	
 	public Course selectByCno(int cno);
 	
 	public Course readCourse(String cname);

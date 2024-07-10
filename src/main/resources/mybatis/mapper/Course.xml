@@ -33,6 +33,12 @@
 		where trno=#{trno} and cstatus=#{cstatus} and cname=#{cname}
 	</select>
 	
+	<select id="selectCourseInfoByCname" parameterType="string" resultType="course">
+		select *
+		from course
+		where cname=#{cname}
+	</select>
+	
 	<select id="selectByCno" parameterType="int" resultType="course">
 		select *
 		from course

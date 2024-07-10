@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.mycompany.kosa_space.dto.Attendance;
+import com.mycompany.kosa_space.dto.response.TraineeAttendanceListResponseDTO;
 
 @Mapper
 public interface AttendanceDao {
@@ -37,4 +38,6 @@ public interface AttendanceDao {
 	public List<Attendance> selectAttendanceInfoByAdateAndCno(
 			Date adate, int cno);
 	
+	public List<TraineeAttendanceListResponseDTO> selectAttendanceList(
+			int cno, Date adate);
 }

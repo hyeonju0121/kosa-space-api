@@ -1,6 +1,7 @@
 package com.mycompany.kosa_space.service;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,9 +14,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.mycompany.kosa_space.dao.AttendanceDao;
 import com.mycompany.kosa_space.dao.AttendanceNotesDao;
+import com.mycompany.kosa_space.dao.CourseDao;
 import com.mycompany.kosa_space.dao.TraineeInfoDao;
 import com.mycompany.kosa_space.dto.Attendance;
 import com.mycompany.kosa_space.dto.AttendanceNotes;
+import com.mycompany.kosa_space.dto.Course;
 import com.mycompany.kosa_space.dto.request.AttendanceNotesRequestDTO;
 import com.mycompany.kosa_space.dto.request.AttendanceTraineeRequestDTO;
 import com.mycompany.kosa_space.dto.request.TraineeAttendanceDetailRequestDTO;
@@ -24,6 +27,7 @@ import com.mycompany.kosa_space.dto.response.AttendanceNotesResponseDTO;
 import com.mycompany.kosa_space.dto.response.AttendanceReasonDashboardResponseDTO;
 import com.mycompany.kosa_space.dto.response.CombineEduTraineeAttendanceDTO;
 import com.mycompany.kosa_space.dto.response.TraineeAttendanceDetailResponseDTO;
+import com.mycompany.kosa_space.dto.response.TraineeAttendanceListResponseDTO;
 import com.mycompany.kosa_space.dto.response.TraineeResponseDto;
 
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +44,9 @@ public class AttendanceService {
 	
 	@Autowired
 	private TraineeInfoDao traineeInfoDao;
+	
+	@Autowired
+	private CourseDao courseDao;
 	
 	
 	private static final String CENTERIP = "125.131.208.230";
@@ -579,7 +586,66 @@ public class AttendanceService {
 		}
 		return response;
 	}
+	
+	// ecname, cname, adate 기준으로 교육생 출결 목록 조회
+	@Transactional
+	public List<TraineeAttendanceListResponseDTO> listAttendance(
+			String ecname, String cname, String adate) throws ParseException {
+		// adate 세팅 String to Date
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		String adateStr = adate.substring(0, 10);
+					        
+		Date date = format.parse(adateStr);
+		
+		// cname 에 해당하는 course 정보 가져오기
+		Course course = courseDao.selectCourseInfoByCname(cname);
+		// 교육과정의 총 훈련일수
+		int crequireddate = course.getCrequireddate();
+		
+		// 교육생 출결 정보 가져오기 
+		List<TraineeAttendanceListResponseDTO> data = 
+				attendanceDao.selectAttendanceList(course.getCno(), date);
+		
+		log.info("crequireddate: " + crequireddate);
+		
+		for (TraineeAttendanceListResponseDTO temp : data) {
+			// log.info("temp: " + temp.toString());
+			double percentage = calPercentage(temp.getApprovecnt(), 
+					course.getCrequireddate());
+			
+			String result = String.format("%.1f", percentage);
+			
+			String acheckin = "";
+			String acheckout = "";
+			
+			if (temp.getAcheckin() != null) {
+				acheckin = temp.getAcheckin();
+				acheckin = acheckin.substring(11, 16);
+				temp.setAcheckin(acheckin);
+			}
+			
+			if (temp.getAcheckout() != null) {
+				acheckout = temp.getAcheckout();
+				acheckout = acheckout.substring(11, 16);
+				temp.setAcheckout(acheckout);
+			}
+			
+			temp.setPercentage(result);
+			temp.setCrequireddate(course.getCrequireddate());
+		}
+		
+		return data;
+	}
 
+	// 교육생의 정상출결일수 기준으로 출석률 구하는 메소드
+	public double calPercentage(int approvecnt, int crequireddate) {
+		double percentage = 1.0;
+		
+		percentage = ((double) approvecnt / crequireddate) * 100;
+
+		//percentage = Math.round(percentage); 
+		return percentage;
+	}
 	
 	
 	// 검증 메소드 ------------------------------------------------------

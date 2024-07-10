@@ -1,6 +1,7 @@
 package com.mycompany.kosa_space.controller;
 
 
+import java.text.ParseException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +20,7 @@ import com.mycompany.kosa_space.dto.request.TraineeAttendanceDetailRequestDTO;
 import com.mycompany.kosa_space.dto.response.AttendanceNotesResponseDTO;
 import com.mycompany.kosa_space.dto.response.AttendanceReasonDashboardResponseDTO;
 import com.mycompany.kosa_space.dto.response.TraineeAttendanceDetailResponseDTO;
+import com.mycompany.kosa_space.dto.response.TraineeAttendanceListResponseDTO;
 import com.mycompany.kosa_space.service.AttendanceService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -113,7 +115,13 @@ public class AttendanceController {
 	}
 	
 	// 파라미터에 해당하는 교육생 출결 목록 조회
-	// parameter: ecname, cname, startdate, enddate, checkinstatus, chechoutstatus, mname
+	@GetMapping("/list")
+	public List<TraineeAttendanceListResponseDTO> attendanceList(
+			@RequestParam String ecname, @RequestParam String cname,
+			@RequestParam String adate) throws ParseException{
+		
+		return attendanceService.listAttendance(ecname, cname, adate);
+	}
 	
 	
 	/*

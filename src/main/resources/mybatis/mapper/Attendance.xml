@@ -73,4 +73,23 @@
 		where cno=#{cno} and adate=#{adate}
    </select>
    
+   <select id="selectAttendanceList" parameterType="map" resultType="traineeattendancelistresponsedto">
+   		select *
+		from (
+		    select rownum as rnum, mid, mname, adate, acheckin, acheckout, astatus, aconfirm,
+		        cno, approvecnt, latenesscnt, absencecnt, acheckinstatus, acheckoutstatus
+		    from (
+		        select a.mid, t1.mname, a.adate, a.acheckin, a.acheckout, a.astatus, a.aconfirm,
+		                a.cno, a.approvecnt, a.latenesscnt, a.absencecnt, a.acheckinstatus, a.acheckoutstatus
+		        from attendance a, (
+		            select m.mname, t.mid
+		            from member m, traineeinfo t
+		            where m.mid=t.mid
+		        ) t1
+		        where a.mid=t1.mid and a.cno=#{cno} and a.adate=#{adate}
+		    )
+		    order by mid asc
+		)
+   </select>
+   
 </mapper>
