@@ -15,6 +15,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TraineeResponseDto {
+	private int rnum;
+	
 	private String mid;		// 교육생 단건 조회
 	private String ecname;
 	private String cname;	// 교육생 단건 조회

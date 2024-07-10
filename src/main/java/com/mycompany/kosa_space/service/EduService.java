@@ -1110,9 +1110,6 @@ public class EduService {
 		
 		List<TraineeResponseDto> response = traineeInfoDao.listTraineeByCno(cno);
 		
-		for(TraineeResponseDto items : response) {
-			items.setTprofileimg(null);
-		}
 		
 		log.info("response.size(): " + response.size());
 		return response;
