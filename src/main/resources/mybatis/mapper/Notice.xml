@@ -74,7 +74,7 @@
 	            and t1.ncategory=#{ncategory}
 	         </if>
    </select>
-   
+
    <select id="selectPageNoticeByEcnameAndCnameAndNcategory" parameterType="map" resultType="noticeeducentercoursecombinedto">
    		<![CDATA[
    			select rnum, nno, ecno, ecname, cno, cname, ncategory,
@@ -105,6 +105,353 @@
 			<if test="ncategory != 'all'">
 			      and ncategory=#{ncategory}
 			</if>
+   </select>
+   
+   
+   <select id="selectRowsNoticeCategory1" parameterType="int" resultType="int">
+   		select count(nno)
+   		from (
+   			select distinct nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+	        from (
+	            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+	            from notice
+	            where ecno is null
+	            
+	            union
+	            
+	            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+	            from notice
+	            where cno is null and ecno = #{ecno}
+	            
+	            union all
+	            
+	            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+	            from notice
+	            where ecno=#{ecno}
+	        )
+	        order by ncreatedat desc
+   		)
+
+   </select>
+   
+   <select id="courseNoticeCategory1" parameterType="map" resultType="notice">
+   		<![CDATA[
+   			select rnum, nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+			from (
+			    select rownum as rnum, nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+			    from (
+			        select distinct nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+			        from (
+			            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+			            from notice
+			            where ecno is null
+			            
+			            union
+			            
+			            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+			            from notice
+			            where cno is null and ecno = #{ecno}
+			            
+			            union all
+			            
+			            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+			            from notice
+			            where ecno = #{ecno}
+			        )
+			        order by ncreatedat desc
+			    )
+			    where rownum <= #{pager.endRowNo}
+			)
+			where rnum >= #{pager.startRowNo}
+   		]]>
+   </select>
+   
+   <select id="selectRowsNoticeCategory2" parameterType="map" resultType="int">
+   		select count(nno)
+   		from (
+   			select distinct nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+	        from (
+	            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+	            from notice
+	            where ecno is null and ncategory=#{ncategory}
+	            
+	            union
+	            
+	            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+	            from notice
+	            where cno is null and ecno = #{ecno} and ncategory=#{ncategory}
+	            
+	            union all
+	            
+	            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+	            from notice
+	            where ecno=#{ecno} and ncategory=#{ncategory}
+	        )
+	        order by ncreatedat desc
+   		)
+
+   </select>
+   
+   <select id="courseNoticeCategory2" parameterType="map" resultType="notice">
+   		<![CDATA[
+   			select rnum, nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+			from (
+			    select rownum as rnum, nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+			    from (
+			        select distinct nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+			        from (
+			            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+			            from notice
+			            where ecno is null and ncategory=#{ncategory}
+			            
+			            union
+			            
+			            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+			            from notice
+			            where cno is null and ecno = #{ecno} and ncategory=#{ncategory}
+			            
+			            union all
+			            
+			            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+			            from notice
+			            where ecno = #{ecno} and ncategory=#{ncategory}
+			        )
+			        order by ncreatedat desc
+			    )
+			    where rownum <= #{pager.endRowNo}
+			)
+			where rnum >= #{pager.startRowNo}
+   		]]>
+   </select>
+   
+   
+   <select id="selectRowsNoticeCategory3" parameterType="int" resultType="int">
+   		select count(nno)
+   		from (
+   			select distinct nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+	        from (
+	            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+	            from notice
+	            where ecno is null
+	            
+	            union
+	            
+	            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+	            from notice
+	            where cno is null and ecno = #{ecno}
+	            
+	            union all
+	            
+	            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+	            from notice
+	            where ecno=#{ecno} and cno = #{cno}
+	        )
+	        order by ncreatedat desc
+   		)
+
+   </select>
+   
+   <select id="courseNoticeCategory3" parameterType="map" resultType="notice">
+   		<![CDATA[
+   			select rnum, nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+			from (
+			    select rownum as rnum, nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+			    from (
+			        select distinct nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+			        from (
+			            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+			            from notice
+			            where ecno is null
+			            
+			            union
+			            
+			            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+			            from notice
+			            where cno is null and ecno = #{ecno}
+			            
+			            union all
+			            
+			            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+			            from notice
+			            where ecno = #{ecno} and cno = #{cno}
+			        )
+			        order by ncreatedat desc
+			    )
+			    where rownum <= #{pager.endRowNo}
+			)
+			where rnum >= #{pager.startRowNo}
+   		]]>
+   </select>
+   
+   <select id="selectRowsNoticeCategory4" parameterType="map" resultType="int">
+   		select count(nno)
+   		from (
+   			select distinct nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+	        from (
+	            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+	            from notice
+	            where ecno is null and ncategory = #{ncategory}
+	            
+	            union
+	            
+	            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+	            from notice
+	            where cno is null and ecno = #{ecno} and ncategory = #{ncategory}
+	            
+	            union all
+	            
+	            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+	            from notice
+	            where ecno=#{ecno} and cno = #{cno} and ncategory = #{ncategory}
+	        )
+	        order by ncreatedat desc
+   		)
+   </select>
+   
+   <select id="courseNoticeCategory4" parameterType="map" resultType="notice">
+   		<![CDATA[
+   			select rnum, nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+			from (
+			    select rownum as rnum, nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+			    from (
+			        select distinct nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+			        from (
+			            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+			            from notice
+			            where ecno is null and ncategory = #{ncategory}
+			            
+			            union
+			            
+			            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+			            from notice
+			            where cno is null and ecno = #{ecno} and ncategory = #{ncategory}
+			            
+			            union all
+			            
+			            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+			            from notice
+			            where ecno = #{ecno} and cno = #{cno} and ncategory = #{ncategory}
+			        )
+			        order by ncreatedat desc
+			    )
+			    where rownum <= #{pager.endRowNo}
+			)
+			where rnum >= #{pager.startRowNo}
+   		]]>
+   </select>
+   
+   <select id="selectRowsNoticeCategory5" resultType="int">
+   		select count(nno)
+   		from (
+   			select distinct nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+	        from (
+	            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+	            from notice
+	            where ecno is null
+	            
+	            union
+	            
+	            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+	            from notice
+	            where cno is null
+	            
+	            union all
+	            
+	            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+	            from notice
+	        )
+	        order by ncreatedat desc
+   		)
+
+   </select>
+   
+   <select id="courseNoticeCategory5" parameterType="map" resultType="notice">
+   		<![CDATA[
+   			select rnum, nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+			from (
+			    select rownum as rnum, nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+			    from (
+			        select distinct nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+			        from (
+			            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+			            from notice
+			            where ecno is null
+			            
+			            union
+			            
+			            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+			            from notice
+			            where cno is null
+			            
+			            union all
+			            
+			            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+			            from notice
+			        )
+			        order by ncreatedat desc
+			    )
+			    where rownum <= #{pager.endRowNo}
+			)
+			where rnum >= #{pager.startRowNo}
+   		]]>
+   </select>
+   
+   <select id="selectRowsNoticeCategory6" parameterType="string" resultType="int">
+   		select count(nno)
+   		from (
+   			select distinct nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+	        from (
+	            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+	            from notice
+	            where ecno is null and ncategory=#{ncategory}
+	            
+	            union
+	            
+	            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+	            from notice
+	            where cno is null and ncategory=#{ncategory}
+	            
+	            union all
+	            
+	            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+	            from notice
+	            where ncategory=#{ncategory}
+	        )
+	        order by ncreatedat desc
+   		)
+
+   </select>
+   
+   <select id="courseNoticeCategory6" parameterType="map" resultType="notice">
+   		<![CDATA[
+   			select rnum, nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+			from (
+			    select rownum as rnum, nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+			    from (
+			        select distinct nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+			        from (
+			            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+			            from notice
+			            where ecno is null and ncategory=#{ncategory}
+			            
+			            union
+			            
+			            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+			            from notice
+			            where cno is null and ncategory=#{ncategory}
+			            
+			            union all
+			            
+			            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+			            from notice
+			            where ncategory=#{ncategory}
+			        )
+			        order by ncreatedat desc
+			    )
+			    where rownum <= #{pager.endRowNo}
+			)
+			where rnum >= #{pager.startRowNo}
+   		]]>
    </select>
    
 

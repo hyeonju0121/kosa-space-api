@@ -2,9 +2,15 @@ package com.mycompany.kosa_space.dto;
 
 import java.util.stream.IntStream;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Pager {
    private int totalRows;      //전체 행수
    private int totalPageNo;   //전체 페이지 수

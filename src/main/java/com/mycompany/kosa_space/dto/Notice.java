@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Notice {
+	private int rnum;
 	private int nno;
 	private int ecno;
 	private int cno;

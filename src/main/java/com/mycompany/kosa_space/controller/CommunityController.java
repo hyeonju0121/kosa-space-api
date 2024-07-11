@@ -52,7 +52,7 @@ public class CommunityController {
 			@RequestParam(value = "ecname", required = false, defaultValue = "all") String ecname,
 			@RequestParam(value = "cname", required = false, defaultValue = "all") String cname,
 			@RequestParam(value = "ncategory", required = false, defaultValue = "all") String ncategory,
-			@RequestParam int pageNo) {
+			@RequestParam(defaultValue = "1") int pageNo) {
 
 		log.info("ecname: " + ecname);
 		log.info("cname: " + cname);

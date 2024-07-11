@@ -14,17 +14,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.mycompany.kosa_space.dao.CourseDao;
 import com.mycompany.kosa_space.dao.CourseResponseDao;
 import com.mycompany.kosa_space.dao.EduCenterDao;
 import com.mycompany.kosa_space.dao.NoticeDao;
+import com.mycompany.kosa_space.dto.Course;
 import com.mycompany.kosa_space.dto.EduCenter;
 import com.mycompany.kosa_space.dto.Notice;
 import com.mycompany.kosa_space.dto.Pager;
 import com.mycompany.kosa_space.dto.request.CreateCommunityRequestDTO;
 import com.mycompany.kosa_space.dto.response.CourseResponseDTO;
 import com.mycompany.kosa_space.dto.response.DashBoardNoticeDTO;
-import com.mycompany.kosa_space.dto.response.DashBoardResponseDTO;
-import com.mycompany.kosa_space.dto.response.NoticeEduCenterCourseCombineDTO;
 import com.mycompany.kosa_space.dto.response.NoticeResponseDTO;
 
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +40,9 @@ public class CommunityService {
 	
 	@Autowired
 	private CourseResponseDao courseResponseDao;
+	
+	@Autowired
+	private CourseDao courseDao;
 	
 	// 공지사항 등록
 	@Transactional
@@ -162,24 +165,117 @@ public class CommunityService {
 	public Map<String, Object> listAllNotice(String ecname, String cname, 
 			String ncategory, int pageNo) {
 		
-		// 해당 페이지의 공지사항 정보 가져오기
-		List<NoticeEduCenterCourseCombineDTO> data = noticeDao
-				.selectNoticeByEcnameAndCnameAndNcategory(ecname, cname, ncategory);
+		EduCenter center = eduCenterDao.selectByEcname(ecname);
 		
-		// 페이징 대상이 되는 전체 행수 얻기
-		int totalRows = data.size();
+		Course course = courseDao.selectCourseInfoByCname(cname);		
 		
-		// 페이지 객체 생성
-		Pager pager = new Pager(10, 10, totalRows, pageNo);
+		int totalRows = 0;
 		
-		// 해당 페이지의 공지사항 정보 가져오기
-		List<NoticeEduCenterCourseCombineDTO> response = noticeDao
-				.selectPageNoticeByEcnameAndCnameAndNcategory(ecname, cname, ncategory, pager);
-		
+		List<Notice> response = new ArrayList<>();
 		Map<String, Object> map = new HashMap<>();
-		map.put("notice", response);
-		map.put("pager",  pager);
 		
+		
+		// ecname 이 all 인 경우
+		if (ecname.equals("all") && cname.equals("all")) {
+			// 교육장과 교육과정 전체 공지 데이터 가져오기 
+			if (ncategory.equals("all")) {
+				log.info("ecname: " + ecname + ", cname: " + cname + "ncategory: " + ncategory);
+				// 모든 교육장에 전체 공지 데이터 가져오기
+				// 페이징 대상이 되는 전체 행수 얻기
+				totalRows = noticeDao.selectRowsNoticeCategory5();
+				
+				// 페이지 객체 생성
+				Pager pager5 = new Pager(10, 10, totalRows, pageNo);
+				
+				response = noticeDao.courseNoticeCategory5(ncategory, pager5);
+				
+				map.put("notice", response);
+				map.put("pager",  pager5);
+
+			} else {
+				log.info("ecname: " + ecname + ", cname: " + cname + "ncategory: " + ncategory);
+				// 모든 교육장에 전체 교육과정의 카테고리에 해당하는 공지 데이터 가져오기
+				// 페이징 대상이 되는 전체 행수 얻기
+				totalRows = noticeDao.selectRowsNoticeCategory6(ncategory);
+				
+				// 페이지 객체 생성
+				Pager pager6 = new Pager(10, 10, totalRows, pageNo);
+				
+				response = noticeDao.courseNoticeCategory6(ncategory, pager6);
+				
+				map.put("notice", response);
+				map.put("pager",  pager6);
+			}
+			
+			
+		} else if (!ecname.equals("all") && cname.equals("all")) {
+			int ecno = center.getEcno();
+			
+			if (ncategory.equals("all")) {
+				log.info("ecname: " + ecname + ", cname: " + cname + "ncategory: " + ncategory);
+				// 특정 교육장에 전체 공지 데이터 가져오기
+				// 페이징 대상이 되는 전체 행수 얻기
+				totalRows = noticeDao.selectRowsNoticeCategory1(ecno);
+				
+				// 페이지 객체 생성
+				Pager pager1 = new Pager(10, 10, totalRows, pageNo);
+				
+				response = noticeDao.courseNoticeCategory1(ecno, pager1);
+				
+				map.put("notice", response);
+				map.put("pager",  pager1);
+			} else {
+				log.info("ecname: " + ecname + ", cname: " + cname + "ncategory: " + ncategory);
+				// 특정 교육장에 전체 교육과정의 카테고리에 해당하는 공지 데이터 가져오기
+				// 페이징 대상이 되는 전체 행수 얻기
+				totalRows = noticeDao.selectRowsNoticeCategory2(ecno, ncategory);
+				
+				// 페이지 객체 생성
+				Pager pager2 = new Pager(10, 10, totalRows, pageNo);
+								
+				response = noticeDao.courseNoticeCategory2(ecno, ncategory, pager2);
+				
+				map.put("notice", response);
+				map.put("pager",  pager2);
+			}
+			
+			
+		} else if (!ecname.equals("all") && !cname.equals("all")) {
+			int ecno = center.getEcno();
+			int cno = course.getCno();
+			
+			if (ncategory.equals("all")) { // 카테고리가 없는 경우
+				log.info("ecname: " + ecname + ", cname: " + cname + "ncategory: " + ncategory);
+				// 특정 교육과정에 공지 데이터 가져오기
+				
+				// 페이징 대상이 되는 전체 행수 얻기
+				totalRows = noticeDao.selectRowsNoticeCategory3(ecno, cno);
+				log.info("totalRows: " + totalRows);
+				
+				// 페이지 객체 생성
+				Pager pager3 = new Pager(10, 10, totalRows, pageNo);
+				
+				response = noticeDao.courseNoticeCategory3(ecno, cno, pager3);
+				
+				map.put("notice", response);
+				map.put("pager",  pager3);
+			}
+			else {
+				log.info("ecname: " + ecname + ", cname: " + cname + "ncategory: " + ncategory);
+				// 특정 교육과정에 해당하는 카테고리 공지 데이터 가져오기
+				// 페이징 대상이 되는 전체 행수 얻기
+				totalRows = noticeDao.selectRowsNoticeCategory4(ecno, cno, ncategory);
+				
+				// 페이지 객체 생성
+				Pager pager4 = new Pager(10, 10, totalRows, pageNo);
+				
+				response = noticeDao.courseNoticeCategory4(ecno, cno, ncategory, pager4);				
+				
+				map.put("notice", response);
+				map.put("pager",  pager4);
+			}
+		}
+
 		return map;
 	}
 	

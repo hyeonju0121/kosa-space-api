@@ -28,5 +28,46 @@ public interface NoticeDao {
 	public List<NoticeEduCenterCourseCombineDTO> selectPageNoticeByEcnameAndCnameAndNcategory(
 					String ecname, String cname, String ncategory, Pager pager);
 
+	
+	
+	
+	
+	// 특정 교육장에 전체 공지 데이터 가져오기 (ecname: !all, cname: all, ncategory: all)
+	public int selectRowsNoticeCategory1(int ecno);
+	
+	public List<Notice> courseNoticeCategory1(int ecno, Pager pager);
+	
+	
+	// 특정 교육장에 전체 교육과정의 카테고리에 해당하는 공지 데이터 가져오기 (ecname: !all, cname: all, ncategory: !all)
+	public int selectRowsNoticeCategory2(int ecno, String ncategory);
+	
+	public List<Notice> courseNoticeCategory2(int ecno, String ncategory, Pager pager);
+	
+	// 특정 교육과정에 공지 데이터 조회 ----------------------------------
+	public int selectRowsNoticeCategory3(int ecno, int cno);
+	
+	public List<Notice> courseNoticeCategory3(
+			int ecno, int cno, Pager pager);
+	// ------------------------------------------------------------
+	
+	
+	// 특정 교육과정에 카테고리에 해당하는 공지 데이터 조회 ----------------------------------
+	public int selectRowsNoticeCategory4(int ecno, int cno, String ncategory);
+	
+	public List<Notice> courseNoticeCategory4(
+			int ecno, int cno, String ncategory, Pager pager);
+	
+	//  모든 교육장에 전체 공지 데이터 가져오기 (ecname: all, cname: all, ncategory: all)
+	public int selectRowsNoticeCategory5();
+	
+	public List<Notice> courseNoticeCategory5(String ncategory, Pager pager);
+	
+	//  모든 교육장에 전체 공지 데이터 가져오기 (ecname: all, cname: all, ncategory: !all)
+	public int selectRowsNoticeCategory6(String ncategory);
+	
+	public List<Notice> courseNoticeCategory6(String ncategory, Pager pager);
+	
 	public void deleteByNno(int nno);
+	
+	
 }
