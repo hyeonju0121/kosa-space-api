@@ -151,15 +151,19 @@ public class EduController {
 
 	// 파라미터 값으로 교육과정 조회
 	@GetMapping("/course/list")
-	public List<CourseResponseDTO> courseList(
+	public Map<String, Object> courseList(
 			@RequestParam(value = "ecname", required = false, defaultValue = "all") String ecname,
 			@RequestParam(value = "cstatus", required = false, defaultValue = "all") String cstatus,
-			@RequestParam(value = "cprofessor", required = false, defaultValue = "all") String cprofessor) {
+			@RequestParam(value = "cprofessor", required = false, defaultValue = "all") String cprofessor,
+			@RequestParam(defaultValue = "1") int pageNo) {
 
-		CourseParameterRequestDTO request = CourseParameterRequestDTO.builder().ecname(ecname).cstatus(cstatus)
-				.cprofessor(cprofessor).build();
+		CourseParameterRequestDTO request = CourseParameterRequestDTO.builder()
+				.ecname(ecname)
+				.cstatus(cstatus)
+				.cprofessor(cprofessor)
+				.build();
 
-		return eduService.listCourse(request);
+		return eduService.listCourse(request, pageNo);
 	}
 	
 	@GetMapping("course/cnamelist")

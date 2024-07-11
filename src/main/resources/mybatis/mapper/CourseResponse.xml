@@ -62,30 +62,82 @@
 		where cno=#{cno}
    </select>
    
-   <select id="listByParameter" parameterType="courseparameterrequestdto" resultType="courseresponsedto">
-	    select e.ecno, e.ecname, t1.trno, t1.cno, t1.trname, t1.cname, t1.ccode, t1.ctotalnum,
-		        t1.cstartdate, t1.cenddate, t1.crequireddate, t1.cstatus,
-		        t1.cprofessor, t1.cmanager, t1.ccreatedat, t1.cupdatedat, t1.ctrainingdate, ctrainingtime,
-		        t1.trcapacity, t1.trenable
-		    from educenter e, (
-		            select c.cno, r.ecno, r.trno, r.trname, c.cname, c.ccode, c.ctotalnum,
-		            c.cstartdate, c.cenddate, c.crequireddate, c.cstatus,
-		            c.cprofessor, c.cmanager, c.ccreatedat, c.cupdatedat, c.ctrainingdate, c.ctrainingtime,
-		            r.trcapacity, r.trenable
-		            from course c, trainingroom r
-		            where c.trno = r.trno
-		    ) t1
-		    where e.ecno = t1.ecno
-		    	<if test="ecname != 'all'">
-	            and e.ecname=#{ecname}
-	          </if>
-	          <if test="cstatus != 'all'">
-	            and t1.cstatus=#{cstatus}
-	          </if>
-	          <if test="cprofessor != 'all'">
-	            and t1.cprofessor=#{cprofessor}
-	          </if>
+   
+   <select id="selectCntlistByParameter" parameterType="courseparameterrequestdto" resultType="int">
+		select count(*)
+		from (
+		    select e.ecno, e.ecname, t1.trno, t1.cno, t1.trname, t1.cname, t1.ccode, t1.ctotalnum,
+						        t1.cstartdate, t1.cenddate, t1.crequireddate, t1.cstatus,
+						        t1.cprofessor, t1.cmanager, t1.ccreatedat, t1.cupdatedat, t1.ctrainingdate, ctrainingtime,
+						        t1.trcapacity, t1.trenable
+					from educenter e, 
+						(
+							select c.cno, r.ecno, r.trno, r.trname, c.cname, c.ccode, c.ctotalnum,
+								c.cstartdate, c.cenddate, c.crequireddate, c.cstatus,
+								c.cprofessor, c.cmanager, c.ccreatedat, c.cupdatedat, c.ctrainingdate, c.ctrainingtime,
+								r.trcapacity, r.trenable
+							from course c, trainingroom r
+							where c.trno = r.trno
+						) t1
+					where e.ecno = t1.ecno
+						<if test="ecname != 'all'">
+					       and e.ecname=#{ecname}
+					    </if>
+					    <if test="cstatus != 'all'">
+					       and t1.cstatus=#{cstatus}
+					    </if>
+					    <if test="cprofessor != 'all'">
+					       and t1.cprofessor=#{cprofessor}
+					    </if>
+			) 
+
+   </select>
+   
+   <select id="listByParameter" parameterType="map" resultType="courseresponsedto">
+	    
+	    select rnum, ecno, ecname, trno, cno, trname, cname, ccode,
+		    		ctotalnum, cstartdate, cenddate, crequireddate, cstatus,
+		    		cprofessor, cmanager, ccreatedat, cupdatedat, ctrainingdate,
+		    		ctrainingtime, trcapacity, trenable
+		from (
+			    select rownum as rnum, ecno, ecname, trno, cno, trname, cname, ccode,
+			    		ctotalnum, cstartdate, cenddate, crequireddate, cstatus,
+			    		cprofessor, cmanager, ccreatedat, cupdatedat, ctrainingdate,
+			    		ctrainingtime, trcapacity, trenable
+			    from (
+			    	select e.ecno, e.ecname, t1.trno, t1.cno, t1.trname, t1.cname, t1.ccode, t1.ctotalnum,
+				        t1.cstartdate, t1.cenddate, t1.crequireddate, t1.cstatus,
+				        t1.cprofessor, t1.cmanager, t1.ccreatedat, t1.cupdatedat, t1.ctrainingdate, ctrainingtime,
+				        t1.trcapacity, t1.trenable
+				    from educenter e, (
+				            select c.cno, r.ecno, r.trno, r.trname, c.cname, c.ccode, c.ctotalnum,
+				            c.cstartdate, c.cenddate, c.crequireddate, c.cstatus,
+				            c.cprofessor, c.cmanager, c.ccreatedat, c.cupdatedat, c.ctrainingdate, c.ctrainingtime,
+				            r.trcapacity, r.trenable
+				            from course c, trainingroom r
+				            where c.trno = r.trno
+				    ) t1
+				    where e.ecno = t1.ecno
+				    	<if test="params.ecname != 'all'">
+			            	and e.ecname=#{params.ecname}
+				         </if>
+				         <if test="params.cstatus != 'all'">
+				            and t1.cstatus=#{params.cstatus}
+				         </if>
+				         <if test="params.cprofessor != 'all'">
+				            and t1.cprofessor=#{params.cprofessor}
+				         </if>
+				    
+			         order by t1.cstartdate desc
+			    )
+			    <![CDATA[
+			    where rownum <= #{pager.endRowNo}
+	    	)
+	    	where rnum >= #{pager.startRowNo}
+	    ]]>
+
 	</select>
+  
 	
 	<select id="listByEcname" parameterType="string" resultType="string">
 	    select t1.cname 

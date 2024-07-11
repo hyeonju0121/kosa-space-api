@@ -895,11 +895,17 @@ public class EduService {
 	}
 
 	// 파라미터 기준으로 교육과정 조회
-	public List<CourseResponseDTO> listCourse(CourseParameterRequestDTO request) {
+	public Map<String, Object> listCourse(CourseParameterRequestDTO request, int pageNo) {
 		log.info("request: " + request);
 
-		List<CourseResponseDTO> response = courseResponseDao.listByParameter(request);
-
+		int totalRows = courseResponseDao.selectCntlistByParameter(request);
+		log.info("totalRows: " + totalRows); 
+		
+		Pager pager = new Pager(3, 10, totalRows, pageNo);
+		
+		List<CourseResponseDTO> response = courseResponseDao.listByParameter(request, pager);
+		log.info("response.size: " + response.size());
+		
 		for (CourseResponseDTO course : response) {
 			log.info("course: " + course.toString());
 
@@ -926,8 +932,12 @@ public class EduService {
 		}
 		log.info("response: " + response);
 
-		return response;
-	}
+		Map<String, Object> map = new HashMap<>();
+		map.put("courseInfo", response);
+		map.put("pager", pager);
+		
+		return map;
+	} 
 	
 	// ecname 기준으로 존재하는 교육과정 명 리스트 조회
 	public List<String> listCnameCourse(String ecname) {

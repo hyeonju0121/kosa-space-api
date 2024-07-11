@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.mycompany.kosa_space.dto.Course;
+import com.mycompany.kosa_space.dto.Pager;
 import com.mycompany.kosa_space.dto.request.CourseParameterRequestDTO;
 import com.mycompany.kosa_space.dto.response.CourseResponseDTO;
 
@@ -17,7 +18,10 @@ public interface CourseResponseDao {
 
 	public CourseResponseDTO selectByCno(int cno);
 	
-	public List<CourseResponseDTO> listByParameter(CourseParameterRequestDTO params);
+	public int selectCntlistByParameter(CourseParameterRequestDTO params);
+	
+	public List<CourseResponseDTO> listByParameter(
+			CourseParameterRequestDTO params, Pager pager);
 	
 	public List<String> listByEcname(String ecname);
 	
