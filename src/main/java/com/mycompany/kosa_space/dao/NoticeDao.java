@@ -20,6 +20,8 @@ public interface NoticeDao {
 	
 	public List<Notice> selectNoticeByEcname(int ecno);
 	
+	public int selectNoticePagerCountByEcno(int ecno);
+	
 	public List<Notice> selectNoticePagerByEcname(int ecno, Pager pager);
 
 	public List<NoticeEduCenterCourseCombineDTO> selectNoticeByEcnameAndCnameAndNcategory(
@@ -27,9 +29,6 @@ public interface NoticeDao {
 	
 	public List<NoticeEduCenterCourseCombineDTO> selectPageNoticeByEcnameAndCnameAndNcategory(
 					String ecname, String cname, String ncategory, Pager pager);
-
-	
-	
 	
 	
 	// 특정 교육장에 전체 공지 데이터 가져오기 (ecname: !all, cname: all, ncategory: all)

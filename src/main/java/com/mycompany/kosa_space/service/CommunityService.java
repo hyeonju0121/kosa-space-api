@@ -129,13 +129,14 @@ public class CommunityService {
 		EduCenter center = eduCenterDao.selectByEcname(ecname);
 		int ecno = center.getEcno();
 		
-		// 해당 페이지의 공지사항 정보 가져오기
-		List<Notice> data = noticeDao.selectNoticeByEcname(ecno);
-		int totalRows = data.size();
+		int totalRows = noticeDao.selectNoticePagerCountByEcno(ecno);
 		
 		// Pager 객체 생성
 		Pager pager = new Pager(10, 5, totalRows, pageNo);
 		
+		// 해당 페이지의 공지사항 정보 가져오기
+		List<Notice> data = noticeDao.selectNoticePagerByEcname(ecno, pager);
+
 		List<DashBoardNoticeDTO> response = new ArrayList<>();
 		for (Notice notice : data) {
 			

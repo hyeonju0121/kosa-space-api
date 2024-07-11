@@ -30,28 +30,65 @@
    		where nno=#{nno}
    </select>
    
-   <select id="selectNoticeByEcname" parameterType="int" resultType="notice">
-   		select distinct nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
-	        from (
-	            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
-	            from notice
-	            where ecno is null
-	            
-	            union
-	            
-	            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
-	            from notice
-	            where cno is null and ecno = #{ecno}
-	            
-	            union all
-	            
-	            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
-	            from notice
-	            where ecno=#{ecno}
-	        )
-	        order by ncreatedat desc
+   <select id="selectNoticePagerCountByEcno" parameterType="int" resultType="int">
+   		select count(*)
+   		from (
+   			select distinct nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+				        from (
+				            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+				            from notice
+				            where ecno is null
+				            
+				            union
+				            
+				            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+				            from notice
+				            where cno is null and ecno = #{ecno}
+				            
+				            union all
+				            
+				            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+				            from notice
+				            where ecno=#{ecno}
+			                )
+			                order by ncreatedat desc
+   		
+   		)
    </select>
    
+   <select id="selectNoticePagerByEcname" parameterType="map" resultType="notice">
+   		<![CDATA[
+	   		select rnum, nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+			from (
+			    select rownum as rnum, nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+			from (
+			    select distinct nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+				        from (
+				            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+				            from notice
+				            where ecno is null
+				            
+				            union
+				            
+				            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+				            from notice
+				            where cno is null and ecno = #{ecno}
+				            
+				            union all
+				            
+				            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+				            from notice
+				            where ecno=#{ecno}
+			                )
+			                order by ncreatedat desc
+			    )
+			    where rownum <= #{pager.endRowNo}
+			)
+			where rnum >= #{pager.startRowNo}
+		]]>
+   </select>
+   
+   <!-- 
    <select id="selectNoticePagerByEcname" parameterType="map" resultType="notice">
    		<![CDATA[
 			select rnum,ncategory, ntitle, ecno, ncreatedat 
@@ -67,6 +104,7 @@
 			) where rnum >= #{pager.startRowNo}
    		]]>
    </select>
+   -->
    
    <select id="selectNoticeByEcnameAndCnameAndNcategory" parameterType="map" resultType="noticeeducentercoursecombinedto">
    		select t1.nno, t1.ecno, t1.ecname, t1.cno, c.cname, t1.ncategory,
