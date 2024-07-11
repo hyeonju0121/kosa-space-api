@@ -11,9 +11,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class DashBoardNoticeDTO {
 	
+	private int nno;
 	private String ncategory;
 	private String ntitle;
 	private String ncreatedat;
 	
 	private String ecname;
+	private String cname;
 }

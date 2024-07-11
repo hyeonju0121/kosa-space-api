@@ -31,9 +31,25 @@
    </select>
    
    <select id="selectNoticeByEcname" parameterType="int" resultType="notice">
-   		select distinct ncategory, ntitle, ecno, ncreatedat 
-		from notice
-		where ecno = #{ecno}
+   		select distinct nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+	        from (
+	            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+	            from notice
+	            where ecno is null
+	            
+	            union
+	            
+	            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+	            from notice
+	            where cno is null and ecno = #{ecno}
+	            
+	            union all
+	            
+	            select nno, ecno, cno, mid, ncategory, ntitle, ncontent, ncreatedat, nupdatedat
+	            from notice
+	            where ecno=#{ecno}
+	        )
+	        order by ncreatedat desc
    </select>
    
    <select id="selectNoticePagerByEcname" parameterType="map" resultType="notice">
