@@ -128,7 +128,7 @@ public class AttendanceController {
 	@GetMapping("/approve/list")
 	public List<TraineeApproveAttendanceListResponseDTO> attendanceApproveList(
 			@RequestParam String ecname, @RequestParam String cname,
-			@RequestParam String adate) {
+			@RequestParam String adate) throws ParseException{
 		return attendanceService.listApproveAttendnace(ecname, cname, adate);
 	}
 	

@@ -650,10 +650,48 @@ public class AttendanceService {
 	
 	// ecname, cname 파라미터 기준으로 출결 승인 조회
 	public List<TraineeApproveAttendanceListResponseDTO> listApproveAttendnace(
-			String ecname, String cname, String adate) {
+			String ecname, String cname, String adate) throws ParseException{
+		// adate 세팅 String to Date
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		String adateStr = adate.substring(0, 10);
+							        
+		Date date = format.parse(adateStr);
+		
+		// cname 에 해당하는 course 정보 가져오기
+		Course course = courseDao.selectCourseInfoByCname(cname);
+		
+		// 교육생 출결 정보 가져오기 
+		List<TraineeApproveAttendanceListResponseDTO> data = 
+				attendanceDao.selectAttendanceApproveList(course.getCno(), date);
+		
+		for (TraineeApproveAttendanceListResponseDTO info : data) {
+			String acheckin = "";
+			String acheckout = "";
+			
+			if (info.getAcheckin() != null) {
+				acheckin = info.getAcheckin();
+				acheckin = acheckin.substring(11, 16);
+				info.setAcheckin(acheckin);
+			} else {
+				info.setAcheckin("-");
+			}
+			
+			if (info.getAcheckout() != null) {
+				acheckout = info.getAcheckout();
+				acheckout = acheckout.substring(11, 16);
+				info.setAcheckout(acheckout);
+			} else {
+				info.setAcheckout("-");
+			}
+			
+			
+			if (info.getAstatus() == null) {
+				info.setAstatus("출결 승인 전");
+			} 
+		}
 		
 		
-		return null;	
+		return data;	
 	}
 
 	

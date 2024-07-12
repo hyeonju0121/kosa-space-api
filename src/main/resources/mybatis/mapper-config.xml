@@ -37,6 +37,7 @@
        <typeAlias alias="dailynotedetailresponsedto" type="com.mycompany.kosa_space.dto.response.DailyNoteDetailResponseDTO"/>
        <typeAlias alias="dailynoterequestdto" type="com.mycompany.kosa_space.dto.request.DailyNoteRequestDTO"/>
        <typeAlias alias="traineeattendancelistresponsedto" type="com.mycompany.kosa_space.dto.response.TraineeAttendanceListResponseDTO"/>
+       <typeAlias alias="traineeapproveattendancelistresponsedto" type="com.mycompany.kosa_space.dto.response.TraineeApproveAttendanceListResponseDTO"/>
    		<typeAlias alias="pager" type="com.mycompany.kosa_space.dto.Pager"/>
    </typeAliases>
 </configuration>
