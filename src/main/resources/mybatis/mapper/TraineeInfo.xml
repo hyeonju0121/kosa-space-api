@@ -72,42 +72,31 @@
 
    
    <select id="listTraineeByEcnameAndCname" parameterType="string" resultType="traineeResponsedto">
-   		select *
-   		from (
-   			select rownum as rnum,cno,cname,ccode,trno, ctotalnum, cstartdate, cenddate, crequireddate, 
-                cprofessor, cmanager, ctrainingdate, ctrainingtime,
-			        mid, tstatus, mname, mphone, memail, tpostcode, taddress, tage,
-			        tsex, tfield, tacademic, tschoolname, tmajor, tminor, tgrade,
-			        mrole, menable, mcreatedat, mupdatedat
-			from (
-			    select *
-			                from (
-			                    select c.cno, c.cname, c.ccode, c.trno, c.ctotalnum, c.cstartdate, c.cenddate, c.crequireddate, 
-			                        c.cprofessor, c.cmanager, c.ctrainingdate, c.ctrainingtime,
-			                        t1.mid, t1.tstatus, t1.mname, t1.mphone, t1.memail, t1.tpostcode, t1.taddress, t1.tage,
-			                        t1.tsex, t1.tfield, t1.tacademic, t1.tschoolname, t1.tmajor, t1.tminor, t1.tgrade,
-			                        t1.mrole, t1.menable, t1.mcreatedat, t1.mupdatedat, 
-			                            t1.tprofileimg, t1.tprofileoname, t1.tprofiletype
-			                    from course c, (
-			                        select m.mid, t.cno, t.tstatus, m.mname, m.mphone, m.memail, t. tpostcode, t.taddress,
-			                            t.tage, t.tsex, t.tfield, t.tacademic, t.tschoolname, t.tmajor, t.tminor, t.tgrade,
-			                            m.mpassword, m.mrole, m.menable, m.mcreatedat, m.mupdatedat, 
-			                            t.tprofileimg, t.tprofileoname, t.tprofiletype
-			                        from member m, traineeinfo t
-			                        where m.mid = t.mid
-			                    ) t1
-			                    where c.cno = t1.cno
-			                )
-			                where cno=#{cno}
-			                <if test="ecname != 'all'">
-						       and ecname=#{ecname}
-						    </if>
-						    <if test="cname != 'all'">
-						       and cname=#{cname}
-						    </if>
-				)
-   		)
-   		
+	 select rownum as rnum, m.mid, m.mname, m.mphone, m.memail, t3.tsex, t3.tage, t3.taddress, t3.tacademic, t3.tschoolname,
+	        t3.tmajor, t3.tminor, t3.tgrade, t3.tstatus, t3.tpostcode, t3.cname, t3.cstartdate, t3.cenddate,
+	        t3.ecname
+	 from member m, (
+	    select t.mid, t.cno, t.tsex, t.tage, t.taddress, t.tacademic, t.tschoolname, t.tmajor, t.tminor,
+	           t.tgrade, t.tstatus, t.tpostcode, t2.cname, t2.cstartdate, t2.cenddate, t2.ecname
+	    from traineeinfo t, (
+	        select c.cno, c.trno, c.cname, c.cstartdate, c.cenddate, t1.ecno, t1.ecname, t1.trname
+	        from course c, (
+	            select e.ecno, tr.trno, e.ecname, tr.trname
+	            from educenter e, trainingroom tr
+	            where e.ecno = tr.ecno
+	        ) t1
+	        where t1.trno = c.trno
+	    ) t2
+	    where t.cno = t2.cno
+	) t3
+	where t3.mid = m.mid
+	<if test="ecname != 'all'">
+		and t3.ecname = #{ecname}
+	</if>
+	<if test="cname != 'all'">
+		and t3.cname = #{cname}
+	</if>
+	
    </select>
    
    <select id="allTraineeList" resultType="traineeresponsedto">

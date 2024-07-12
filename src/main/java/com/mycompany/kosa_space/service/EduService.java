@@ -1104,9 +1104,6 @@ public class EduService {
 		List<TraineeResponseDto> response = traineeInfoDao.listTraineeByEcnameAndCname(ecname, cname);
 		
 		// taddress , detailaddress 분리
-		
-		
-		
 		log.info("response.size(): " + response.size());
 		return response;
 	}
