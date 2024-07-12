@@ -44,6 +44,7 @@ import com.mycompany.kosa_space.dto.response.CourseResponseDTO;
 import com.mycompany.kosa_space.dto.response.DashBoardAttendanceDTO;
 import com.mycompany.kosa_space.dto.response.DashBoardResponseDTO;
 import com.mycompany.kosa_space.dto.response.EduCenterResponseDTO;
+import com.mycompany.kosa_space.dto.response.TraineeProfileHeaderResposneDTO;
 import com.mycompany.kosa_space.dto.response.TraineeResponseDto;
 import com.mycompany.kosa_space.dto.response.TrainingRoomListResponseDTO;
 
@@ -1099,26 +1100,11 @@ public class EduService {
 
 	// 교육생 (교육장, 교육과정) 목록 조회 (성민)
 	public List<TraineeResponseDto> listTrainee(String ecname, String cname) {
-		log.info("ecname = " + ecname);
-		log.info("cname = " + cname);
 
-		// ecname으로 필요없이 들어오는 cname 기준으로 cno를 가져와야한다.
-		// 그리고 그 cno에 해당하는 member와 traineeinfo를 합친 테이블에서 where절로 cno를 찾은 cno로 교육생을 조회
-		// List<TraineeResponseDto> list = traineeInfoDao.listTrainee(ecname, cname);
-		// log.info("listTrainee(ecname, cname) 실행 완료");
+		List<TraineeResponseDto> response = traineeInfoDao.listTraineeByEcnameAndCname(ecname, cname);
 		
-		int cno = 0;
+		// taddress , detailaddress 분리
 		
-		// cname 을 기준으로 cno 찾기
-		if(cname.equals("all")) {
-			cno = 0;
-		} else {
-			Course course = courseDao.readCourse(cname);
-			cno = course.getCno();
-		}
-		log.info("cno = " + String.valueOf(cno));
-		
-		List<TraineeResponseDto> response = traineeInfoDao.listTraineeByCno(cno);
 		
 		
 		log.info("response.size(): " + response.size());
@@ -1131,6 +1117,31 @@ public class EduService {
 		log.info("traineeInfo = " + traineeInfo);
 		return traineeInfo;
 	}
+	
+	// 교육생 프로필 헤더 (현주)
+	public TraineeProfileHeaderResposneDTO getTraineeProfileHeader(String mid) {
+		TraineeInfo traineeInfo = traineeInfoDao.selectByMid(mid);
+		Member member = memberDao.selectByMid(mid);
+		
+		int cno = traineeInfo.getCno();
+		
+		CourseResponseDTO course = courseResponseDao.selectByCno(cno);
+		String cname = course.getCname();
+		String ecname = course.getEcname();
+		String cstartdate = course.getCstartdate().substring(0, 10);
+		String cenddate = course.getCenddate().substring(0, 10);
+		
+		return TraineeProfileHeaderResposneDTO.builder()
+				.mid(mid)
+				.mname(member.getMname())
+				.ecname(ecname)
+				.cname(cname)
+				.cstartdate(cstartdate)
+				.cenddate(cenddate)
+				.build();
+	}
+	
+	
 	
 	// dashboard -------------------------------------------
 	// ecname 기준으로 현재 진행중인 교육과정과 완료된 교육과정 카운트 조회 기능

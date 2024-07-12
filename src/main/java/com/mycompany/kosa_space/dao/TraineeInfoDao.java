@@ -21,7 +21,8 @@ public interface TraineeInfoDao {
 	// (교육생) 운영진 -> 교육생 수정
 	public void updateTrainee(UpdateTraineeRequestDto request);
 	// 교육생 (교육장, 교육과정) 기준으로 리스트 가져오기
-	public List<TraineeResponseDto> listTraineeByCno(int cno);
+	public List<TraineeResponseDto> listTraineeByEcnameAndCname(
+			String ecname, String cname);
 	
 	// (현주) 모든 교육과정의 교육생 정보 가져오기
 	public List<TraineeResponseDto> allTraineeList();
