@@ -23,6 +23,7 @@ public interface ReferenceDataDao {
 	public List<DailyNoteDetailResponseDTO> selectByMidAndRefWeek(
 			String mid, String refweek);
 	
+	
 	public void delete(int refno);
-
+	
 }

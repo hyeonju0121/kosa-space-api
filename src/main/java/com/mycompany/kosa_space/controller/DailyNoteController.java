@@ -2,6 +2,7 @@ package com.mycompany.kosa_space.controller;
 
 import java.text.ParseException;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -58,5 +59,13 @@ public class DailyNoteController {
 	@DeleteMapping("/delete/{refno}")
 	public void noteDelete(@PathVariable int refno) {
 		dailyNoteService.deleteDailyNote(refno);
+	}
+	
+	@GetMapping("/trainee/note/list")
+	public Map<String, Object> traineeNoteList(@RequestParam String mid, 
+			@RequestParam String adate, 
+			@RequestParam(defaultValue = "1") int pageNo) throws ParseException {
+		
+		return dailyNoteService.traineeNoteList(mid, adate, pageNo);
 	}
 }
