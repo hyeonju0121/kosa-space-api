@@ -668,6 +668,8 @@ public class AttendanceService {
 			String acheckin = "";
 			String acheckout = "";
 			
+			log.info("info: " + info);
+			
 			if (info.getAcheckin() != null) {
 				acheckin = info.getAcheckin();
 				acheckin = acheckin.substring(11, 16);
@@ -688,8 +690,21 @@ public class AttendanceService {
 			if (info.getAstatus() == null) {
 				info.setAstatus("출결 승인 전");
 			} 
+			
+			// 사유 
+			boolean anconfirm = false;
+			// mid 가 adate 에 사유를 작성한게 있는지 조회
+			AttendanceInfoResponseDTO reason = attendanceNotesDao
+					.selectReasonByMid(info.getMid(), date);
+					
+			// log.info("reason: " + reason.toString());
+			
+			if (reason != null) { // 사유를 작성한 경우
+				log.info("사유 작성한게 없음");
+				anconfirm = true;
+			} 
+			info.setAnconfirm(anconfirm);	
 		}
-		
 		
 		return data;	
 	}
