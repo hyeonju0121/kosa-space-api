@@ -71,7 +71,9 @@ public class AttendanceController {
 	@GetMapping("/reason/detail")
 	public AttendanceNotesResponseDTO reasonInfo(@RequestParam String mid,
 			@RequestParam String adate) throws Exception{
-				
+		
+		log.info("mid: " + mid);
+		log.info("adate: " + adate);
 		return attendanceService.detailReason(mid, adate);
 	}
 	
