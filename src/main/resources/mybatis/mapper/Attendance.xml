@@ -64,7 +64,8 @@
 		from attendance
 		where mid=#{mid}
 		    and adate between to_date(#{startdate}, 'YYYY-MM-DD') 
-		    and to_date(#{enddate}, 'YYYY-MM-DD') 
+		    and to_date(#{enddate}, 'YYYY-MM-DD')
+		order by adate desc
    </select>
    
    <select id="selectAttendanceInfoByAdateAndCno" parameterType="map" resultType="attendance">
