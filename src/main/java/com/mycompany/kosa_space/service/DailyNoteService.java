@@ -231,13 +231,6 @@ public class DailyNoteService {
 	}
 
 	
-	// 월 ~ 금 요일을 계산하고, 해당 카운트 반환하는 메소드
-	public int calDayOfWeekCnt(Calendar cal) {
-		return 0;
-		
-	}
-	
-	
 	// Date 객체를 받아 해당 연, 월, 일 을 반환하는 메소드 
 	public int[] getMonthFromDate(Date date) {
 		int[] result = new int[3];

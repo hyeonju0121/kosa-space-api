@@ -26,6 +26,7 @@ import com.mycompany.kosa_space.dto.response.AttendanceInfoResponseDTO;
 import com.mycompany.kosa_space.dto.response.AttendanceNotesResponseDTO;
 import com.mycompany.kosa_space.dto.response.AttendanceReasonDashboardResponseDTO;
 import com.mycompany.kosa_space.dto.response.CombineEduTraineeAttendanceDTO;
+import com.mycompany.kosa_space.dto.response.TraineeApproveAttendanceListResponseDTO;
 import com.mycompany.kosa_space.dto.response.TraineeAttendanceDetailResponseDTO;
 import com.mycompany.kosa_space.dto.response.TraineeAttendanceListResponseDTO;
 import com.mycompany.kosa_space.dto.response.TraineeResponseDto;
@@ -491,12 +492,20 @@ public class AttendanceService {
 		if (startdate.equals("all") && enddate.equals("all")) {
 			data = attendanceDao.selectTotalAttendanceByMid(mid);
 			
+			log.info("data: " + data.toString());
+			
 			for (Attendance info : data) {        
 				String adate = format1.format(info.getAdate());
 				
-				String acheckin = format2.format(info.getAcheckin()).substring(11, 16);
-				String acheckout = format2.format(info.getAcheckout()).substring(11, 16);
-			
+				String acheckin = "";
+				String acheckout = "";
+				if (info.getAcheckin() != null) {
+					acheckin = format2.format(info.getAcheckin()).substring(11, 16);
+				} 
+				if (info.getAcheckout() != null) {
+					acheckout = format2.format(info.getAcheckout()).substring(11, 16);
+				}
+				
 				String astatus = "";
 				boolean aconfirm = false;
 				
@@ -507,11 +516,11 @@ public class AttendanceService {
 					astatus = info.getAstatus();
 				}
 				
-				boolean anconfirm = false;
+				boolean anconfirm = false; // 사유작성여부
 				// mid 가 adate 에 사유를 작성한게 있는지 조회
 				AttendanceInfoResponseDTO reason = attendanceNotesDao
 						.selectReasonByMid(mid, info.getAdate());
-						
+				
 				if (reason != null) { // 사유를 작성한 경우
 					anconfirm = true;
 				} 
@@ -535,10 +544,8 @@ public class AttendanceService {
 			data = attendanceDao.selectTotalAttendanceByMidAndAdate(mid, startdate, enddate);
 			
 			for (Attendance info : data) {   
-				TraineeAttendanceDetailResponseDTO attendance = new TraineeAttendanceDetailResponseDTO();
-				
+
 				String adate = format1.format(info.getAdate());
-				attendance.setAdate(adate);
 				
 				// log.info("info: " + info.toString());
 				
@@ -548,12 +555,10 @@ public class AttendanceService {
 				// checkin, checkout -> date to string
 				if (info.getAcheckin() != null) {
 					acheckin = format2.format(info.getAcheckin()).substring(11, 16);
-					attendance.setAcheckin(acheckin);
 				} 
 				
 				if (info.getAcheckout() != null) {
 					acheckout = format2.format(info.getAcheckout()).substring(11, 16);
-					attendance.setAcheckout(acheckout);
 				}
 			
 				String astatus = "";
@@ -561,13 +566,9 @@ public class AttendanceService {
 				
 				if (!info.isAconfirm()) {
 					astatus = "출결 승인 전";
-					attendance.setAstatus(astatus);
-					attendance.setAconfirm(aconfirm);
 				} else {
 					aconfirm = true;
 					astatus = info.getAstatus();
-					attendance.setAstatus(astatus);
-					attendance.setAconfirm(aconfirm);
 				}
 				
 				boolean anconfirm = false;
@@ -575,12 +576,22 @@ public class AttendanceService {
 				AttendanceInfoResponseDTO reason = attendanceNotesDao
 						.selectReasonByMid(mid, info.getAdate());
 						
+				// log.info("reason: " + reason.toString());
+				
 				if (reason != null) { // 사유를 작성한 경우
+					log.info("사유 작성한게 없음");
 					anconfirm = true;
-					attendance.setAconfirm(aconfirm);
-				} else {
-					attendance.setAnconfirm(anconfirm);
-				}
+				} 
+				
+				TraineeAttendanceDetailResponseDTO attendance = TraineeAttendanceDetailResponseDTO.builder()
+						.adate(adate)
+						.acheckin(acheckin)
+						.acheckout(acheckout)
+						.astatus(astatus)
+						.aconfirm(aconfirm)
+						.anconfirm(anconfirm)
+						.build();
+				
 				response.add(attendance);
 			} 
 		}
@@ -636,7 +647,16 @@ public class AttendanceService {
 		
 		return data;
 	}
+	
+	// ecname, cname 파라미터 기준으로 출결 승인 조회
+	public List<TraineeApproveAttendanceListResponseDTO> listApproveAttendnace(
+			String ecname, String cname, String adate) {
+		
+		
+		return null;	
+	}
 
+	
 	// 교육생의 정상출결일수 기준으로 출석률 구하는 메소드
 	public double calPercentage(int approvecnt, int crequireddate) {
 		double percentage = 1.0;

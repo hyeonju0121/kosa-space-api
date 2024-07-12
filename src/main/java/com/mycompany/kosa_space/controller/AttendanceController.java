@@ -19,6 +19,7 @@ import com.mycompany.kosa_space.dto.request.AttendanceTraineeRequestDTO;
 import com.mycompany.kosa_space.dto.request.TraineeAttendanceDetailRequestDTO;
 import com.mycompany.kosa_space.dto.response.AttendanceNotesResponseDTO;
 import com.mycompany.kosa_space.dto.response.AttendanceReasonDashboardResponseDTO;
+import com.mycompany.kosa_space.dto.response.TraineeApproveAttendanceListResponseDTO;
 import com.mycompany.kosa_space.dto.response.TraineeAttendanceDetailResponseDTO;
 import com.mycompany.kosa_space.dto.response.TraineeAttendanceListResponseDTO;
 import com.mycompany.kosa_space.service.AttendanceService;
@@ -121,6 +122,14 @@ public class AttendanceController {
 			@RequestParam String adate) throws ParseException{
 		
 		return attendanceService.listAttendance(ecname, cname, adate);
+	}
+	
+	// 파라미터에 해당하는 교육생 출결 승인 조회
+	@GetMapping("/approve/list")
+	public List<TraineeApproveAttendanceListResponseDTO> attendanceApproveList(
+			@RequestParam String ecname, @RequestParam String cname,
+			@RequestParam String adate) {
+		return attendanceService.listApproveAttendnace(ecname, cname, adate);
 	}
 	
 	
