@@ -643,6 +643,8 @@ public class AttendanceService {
 			
 			temp.setPercentage(result);
 			temp.setCrequireddate(course.getCrequireddate());
+			
+			
 		}
 		
 		return data;
@@ -692,6 +694,7 @@ public class AttendanceService {
 			} 
 			
 			// 사유 
+			boolean reasonable = false;
 			boolean anconfirm = false;
 			// mid 가 adate 에 사유를 작성한게 있는지 조회
 			AttendanceInfoResponseDTO reason = attendanceNotesDao
@@ -700,10 +703,13 @@ public class AttendanceService {
 			// log.info("reason: " + reason.toString());
 			
 			if (reason != null) { // 사유를 작성한 경우
-				log.info("사유 작성한게 없음");
-				anconfirm = true;
+				log.info("사유 작성한게 있음");
+				
+				reasonable = true;
+				anconfirm = reason.isAnconfirm();
 			} 
-			info.setAnconfirm(anconfirm);	
+			info.setReasonable(reasonable);	
+			info.setAnconfirm(anconfirm);
 		}
 		
 		return data;	

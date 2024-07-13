@@ -20,6 +20,7 @@ public class TraineeApproveAttendanceListResponseDTO {
 	private String astatus; // 출결 유형
 	
 	private boolean aconfirm; // 출결 승인 여부
+	private boolean reasonable; // 사유 작성 여부
 	private boolean anconfirm; // 출결 사유 승인 여부
 
 }
