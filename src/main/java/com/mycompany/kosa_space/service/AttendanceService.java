@@ -371,6 +371,9 @@ public class AttendanceService {
 	// (운영진) 교육생 출결 승인 기능
 	@Transactional
 	public void approveAttendance(String mid, String adate) throws Exception{
+		log.info("mid: " + mid);	
+		log.info("adate: " + adate);
+		
 		// 사유를 작성한 교육생이 있다면 먼저 사유에 대한 승인 처리가 있어야 함.
 		// 사유 미승인시 교육생의 출결을 승인 기능을 수행할 수 없음
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");        
@@ -384,7 +387,10 @@ public class AttendanceService {
 		
 		
 		// 교육생의 adate 에 해당하는 출결 정보 가져오기 
-		Attendance userAttendanceInfo = attendanceDao.selectByMid(mid);
+		//Attendance userAttendanceInfo = attendanceDao.selectByMid(mid);
+		
+		Attendance userAttendanceInfo = attendanceDao.selectByMidAndAdate(mid, date);
+		
 		
 		//log.info("userAttendanceInfo: " + userAttendanceInfo.toString());
 
@@ -413,10 +419,12 @@ public class AttendanceService {
 					(!checkinStatus && !checkoutStatus)) { 
 				// 퇴실을 안찍은 경우, 사유 작성 없이 결석인 경우 -> 결석처리
 				absenceCnt++;
+				
 				userAttendanceInfo.setAstatus("결석");
 				userAttendanceInfo.setApprovecnt(approveCnt);
 				userAttendanceInfo.setAbsencecnt(absenceCnt);
 				userAttendanceInfo.setAconfirm(true);
+				log.info("userAttendanceInfo: " + userAttendanceInfo.toString());	
 			} else {
 				approveCnt++;
 				userAttendanceInfo.setAstatus("정상출결");

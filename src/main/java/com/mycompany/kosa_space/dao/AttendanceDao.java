@@ -19,6 +19,8 @@ public interface AttendanceDao {
 	
 	public Attendance selectByMid(String mid);
 	
+	public Attendance selectByMidAndAdate(String mid, Date adate);
+	
 	// (교육생) 입실 기능
 	public void checkin(Attendance attendance);
 	
