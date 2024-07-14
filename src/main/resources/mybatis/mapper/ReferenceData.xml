@@ -29,6 +29,12 @@
 		where refno=#{refno}
 	</select>
 	
+	<select id="selectByMidAndRefdate" parameterType="map" resultType="referencedata">
+		select *
+		from referencedata
+		where refdate=#{refdate} and mid=#{mid}
+	</select>
+	
 	<select id="selectInfoByRefno" parameterType="int">
 		select reftitle, refurl, refdate
 		from referencedata

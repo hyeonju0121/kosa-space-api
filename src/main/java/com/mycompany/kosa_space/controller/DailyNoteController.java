@@ -34,6 +34,7 @@ public class DailyNoteController {
 	public void noteCreate(DailyNoteRequestDTO request, 
 			Authentication authentication) throws ParseException {
 
+		log.info("request: " + request.toString());
 		dailyNoteService.createDailyNote(request, authentication);
 	}
 	

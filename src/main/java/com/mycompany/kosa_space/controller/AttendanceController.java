@@ -34,7 +34,7 @@ public class AttendanceController {
 	@Autowired
 	private AttendanceService attendanceService;
 	
-	// 교육생 입실 시간, 퇴실 시간 조회 기능
+	// 교육생 입실 시간, 퇴실 시간, 과제 작성 여부 조회 기능
 	@GetMapping("/user/attendance/time")
 	public UserAttendanceTimeInfoResponseDTO attendanceTime(
 			@RequestParam String mid, @RequestParam String adate) throws ParseException{

@@ -254,7 +254,7 @@ public class EduController {
 		log.info("mid = " + mid);
 		
 		TraineeInfo traineeInfo = eduService.tattachDownload(mid);
-		log.info("traineeInfo = " + traineeInfo.toString());
+		// log.info("traineeInfo = " + traineeInfo.toString());
 		
 		// 파일 이름이 한글일 경우, 브라우저에서 한글 이름으로 다운로드 받기 위해 헤더에 추가할 내용
 		try {

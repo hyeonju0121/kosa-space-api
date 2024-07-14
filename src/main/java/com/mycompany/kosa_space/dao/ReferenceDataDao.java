@@ -1,5 +1,6 @@
 package com.mycompany.kosa_space.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -16,6 +17,8 @@ public interface ReferenceDataDao {
 	public void update(int refno, ReferenceData dailyNote);
 	
 	public ReferenceData selectByRefno(int refno);
+	
+	public ReferenceData selectByMidAndRefdate(String mid, Date refdate);
 	
 	public DailyNoteRequestDTO selectInfoByRefno(int refno);
 	

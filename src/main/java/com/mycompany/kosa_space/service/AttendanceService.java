@@ -15,10 +15,12 @@ import org.springframework.web.multipart.MultipartFile;
 import com.mycompany.kosa_space.dao.AttendanceDao;
 import com.mycompany.kosa_space.dao.AttendanceNotesDao;
 import com.mycompany.kosa_space.dao.CourseDao;
+import com.mycompany.kosa_space.dao.ReferenceDataDao;
 import com.mycompany.kosa_space.dao.TraineeInfoDao;
 import com.mycompany.kosa_space.dto.Attendance;
 import com.mycompany.kosa_space.dto.AttendanceNotes;
 import com.mycompany.kosa_space.dto.Course;
+import com.mycompany.kosa_space.dto.ReferenceData;
 import com.mycompany.kosa_space.dto.request.AttendanceNotesRequestDTO;
 import com.mycompany.kosa_space.dto.request.AttendanceTraineeRequestDTO;
 import com.mycompany.kosa_space.dto.request.TraineeAttendanceDetailRequestDTO;
@@ -49,6 +51,9 @@ public class AttendanceService {
 	
 	@Autowired
 	private CourseDao courseDao;
+	
+	@Autowired
+	private ReferenceDataDao referenceDataDao;
 	
 	
 	private static final String CENTERIP = "125.131.208.230";
@@ -139,6 +144,8 @@ public class AttendanceService {
 		// 09: 10 분 이전이면, 사용자의 astatus 를 정상 출결로 업데이트
 		SimpleDateFormat format = new SimpleDateFormat("HH:mm");
 
+		log.info("request: " + attendance.toString());
+		
         String absenceTimeStr = "09:10";
         //String requestTimeStr = "15:12"; // 임의로 시간 지정해서 테스트함
         String requestTimeStr = attendance.getAttendancetime().substring(11, 16);
@@ -724,7 +731,7 @@ public class AttendanceService {
 		return data;	
 	}
 
-	// 교육생 입실 시간, 퇴실 시간 조회 기능
+	// 교육생 입실 시간, 퇴실 시간, 과제 작성 여부 조회 기능
 	public UserAttendanceTimeInfoResponseDTO getAttendanceTime(
 			String mid, String adate) throws ParseException {
 		// adate 세팅 String to Date
@@ -742,7 +749,7 @@ public class AttendanceService {
 
      	Date checkin = new Date();
      	Date checkout = new Date();
-
+     	
 		UserAttendanceTimeInfoResponseDTO response = new UserAttendanceTimeInfoResponseDTO();
 		response.setMid(mid);
 	 
@@ -757,6 +764,14 @@ public class AttendanceService {
 		
 		response.setAcheckinstatus(info.isAcheckinstatus());
 		response.setAcheckoutstatus(info.isAcheckoutstatus());
+		
+		// 과제 작성 여부 조회
+     	ReferenceData reference = referenceDataDao.selectByMidAndRefdate(mid, date);
+     	if (reference != null) {
+     		response.setReferencestatus(true);
+     	} else {
+     		response.setReferencestatus(false);
+     	}
 		
 		return response;
 	}

@@ -1041,7 +1041,7 @@ public class EduService {
 		log.info("member = " + member.toString());
 
 		TraineeInfo traineeInfo = traineeInfoDao.selectByMid(mid);
-		log.info("traineeInfo = " + traineeInfo.toString());
+		//log.info("traineeInfo = " + traineeInfo.toString());
 
 		// 조인문 만들어서 단번에 TraineeResponseDTO 객체에 삽입하여 반환할 수 있는지?
 
@@ -1111,7 +1111,7 @@ public class EduService {
 	// 교육생 이미지 첨부파일 정보 받아오기 (성민)
 	public TraineeInfo tattachDownload(String mid) {
 		TraineeInfo traineeInfo = traineeInfoDao.selectByMid(mid);
-		log.info("traineeInfo = " + traineeInfo);
+		//log.info("traineeInfo = " + traineeInfo);
 		return traineeInfo;
 	}
 	

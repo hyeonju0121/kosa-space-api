@@ -15,4 +15,6 @@ public class UserAttendanceTimeInfoResponseDTO {
 	private String acheckout;
 	private boolean acheckinstatus;
 	private boolean acheckoutstatus;
+	
+	private boolean referencestatus;
 }
