@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
 import com.mycompany.kosa_space.dto.Attendance;
 import com.mycompany.kosa_space.dto.response.TraineeApproveAttendanceListResponseDTO;
 import com.mycompany.kosa_space.dto.response.TraineeAttendanceListResponseDTO;
+import com.mycompany.kosa_space.dto.response.UserAttendanceTimeInfoResponseDTO;
 
 @Mapper
 public interface AttendanceDao {
@@ -20,6 +21,8 @@ public interface AttendanceDao {
 	public Attendance selectByMid(String mid);
 	
 	public Attendance selectByMidAndAdate(String mid, Date adate);
+	
+	public UserAttendanceTimeInfoResponseDTO selectUserInfoByMidAndAdate(String mid, Date date);
 	
 	// (교육생) 입실 기능
 	public void checkin(Attendance attendance);

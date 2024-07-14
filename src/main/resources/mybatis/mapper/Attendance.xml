@@ -15,6 +15,12 @@
 		where mid=#{mid} and adate=#{adate}
    </select>
    
+   <select id="selectUserInfoByMidAndAdate" parameterType="map" resultType="userattendancetimeinforesponsedto">
+   		select *
+		from attendance
+		where mid=#{mid} and adate=#{adate}
+   </select>
+   
    <!-- (운영진) 교육생 활성화 기능  -->
    <insert id="active" parameterType="attendance">
   		insert into attendance(

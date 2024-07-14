@@ -30,6 +30,7 @@ import com.mycompany.kosa_space.dto.response.TraineeApproveAttendanceListRespons
 import com.mycompany.kosa_space.dto.response.TraineeAttendanceDetailResponseDTO;
 import com.mycompany.kosa_space.dto.response.TraineeAttendanceListResponseDTO;
 import com.mycompany.kosa_space.dto.response.TraineeResponseDto;
+import com.mycompany.kosa_space.dto.response.UserAttendanceTimeInfoResponseDTO;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -723,6 +724,43 @@ public class AttendanceService {
 		return data;	
 	}
 
+	// 교육생 입실 시간, 퇴실 시간 조회 기능
+	public UserAttendanceTimeInfoResponseDTO getAttendanceTime(
+			String mid, String adate) throws ParseException {
+		// adate 세팅 String to Date
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		String adateStr = adate.substring(0, 10);
+									        
+		Date date = format.parse(adateStr);
+				
+		log.info("mid: " + mid);
+		log.info("adate: " + adate);
+		
+		Attendance info = attendanceDao.selectByMidAndAdate(mid, date);
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+     	Date checkin = new Date();
+     	Date checkout = new Date();
+
+		UserAttendanceTimeInfoResponseDTO response = new UserAttendanceTimeInfoResponseDTO();
+		response.setMid(mid);
+	 
+		if (info.getAcheckin() != null) {
+			checkin = info.getAcheckin();
+			response.setAcheckin(sdf.format(checkin));
+		}
+		if (info.getAcheckout() != null) {
+			checkout = info.getAcheckout();
+			response.setAcheckout(sdf.format(checkout));
+		}
+		
+		response.setAcheckinstatus(info.isAcheckinstatus());
+		response.setAcheckoutstatus(info.isAcheckoutstatus());
+		
+		return response;
+	}
+	
 	
 	// 교육생의 정상출결일수 기준으로 출석률 구하는 메소드
 	public double calPercentage(int approvecnt, int crequireddate) {

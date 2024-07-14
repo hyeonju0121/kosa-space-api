@@ -22,6 +22,7 @@ import com.mycompany.kosa_space.dto.response.AttendanceReasonDashboardResponseDT
 import com.mycompany.kosa_space.dto.response.TraineeApproveAttendanceListResponseDTO;
 import com.mycompany.kosa_space.dto.response.TraineeAttendanceDetailResponseDTO;
 import com.mycompany.kosa_space.dto.response.TraineeAttendanceListResponseDTO;
+import com.mycompany.kosa_space.dto.response.UserAttendanceTimeInfoResponseDTO;
 import com.mycompany.kosa_space.service.AttendanceService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +33,15 @@ import lombok.extern.slf4j.Slf4j;
 public class AttendanceController {
 	@Autowired
 	private AttendanceService attendanceService;
+	
+	// 교육생 입실 시간, 퇴실 시간 조회 기능
+	@GetMapping("/user/attendance/time")
+	public UserAttendanceTimeInfoResponseDTO attendanceTime(
+			@RequestParam String mid, @RequestParam String adate) throws ParseException{
+		
+		return attendanceService.getAttendanceTime(mid, adate);
+	}
+	
 	
 	// (운영진) 교육생 출결 활성화 기능
 	@PostMapping("/active")
