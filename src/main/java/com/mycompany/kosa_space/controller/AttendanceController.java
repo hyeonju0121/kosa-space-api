@@ -144,6 +144,13 @@ public class AttendanceController {
 		return attendanceService.listApproveAttendnace(ecname, cname, adate);
 	}
 	
+	// 교육생 출결 정보 상세 조회
+	@GetMapping("/trainee/attendance/dashboard/detail")
+	public TraineeAttendanceListResponseDTO attendanceTraineeDetail(
+			@RequestParam String mid, @RequestParam String adate) throws ParseException {
+		return attendanceService.dashboardDetail(mid, adate);
+	}
+	
 	
 	/*
 	@GetMapping("/test/getClientIP")

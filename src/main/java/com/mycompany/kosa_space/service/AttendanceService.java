@@ -21,6 +21,7 @@ import com.mycompany.kosa_space.dto.Attendance;
 import com.mycompany.kosa_space.dto.AttendanceNotes;
 import com.mycompany.kosa_space.dto.Course;
 import com.mycompany.kosa_space.dto.ReferenceData;
+import com.mycompany.kosa_space.dto.TraineeInfo;
 import com.mycompany.kosa_space.dto.request.AttendanceNotesRequestDTO;
 import com.mycompany.kosa_space.dto.request.AttendanceTraineeRequestDTO;
 import com.mycompany.kosa_space.dto.request.TraineeAttendanceDetailRequestDTO;
@@ -665,6 +666,70 @@ public class AttendanceService {
 		
 		return data;
 	}
+	
+	// 교육생 출결 정보 상세 조회
+	public TraineeAttendanceListResponseDTO dashboardDetail(String mid, 
+			String adate) throws ParseException{
+		// adate 세팅 String to Date
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		String adateStr = adate.substring(0, 10);
+							        
+		Date date = format.parse(adateStr);
+		
+		TraineeInfo trainee = traineeInfoDao.selectByMid(mid);
+		
+		
+		// cname 에 해당하는 course 정보 가져오기
+		Course course = courseDao.selectByCno(trainee.getCno());
+		// 교육과정의 총 훈련일수
+		int crequireddate = course.getCrequireddate();
+		
+		// 교육생 출결 정보 가져오기 
+		List<TraineeAttendanceListResponseDTO> data = 
+				attendanceDao.selectAttendanceList(course.getCno(), date);
+		
+		TraineeAttendanceListResponseDTO result = new TraineeAttendanceListResponseDTO();
+		
+		for (TraineeAttendanceListResponseDTO temp : data) {
+			if (temp.getMid().equals(mid)) {
+				result.setMname(temp.getMname());
+				result.setMid(mid);
+				result.setCrequireddate(crequireddate);
+
+				// log.info("temp: " + temp.toString());
+				double percentage = calPercentage(temp.getApprovecnt(), 
+						course.getCrequireddate());
+				
+				String result2 = String.format("%.1f", percentage);
+				
+				String acheckin = "";
+				String acheckout = "";
+				
+				if (temp.getAcheckin() != null) {
+					acheckin = temp.getAcheckin();
+					acheckin = acheckin.substring(11, 16);
+					result.setAcheckin(acheckin);
+				}
+				
+				if (temp.getAcheckout() != null) {
+					acheckout = temp.getAcheckout();
+					acheckout = acheckout.substring(11, 16);
+					result.setAcheckout(acheckout);
+				}
+				
+				result.setApprovecnt(temp.getApprovecnt());
+				result.setLatenesscnt(temp.getLatenesscnt());
+				result.setAbsencecnt(temp.getAbsencecnt());
+				
+				result.setPercentage(result2);
+				result.setCrequireddate(course.getCrequireddate());
+			}
+
+		}
+				
+		return result;
+	}
+	
 	
 	// ecname, cname 파라미터 기준으로 출결 승인 조회
 	public List<TraineeApproveAttendanceListResponseDTO> listApproveAttendnace(
