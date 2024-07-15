@@ -167,7 +167,7 @@ public class DailyNoteService {
 			// 교육생 과제 목록 가져오기
 			List<DailyNoteDetailResponseDTO> noteList = referenceDataDao
 					.selectByMidAndRefWeek(mid, refweek);
-			
+
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 			
 			int submitCnt = 0;
@@ -180,12 +180,15 @@ public class DailyNoteService {
 				int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
 
 				switch(dayOfWeek) {
-					case 2: submitCnt++;
-					case 3: submitCnt++;
-					case 4: submitCnt++;
-					case 5: submitCnt++;
-					case 6: submitCnt++;
+					case 2: submitCnt++; break;
+					case 3: submitCnt++; break;
+					case 4: submitCnt++; break;
+					case 5: submitCnt++; break;
+					case 6: submitCnt++; break;
 				}
+				
+				log.info("sumitCnt: " + submitCnt);
+				
 				
 				if (submitCnt >= 5) {
 					submitstatus = "제출";
