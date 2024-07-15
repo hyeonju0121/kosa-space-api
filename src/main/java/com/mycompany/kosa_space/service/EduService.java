@@ -974,6 +974,12 @@ public class EduService {
 		return response;
 	}
 
+	// ecname 기준으로 강의실 목록 리스트 조회
+	public List<String> listNameList(String ecname) {
+		List<String> response = trainingRoomDao.listTrnameByEcname(ecname);
+		return response;
+	}
+	
 	// --- 첨부파일 다운로드 ---------------------------------------------------------
 	public EduAttach attachDownload(int eano) {
 		EduAttach attach = eduAttachDao.selectByEano(eano);

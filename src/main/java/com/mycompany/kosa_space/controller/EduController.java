@@ -128,6 +128,12 @@ public class EduController {
 	public void roomDelete(@RequestParam int trno) {
 		eduService.deleteRoom(trno);
 	}
+	
+	// 강의실 목록 조회
+	@GetMapping("/room/namelist")
+	public List<String> roomNameList(@RequestParam String ecname) {
+		return eduService.listNameList(ecname);
+	}
 
 	// 교육과정 관련 -------------------------------------
 
@@ -188,6 +194,7 @@ public class EduController {
 				@RequestParam(value="ecname", required=false, defaultValue = "all")String ecname) {
 		return eduService.listCprofessor(ecname);
 	}
+	
 	
 	// 다운로드
 	@GetMapping("/download/attach/{eano}")

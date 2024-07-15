@@ -15,6 +15,16 @@
 		)
 	</insert>
 	
+	<select id="listTrnameByEcname" parameterType="string" resultType="string">
+		select trname
+		from (
+		    select e.ecname, r.trno, r.trname
+		    from educenter e, trainingroom r
+		    where e.ecno = r.ecno
+		) 
+		where ecname =#{ecname}
+ 	</select>
+	
 	<select id="selectByTrname" parameterType="string" resultType="trainingroom">
 		select *
 		from trainingroom

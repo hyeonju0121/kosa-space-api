@@ -19,6 +19,8 @@ public interface TrainingRoomDao {
 	
 	public void deleteByTrno(int trno);
 	
+	public List<String> listTrnameByEcname(String ecname);
+	
 	// 강의실 명 존재 여부
 	public int selectCntByTrname(int ecno, String trname);
 	
