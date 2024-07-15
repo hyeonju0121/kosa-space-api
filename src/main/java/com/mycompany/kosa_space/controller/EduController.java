@@ -99,7 +99,7 @@ public class EduController {
 	}
 
 	// 교육장 이름 기준으로 강의실 목록 조회
-	@PostMapping("/room/list")
+	@GetMapping("/room/list")
 	public List<TrainingRoomListResponseDTO> roomList(
 			@RequestParam(value = "ecname", required = false, defaultValue = "all") String ecname,
 			@RequestParam(value = "trenable", required = false, defaultValue = "all") String trenable) {

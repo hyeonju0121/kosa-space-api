@@ -427,7 +427,7 @@ public class EduService {
 	@Transactional
 	public List<TrainingRoomListResponseDTO> listRoom(List<String> request) {
 		String ecname = request.get(0);
-
+		
 		EduCenter center = educenterDao.selectByEcname(ecname);
 
 		// 존재하지 않는 교육장명일 경우 에러 처리
@@ -441,6 +441,7 @@ public class EduService {
 
 		int ecno = center.getEcno();
 
+		// "all", "사용중", "사용가능"
 		String trenableStr = request.get(1);
 		if (trenableStr.equals("all")) {
 			data = trainingRoomDao.selectByEcno(ecno);
@@ -451,14 +452,13 @@ public class EduService {
 			data = trainingRoomDao.selectByEcnoAndTrenable(ecno, trenable);
 		}
 
-		// List<TrainingRoom> room = trainingRoomDao.selectByEcno(center.getEcno());
-
 		List<TrainingRoomListResponseDTO> response = new ArrayList<>();
 
+		log.info("data: " + data.toString());
 		for (TrainingRoom temp : data) {
 			// 해당 ecnam과 trno 에 해당하는 진행중인 교육과정 정보 가져오기
 			CourseResponseDTO course = courseResponseDao.listByEcnameAndTrno(ecname, temp.getTrno());
-
+			
 			String cname = "";
 			String cstartdate = "";
 			String cenddate = "";
