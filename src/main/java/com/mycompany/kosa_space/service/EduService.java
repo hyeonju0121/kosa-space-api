@@ -659,6 +659,12 @@ public class EduService {
 		// 교육과정명 중복 검사 (교육장명&교육진행상태 여부가 진행중 및 진행예정이면 에러처리)
 		validationDuplicatedCname(request.getEcname(), request.getCname());
 
+		// 존재하는 강의실 이름 인지 검사
+		TrainingRoom room = trainingRoomDao.selectByTrname(request.getTrname());
+		if (room == null) {
+			throw new RuntimeException("존재하지 않는 강의실 명입니다.");
+		}
+		
 		// trno 배정 가능한지 검사
 		validationTrenable(request);
 
@@ -667,11 +673,20 @@ public class EduService {
 		validationExistsByMname(request.getCprofessor());
 
 		// Course 객체 생성
-		Course course = Course.builder().trno(request.getTrno()).cname(request.getCname()).ccode(request.getCcode())
-				.ctotalnum(request.getCtotalnum()).cstatus("진행예정").cstartdate(request.getCstartdate())
-				.cenddate(request.getCenddate()).crequireddate(request.getCrequireddate())
-				.cprofessor(request.getCprofessor()).cmanager(request.getCmanager())
-				.ctrainingdate(request.getCtrainingdate()).ctrainingtime(request.getCtrainingtime()).build();
+		Course course = Course.builder()
+				.trno(room.getTrno())
+				.cname(request.getCname())
+				.ccode(request.getCcode())
+				.ctotalnum(request.getCtotalnum())
+				.cstatus("진행예정")
+				.cstartdate(request.getCstartdate())
+				.cenddate(request.getCenddate())
+				.crequireddate(request.getCrequireddate())
+				.cprofessor(request.getCprofessor())
+				.cmanager(request.getCmanager())
+				.ctrainingdate(request.getCtrainingdate())
+				.ctrainingtime(request.getCtrainingtime())
+				.build();
 
 		log.info("course: " + course.toString());
 
@@ -679,7 +694,7 @@ public class EduService {
 		courseDao.insert(course);
 
 		// 저장된 Course cno 를 찾고, 변수에 저장
-		int cno = courseDao.selectByCnameAndCstatus(request.getTrno(), course.getCstatus(), request.getCname());
+		int cno = courseDao.selectByCnameAndCstatus(room.getTrno(), course.getCstatus(), request.getCname());
 
 		// 첨부파일이 넘어왔을 경우 처리
 		List<MultipartFile> attachList = request.getCattachdata();

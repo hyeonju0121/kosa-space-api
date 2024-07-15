@@ -22,6 +22,8 @@ public interface TrainingRoomDao {
 	// 강의실 명 존재 여부
 	public int selectCntByTrname(int ecno, String trname);
 	
+	public TrainingRoom selectByTrname(String trname);
+	
 	public TrainingRoom selectByTrno(int trno);
 	
 	public List<TrainingRoom> selectByEcno(int ecno);

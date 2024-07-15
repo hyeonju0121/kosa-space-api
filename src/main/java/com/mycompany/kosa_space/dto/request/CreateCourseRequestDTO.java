@@ -20,6 +20,7 @@ public class CreateCourseRequestDTO {
 	private String cname;
 	private String ccode;
 	private int trno;
+	private String trname;
 	private int crequireddate;
 	private int ctotalnum;
 	private String cstatus;

@@ -15,6 +15,12 @@
 		)
 	</insert>
 	
+	<select id="selectByTrname" parameterType="string" resultType="trainingroom">
+		select *
+		from trainingroom
+		where trname=#{trname}
+	</select>
+	
 	<select id="selectCntByTrname" parameterType="map" resultType="int">
 		select count(trname)
 		from trainingroom
