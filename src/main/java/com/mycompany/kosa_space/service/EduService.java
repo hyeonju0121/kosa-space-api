@@ -442,7 +442,7 @@ public class EduService {
 		int ecno = center.getEcno();
 
 		String trenableStr = request.get(1);
-		if (trenableStr.equals("전체")) {
+		if (trenableStr.equals("all")) {
 			data = trainingRoomDao.selectByEcno(ecno);
 		} else if (trenableStr.equals("사용중")) {
 			trenable = true;
