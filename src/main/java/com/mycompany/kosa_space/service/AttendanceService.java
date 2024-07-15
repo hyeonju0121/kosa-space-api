@@ -414,11 +414,30 @@ public class AttendanceService {
 						"조퇴 및 결석 사유에 대한 승인을 먼저 진행해주세요. 출결을 승인할 수 없습니다.");
 			} 
 			
-			// 사유가 승인된 경우 (사유 카테고리 : 결석, 지각)
-			approveCnt++;
-			userAttendanceInfo.setAstatus("정상출결");
-			userAttendanceInfo.setAconfirm(true);
-			userAttendanceInfo.setApprovecnt(approveCnt); 
+			if (attendance.getAncategory().equals("지각")) {
+				// acheckinstatus 와 acheckoutstatus 비교 
+				boolean checkinStatus = userAttendanceInfo.isAcheckinstatus();
+				boolean checkoutStatus = userAttendanceInfo.isAcheckoutstatus();
+				// 사유가 승인된 경우 (사유 카테고리 : 지각)
+				if ((checkinStatus && !checkoutStatus) || 
+						(!checkinStatus && !checkoutStatus)) { 
+					// 퇴실을 안찍은 경우, 결석인 경우 -> 결석처리
+					absenceCnt++;
+					
+					userAttendanceInfo.setAstatus("결석");
+					userAttendanceInfo.setApprovecnt(approveCnt);
+					userAttendanceInfo.setAbsencecnt(absenceCnt);
+					userAttendanceInfo.setAconfirm(true);
+					log.info("userAttendanceInfo: " + userAttendanceInfo.toString());	
+				}
+			} else {
+				// 사유가 승인된 경우 (사유 카테고리 : 결석)
+				approveCnt++;
+				userAttendanceInfo.setAstatus("정상출결");
+				userAttendanceInfo.setAconfirm(true);
+				userAttendanceInfo.setApprovecnt(approveCnt); 
+			}
+
 		} else {
 			// 사유가 작성되지 않은 교육생인 경우
 			// acheckinstatus 와 acheckoutstatus 비교 
