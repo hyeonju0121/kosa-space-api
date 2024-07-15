@@ -100,8 +100,9 @@ public class EduController {
 
 	// 교육장 이름 기준으로 강의실 목록 조회
 	@GetMapping("/room/list")
-	public List<TrainingRoomListResponseDTO> roomList(@RequestParam String ecname,
-			@RequestParam String trenable) {
+	public List<TrainingRoomListResponseDTO> roomList(
+			@RequestParam(value = "ecname", required = false, defaultValue = "all") String ecname,
+			@RequestParam(value = "trenable", required = false, defaultValue = "all") String trenable) {
 		List<String> request = new ArrayList<>();
 		request.add(ecname);
 		request.add(trenable);
@@ -180,6 +181,13 @@ public class EduController {
 		return eduService.listCnameCourseInProgress(ecname);
 	}
 	
+	
+	// 교육과정 강사진 목록 조회
+	@GetMapping("course/cprofessor/list") 
+		public List<String> courseCprofessorList(
+				@RequestParam(value="ecname", required=false, defaultValue = "all")String ecname) {
+		return eduService.listCprofessor(ecname);
+	}
 	
 	// 다운로드
 	@GetMapping("/download/attach/{eano}")
@@ -276,7 +284,7 @@ public class EduController {
 			log.error(e.getMessage()); // error 출력
 		}
 	}
-	
+	 
 	
 	// 교육생 프로필 헤더
 	@GetMapping("/trainee/profile/header")

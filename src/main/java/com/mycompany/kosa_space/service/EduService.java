@@ -952,6 +952,12 @@ public class EduService {
 		List<String> response = courseResponseDao.listInProgressByEcname(ecname);
 		return response;
 	}
+	
+	// ecname 기준으로 강사진 명 리스트 조회
+	public List<String> listCprofessor(String ecname) {
+		List<String> response = courseResponseDao.listCprofessorByEcname(ecname);
+		return response;
+	}
 
 	// --- 첨부파일 다운로드 ---------------------------------------------------------
 	public EduAttach attachDownload(int eano) {
