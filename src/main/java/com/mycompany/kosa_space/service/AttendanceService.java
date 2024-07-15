@@ -860,6 +860,18 @@ public class AttendanceService {
 		return response;
 	}
 	
+	// 교육생 사유 첨부파일 다운로드
+	public AttendanceNotes anattachDownload(String mid, String adate) throws ParseException {
+		// adate 세팅 String to Date
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		String adateStr = adate.substring(0, 10);
+											        
+		Date date = format.parse(adateStr);
+		
+		AttendanceNotes response = attendanceNotesDao.selectByMidAndAdate(mid, date);
+		return response;
+	}
+	
 	
 	// 교육생의 정상출결일수 기준으로 출석률 구하는 메소드
 	public double calPercentage(int approvecnt, int crequireddate) {
