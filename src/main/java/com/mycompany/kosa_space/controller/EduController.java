@@ -142,7 +142,7 @@ public class EduController {
 	// 교육과정 수정
 	@PutMapping("/course/update")
 	public void courseUpdate(@RequestParam int cno, CreateCourseRequestDTO request) {
-		// eduService.updateCourse(cno, request);
+		eduService.updateCourse(cno, request);
 	}
 
 	// 교육과정 단건조회
