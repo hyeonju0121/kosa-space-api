@@ -54,4 +54,25 @@
    		where mid = #{mid}
    </update>
    
+   <!-- 아이디 중복검사 -->
+   <select id="checkMid" parameterType="String" resultType="String">
+   		select mid
+   		from member
+   		where mid=#{mid}
+   </select>
+   
+   <!-- 이메일 중복검사 -->
+   <select id="checkMemail" parameterType="String" resultType="String">
+   		select memail
+   		from member
+   		where memail=#{memail}
+   </select>
+   
+   <!-- 휴대폰 중복검사 -->
+   <select id="checkMphone" parameterType="String" resultType="String">
+   		select mphone
+   		from member
+   		where mphone=#{mphone}
+   </select>
+   
 </mapper>

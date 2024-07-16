@@ -49,9 +49,30 @@ public class AuthController {
 	public void signUp(Member member) {
 		log.info(member.getMid());
 		log.info(member.getMid().substring(0,4));
-		authService.createMember(member);
 		log.info(member.toString());
 	}
+	
+	// 아이디 중복 검사
+	@GetMapping("/idcheck")
+	public Boolean idCheck(String mid) {
+		log.info("입력받은 ID = " + mid);
+		return authService.idCheck(mid);
+	}
+	
+	// 이메일 중복 검사
+	@GetMapping("/emailcheck")
+	public Boolean emailCheck(String memail) {
+		log.info("입력받은 email = " + memail);
+		return authService.emailCheck(memail);
+	}
+	
+	// 휴대폰 번호 중복 검사
+	@GetMapping("/phonecheck")
+	public Boolean phoneCheck(String mphone) {
+		log.info("입력받은 phone number = " + mphone);
+		return authService.phoneCheck(mphone);
+	}
+	
 	
 	// (공통) 아이디 찾기 ------------------------------------
 	@GetMapping("/find/id")

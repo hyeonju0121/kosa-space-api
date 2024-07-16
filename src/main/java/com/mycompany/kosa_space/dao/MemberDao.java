@@ -22,4 +22,14 @@ public interface MemberDao {
 	public Member selectByMname(String mname);
 	// (교육생) 운영진 -> 교육생 수정
 	public void updateTrainee(UpdateTraineeRequestDto request);
+	
+	// 중복검사
+	// 아이디
+	public String checkMid(String mid);
+	// 이메일
+	public String checkMemail(String memail);
+	// 휴대폰 번호	
+	public String checkMphone(String mphone);
+	
+	
 }
