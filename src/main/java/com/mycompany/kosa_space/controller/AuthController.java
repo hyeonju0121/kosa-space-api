@@ -50,6 +50,7 @@ public class AuthController {
 		log.info(member.getMid());
 		log.info(member.getMid().substring(0,4));
 		log.info(member.toString());
+		authService.createMember(member);
 	}
 	
 	// 아이디 중복 검사
