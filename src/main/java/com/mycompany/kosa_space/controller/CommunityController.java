@@ -46,6 +46,13 @@ public class CommunityController {
 		return communityService.listNotice(ecname, pageNo);
 	}
 
+	// (교육생 대시보드) ecname 기준으로 공지사항 조회
+	@GetMapping("/dashboard/trainee/notice/list")
+	public Map<String, Object> traineeNoticeList(@RequestParam String ecname, @RequestParam(defaultValue = "1") int pageNo) {
+		return communityService.listTraineeNotice(ecname, pageNo);
+	}
+
+	
 	// ecname, cname, ncategory, pageNo 에 따른 공지사항 목록 조회
 	@PostMapping("/notice/list")
 	public Map<String, Object> noticeAllList(

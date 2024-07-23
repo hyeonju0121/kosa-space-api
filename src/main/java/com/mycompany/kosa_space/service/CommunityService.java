@@ -180,6 +180,63 @@ public class CommunityService {
 		return map;
 	}
 	
+	// 공지사항 조회 (교육생 대시보드)
+		public Map<String, Object> listTraineeNotice(String ecname, int pageNo) {
+			EduCenter center = eduCenterDao.selectByEcname(ecname);
+			int ecno = center.getEcno();
+			
+			int totalRows = noticeDao.selectNoticePagerCountByEcno(ecno);
+			
+			// Pager 객체 생성
+			Pager pager = new Pager(4, 5, totalRows, pageNo);
+			
+			// 해당 페이지의 공지사항 정보 가져오기
+			List<Notice> data = noticeDao.selectNoticePagerByEcname(ecno, pager);
+
+			List<DashBoardNoticeDTO> response = new ArrayList<>();
+			for (Notice notice : data) {
+				
+				String name = "";
+				if (notice.getEcno() == 0) {
+					name = "전체";
+				} else {
+					name = center.getEcname();
+				}
+				
+				String cname = "";
+				if (notice.getCno() == 0) {
+					cname = "전체";
+				} else {
+					Course course = courseDao.selectByCno(notice.getCno());
+					cname = course.getCname();
+				}
+				
+				DashBoardNoticeDTO temp = DashBoardNoticeDTO.builder()
+						.nno(notice.getNno())
+						.ncategory(notice.getNcategory())
+						.ntitle(notice.getNtitle())
+						.ecname(name)
+						.cname(cname)
+						.build();
+				
+				// 생성일시, 수정일시 Date to String
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				Date createdat = notice.getNcreatedat();
+				String ncreatedat = sdf.format(createdat);
+				
+				temp.setNcreatedat(ncreatedat);
+				
+				response.add(temp);
+			}
+			
+			Map<String, Object> map = new HashMap<>();
+			map.put("noticeInfo", response);
+			map.put("pager", pager);
+
+			return map;
+		}
+	
+	
 	// ecname, cname, ncategory, pageNo 에 따른 공지사항 목록 조회
 	public Map<String, Object> listAllNotice(String ecname, String cname, 
 			String ncategory, int pageNo) {
