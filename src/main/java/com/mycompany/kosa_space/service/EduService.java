@@ -760,9 +760,11 @@ public class EduService {
 
 		case "진행완료":
 			// 해당 강의실 사용여부 검사
+			/*
 			if (trenable) {
 				throw new RuntimeException("해당 강의실을 사용할 수 없습니다." + "이미 다른 교육과정이 진행중입니다. 진행완료로 변경하실 수 없습니다.");
 			}
+			*/
 
 			trenable = false;
 			trainingRoomDao.updateByTrenable(room.getTrno(), trenable);
